@@ -1,5 +1,5 @@
 # Financial Project
-
+//Testing forked copy
 <b>Background</b>  
 You as a user would like to manage your financial accounts with the help of a tool that keeps track of your finances. The purpose of the software is to allow users to manage their spending and income accounts. The software shall also provide a friendly graphical user interface. 
 
