@@ -54,6 +54,14 @@ public class GUI {
 		frame = new JFrame("Financial Tool");
 		// sets the size of the frame
 		frame.setSize(1070,800);   // <-- Feel free change these dimensions accordingly
+        
+        // makes the 'X' on the window close the program
+		frame.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){				
+				System.exit(0);
+			}
+			
+		});
 		
 		
 		
