@@ -31,7 +31,7 @@ public class GUI {
 	 * @param args
 	 */
 	//Elements of the ComboBox
-	// not impliments but ay be a better solution in the future
+	// not implements but may be a better solution in the future
 	//static String[] view_options = { "Account Management", "Reports", "Record Transactions"};
 
 	
@@ -41,19 +41,27 @@ public class GUI {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		//Defines and setups up the Frame
+		//Defines and sets-up up the Frame
 		//loads the GUI
 		GUI();
 		
 		
-	}
+	} // main
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void GUI(){
 		//panel = new JPanel();
 		frame = new JFrame("Financial Tool");
 		// sets the size of the frame
-		frame.setSize(1070,800);   // <-- Feel free change this diminseions accordinly
+		frame.setSize(1070,800);   // <-- Feel free change these dimensions accordingly
+        
+        // makes the 'X' on the window close the program
+		frame.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){				
+				System.exit(0);
+			}
+			
+		});
 		
 		
 		
@@ -117,8 +125,8 @@ public class GUI {
 		 */
 		view_acct= new JComboBox<String>();
 		
-		///adds components to the Drop down meen for user selectability --> Can be implmented in an Array as seen above: THis solution could be a better solutio
-		// but the current implimentation will work for the current sprint
+		// adds components to the Drop down menu for user selectability --> Can be implemented in an Array as seen above: This solution could be improved
+		// but the current implementation will work for the current sprint
 		view_acct.addItem("Account Management");
 		view_acct.addItem("Reports");
 		view_acct.addItem( "Record Transactions");
@@ -132,7 +140,7 @@ public class GUI {
 		frame.getContentPane().add(view_acct, gbc_view_acct);
 		frame.setVisible(true);
 		
-		//JTable to hold teh user transcation dda
+		//JTable to hold the user transaction data
 		table = new JTable();
 		GridBagConstraints gbc_table = new GridBagConstraints();
 		gbc_table.gridwidth = 21;
@@ -142,6 +150,6 @@ public class GUI {
 		frame.getContentPane().add(table, gbc_table);
 	
 		frame.setVisible(true);
-	}
+	} // GUI
 
-}
+} // class
