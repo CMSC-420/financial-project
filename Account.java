@@ -12,7 +12,7 @@ public class Account{
     
     public Account(){
         balance = 0;
-        name = "NEW ACCOUNT"
+        name = "NEW ACCOUNT";
     } // default constructor
     
     /*
