@@ -7,10 +7,12 @@
 
 public class Account{
     
-    private int balance;
+    private int balance; // balance of the account
+    private String name; // name of the account
     
     public Account(){
-        
+        balance = 0;
+        name = "NEW ACCOUNT"
     } // default constructor
     
     /*
@@ -24,4 +26,12 @@ public class Account{
     public int getBalance(){
         return balance;
     } // getBalance
+    
+    public void setName(String name){
+        this.name = name;
+    } // setName
+    
+    public String getName(){
+        return name;
+    } // getName
 } // class
