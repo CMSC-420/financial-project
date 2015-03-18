@@ -1,3 +1,11 @@
+/**
+ * As its name suggests, this class manages the GUI.
+ * This will act as the staging point for the entire project.
+ *
+ * The objects of all accounts and reports will be maintained in this class
+ * to make it easier to push the information to the interface.
+ */
+
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.GroupLayout.Alignment;
