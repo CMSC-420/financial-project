@@ -38,7 +38,7 @@ public class GUI {
 	
 	//Buttons for user to select the option they wish
 	static JButton act_mgmt, reports, record_transaction, button_1, button_2;
-														// |__>  Adam here are the buttons you requested....feel free to rename the accordingly
+    
 	/**
 	 * 
 	 *Below defines the components background data;
@@ -69,12 +69,14 @@ public class GUI {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		//Defines and setups up the Frame and Panel
-		//loads the GUI
+		// Defines and sets up the Frame and Panel
+		// loads the GUI
 		GUI();
 		
 		
-	}
+	} // main
+    
+    
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void GUI(){
@@ -104,21 +106,19 @@ public class GUI {
 		 * 		3) Record Transactions
 		*/
 		view_acct= new JComboBox<String>();
+        
+        // makes the X in the titlebar close the program
+        // DO NOT DELETE THIS AGAIN
+        frame.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				System.exit(0);
+			}
+			
+		});
 		
 		
 		
 		/**
-		 * 
-		 * 		Below Defines the GUI components
-		 * 
-		 * 
-		 */
-		
-		
-		
-		
-		
-		/***
 		 * 
 		 * 
 		 * Below defines the GUI components for: 
@@ -142,7 +142,7 @@ public class GUI {
 		
 		//Start Selectable Button
 		// account management
-		act_mgmt=  new JButton("Account Management");
+		act_mgmt=  new JButton("Accounts");
 		act_mgmt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -169,7 +169,7 @@ public class GUI {
 		
 		
 		//record transaction
-		record_transaction= new JButton("Record Transaction");
+		record_transaction= new JButton("Transactions");
 		record_transaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -192,9 +192,9 @@ public class GUI {
 		 * 																	all the user options and then access them with the correct array index --> would make code more organized
 		*																	but the current implementation will work for the current sprint
 		*/
-		view_acct.addItem("Account Management");
-		view_acct.addItem("Reports");
-		view_acct.addItem( "Record Transactions");
+		view_acct.addItem("Account 1");
+		view_acct.addItem("Account 2");
+		view_acct.addItem("Account 3");
 		
 		
 		
@@ -202,55 +202,12 @@ public class GUI {
 		 * 
 		 * Below Creates a table and a table model:
 		 * 	--> The Table allows for data entry
-		 *  --> The Table model allows a custom model inorder to implement a table with selectable and editable cell --> Like an excel spreadsheet 
+		 *  --> The Table model allows a custom model in order to implement a table with selectable and editable cell --> Like an excel spreadsheet 
 		 * 
 		 * 
 		 */
 	
-		table.setModel(new DefaultTableModel(
-			
-			/** 2D Array that represents an N x M matrix where the ith column represents a category 
-			/* and the jth row represents data for that particular category entry 
-			 *  Currently : 10 Columns that represent 10  Categories and 25 rows that represent 25 available entries
-			 *  Rows can be predefined or manually set. This property can be changed later if needed
-			 *  
-			 *  Each ij entry is initially set to "null" to indicate that particular entry as empty.
-			 * 
-			 */
-			new Object[][] {
-					
-			//				col1   col1  col3  col4  col5  col6  col7  col8  col9  col10
-			/* row 1  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 2  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 3  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 4  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 5  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 6  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 7  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 8  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 9  */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 10 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 11 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 12 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 13 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 14 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 15 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 16 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 17 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 18 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 19 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 20 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 21 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 22 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 23 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 24 */	{null, null, null, null, null, null, null, null, null, null},
-			/* row 25 */	{null, null, null, null, null, null, null, null, null, null},
-			},
-			new String[] {
-					//Sets the category name for each column--> feel free to change these as you wish
-				"Category 1", "Category 2", "Category 3", "Category 4", "Category  5", "Category  6", "Category  7", "Category  8", "Category  9", "Category  10"
-			}
-		));
+		table.setModel(new MyTableModel());
 		
 		/**
 		 * 
@@ -305,7 +262,7 @@ public class GUI {
 		
 		
 		// provides a definition for the specific layout chooses for this project: GridBagLayout:: 
-		//GridBagLayout allow as the name suggests an "x" , "y" grid layout to position things within the the Frame :: Components in this type of layout
+		// GridBagLayout allow as the name suggests an "x" , "y" grid layout to position things within the the Frame :: Components in this type of layout
 		// can be thought of as positioned with in coordinate grid with each component having a specific "x" and "y" coordinate on the grid
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -355,7 +312,7 @@ public class GUI {
 		gbc_scrollPane.anchor = GridBagConstraints.NORTH;
 		gbc_scrollPane.gridwidth = 21;
 		gbc_scrollPane.fill = GridBagConstraints.HORIZONTAL;  // do not change this! If not specified to "HORIZONTAL" then the scroll pane fills
-															  // both the horizontal and verticle limits of the screen which because it goes the the bottom of the frame
+															  // both the horizontal and vertical limits of the screen which because it goes the the bottom of the frame
 															  // then does not allow for other components to be added to the frame after the table and scrollpane limit have been reached
 		gbc_scrollPane.gridx = 1;
 		gbc_scrollPane.gridy = 4;
@@ -404,9 +361,36 @@ public class GUI {
 		frame.setVisible(true);
 		
 		
-	}
+	} // GUI
 	
+    
+    /*
+	 * This class was made to allow the use of certain variable types in the table.
+	 * In particular, this allows the use of booleans, because it forces the table to 
+	 * return variable classes rather than "Object." 
+	 */
+	private static class MyTableModel extends DefaultTableModel{
+		public Class<?> getColumnClass(int index){
+			Class<?> temp = String.class;
+			
+			try{
+				temp = getValueAt(0, index).getClass();
+			} catch(NullPointerException npe){
+                System.out.println("NullPointerException - GUI.MyTableModel.getColumnClass");
+            }
+			
+			return temp;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public void setValueAt(Object value, int row, int col) {  
+			// overridden code
+			Vector rowVector = (Vector)dataVector.elementAt(row);  
+			rowVector.setElementAt(value, col);  
+			fireTableCellUpdated(row, col);
+		}
+	} // class MyTableModel
 	
 	
 
-}
+} // class
