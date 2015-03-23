@@ -43,6 +43,7 @@ public class GUI {
     private static MyTableModel tableModel;
     private static ListSelectionModel listModel;
     
+    // list of all accounts
     private static ArrayList<Account> accounts;
     
     // the currently selected tab
@@ -68,16 +69,14 @@ public class GUI {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void GUI(){
 	
-		frame = new JFrame("Financial Tool");
-		// sets the size of the frame
-		frame.setSize(1024,768);   // <-- Feel free change this dimensions accordingly for debugging --> My machine current aspect ratio is 1600 x 900
+		frame = new JFrame("Financial Tool"); // label the window
+		frame.setSize(1024,768); // default frame size
 		
 		//creates a table for user date entry
 		table = new JTable();
         tableModel = new MyTableModel();
 		//give table the ability to select multiple rows simultaneously
-		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION); 
-		//table.setPreferredSize(new Dimension(400,300)); // <-- Feel free change this dimensions accordingly for debugging --> My machine current aspect ratio is 1600 x 900
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setFillsViewportHeight(true); // the table fills out the JScrollPane
         table.setAutoResizeMode(1); // table till auto-resize
         table.setModel(tableModel);
@@ -157,20 +156,21 @@ public class GUI {
 		});
 		
         
-		//button 1
+		// button 1
 		button_1 = new JButton("Button 1");
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
                 
                 // temporary panel for the JOptionPane
                 JPanel dialog = new JPanel(new BorderLayout(5,5));
-                
+                // all of the labels for the JOptionPane
                 JPanel labels = new JPanel(new GridLayout(0,1,2,2));
-                
+                // all of the input fields for the JOptionPane
                 JPanel fields = new JPanel(new GridLayout(0,1,2,2));
 				
 				switch(currTab){
-                    case 0:
+                    case 0: // this button will add an account
+                        // setup the JOptionPane for adding an account
                         labels.add(new JLabel("Account Name "));
                         labels.add(new JLabel("Starting Balance ($)"));
                         labels.add(new JLabel("Account Type"));
@@ -189,6 +189,7 @@ public class GUI {
                         fields.add(accType);
                         dialog.add(fields, BorderLayout.CENTER);
                 
+                        // prompt the user for basic account info
                         int result = JOptionPane.showConfirmDialog(frame, dialog,
                                         "New Account", JOptionPane.OK_CANCEL_OPTION);
                                         
@@ -197,7 +198,7 @@ public class GUI {
                             int balance = Integer.parseInt(accBal.getText());
                             String type = accType.getSelectedItem().toString();
                             
-                            switch(type){
+                            switch(type){ // add account depending on type
                                 case "Checking":
                                     Checking checking = new Checking();
                                     checking.setBalance(balance);
@@ -238,9 +239,9 @@ public class GUI {
                             }
                         }
                         break;
-                    case 1:
+                    case 1: // reports
                         break;
-                    case 2:
+                    case 2: // transactions
                         break;
                     default:
                         System.out.println("ERROR - GUI button_1 - invalid currTab");
@@ -249,7 +250,7 @@ public class GUI {
 		});
 		
 		
-		//button 2
+		// button 2
 		button_2 = new JButton("Button 2");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
