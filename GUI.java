@@ -44,6 +44,10 @@ public class GUI {
     private static ListSelectionModel listModel;
     
     private static ArrayList<Account> accounts;
+    
+    // the currently selected tab
+    // 0 = Account, 1 = Reports, 2 = Transactions
+    private static int currTab = 0;
 	
     
     
@@ -125,6 +129,7 @@ public class GUI {
 		act_mgmt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+                currTab = 0;
 				initTableAccounts();
 			}
 		});
@@ -135,6 +140,7 @@ public class GUI {
 		reports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+                currTab = 1;
 				initTableReports();
 			}
 		});
@@ -145,6 +151,7 @@ public class GUI {
 		record_transaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+                currTab = 2;
 				initTableTransactions();
 			}
 		});
@@ -154,8 +161,90 @@ public class GUI {
 		button_1 = new JButton("Button 1");
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+                
+                // temporary panel for the JOptionPane
+                JPanel dialog = new JPanel(new BorderLayout(5,5));
+                
+                JPanel labels = new JPanel(new GridLayout(0,1,2,2));
+                
+                JPanel fields = new JPanel(new GridLayout(0,1,2,2));
 				
-				//code for onclick event goes here
+				switch(currTab){
+                    case 0:
+                        labels.add(new JLabel("Account Name "));
+                        labels.add(new JLabel("Starting Balance ($)"));
+                        labels.add(new JLabel("Account Type"));
+                        dialog.add(labels, BorderLayout.WEST);
+                        
+                        JTextField accName = new JTextField();
+                        JTextField accBal = new JTextField();
+                        JComboBox accType = new JComboBox();
+                        accType.addItem("Checking");
+                        accType.addItem("Savings");
+                        accType.addItem("COD");
+                        accType.addItem("Credit Card");
+                        accType.addItem("Money Market");
+                        fields.add(accName);
+                        fields.add(accBal);
+                        fields.add(accType);
+                        dialog.add(fields, BorderLayout.CENTER);
+                
+                        int result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                        
+                        if(result == JOptionPane.OK_OPTION){
+                            String name = accName.getText();
+                            int balance = Integer.parseInt(accBal.getText());
+                            String type = accType.getSelectedItem().toString();
+                            
+                            switch(type){
+                                case "Checking":
+                                    Checking checking = new Checking();
+                                    checking.setBalance(balance);
+                                    checking.setName(name);
+                                    accounts.add(checking);
+                                    initTableAccounts();
+                                    break;
+                                case "Savings":
+                                    Savings savings = new Savings();
+                                    savings.setBalance(balance);
+                                    savings.setName(name);
+                                    accounts.add(savings);
+                                    initTableAccounts();
+                                    break;
+                                case "COD":
+                                    COD cod = new COD();
+                                    cod.setBalance(balance);
+                                    cod.setName(name);
+                                    accounts.add(cod);
+                                    initTableAccounts();
+                                    break;
+                                case "Credit Card":
+                                    CreditCard card = new CreditCard();
+                                    card.setBalance(balance);
+                                    card.setName(name);
+                                    accounts.add(card);
+                                    initTableAccounts();
+                                    break;
+                                case "Money Market":
+                                    MoneyMarket mm = new MoneyMarket();
+                                    mm.setBalance(balance);
+                                    mm.setName(name);
+                                    accounts.add(mm);
+                                    initTableAccounts();
+                                    break;
+                                default:
+                                    System.out.println("Invalid Entry");
+                            }
+                        }
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        System.out.println("ERROR - GUI button_1 - invalid currTab");
+                }
 			}
 		});
 		
