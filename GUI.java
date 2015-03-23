@@ -169,6 +169,7 @@ public class GUI {
 				//code for onclick event goes here
 			}
 		});
+        button_2.setVisible(false); // this button may not be necessary at all times
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
@@ -201,6 +202,8 @@ public class GUI {
         frame.addComponentListener(new ResizeListener());
 		frame.setVisible(true);
         
+        initTableAccounts(); // begin with the accounts view
+        
         
 		
 		
@@ -228,16 +231,20 @@ public class GUI {
     
     // setup the table for viewing accounts
     private static void initTableAccounts(){
+        Account account = new Account();
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
-        tableModel.addColumn("Accounts");
-        tableModel.addColumn("Accounts");
-        tableModel.addColumn("Accounts");
+        tableModel.addColumn("Account Name");
+        tableModel.addColumn("Account Type");
+        tableModel.addColumn("Balance");
         
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
+        for(int i = 0; i < accounts.size(); i++){
+            account = accounts.get(i);
+            tableModel.addRow(new Object[]{account.getName(), account.getType(), "$" + account.getBalance()});
+        }
+        
+        button_1.setText("New Account");
     } // initTableAccounts
     
     

@@ -35,6 +35,14 @@ public class Account{
     public String getName(){
         return name;
     } // getName
+    
+    public void setType(String type){
+        this.type = type;
+    } // setType
+    
+    public String getType(){
+        return type;
+    } // getType
 } // Account class
 
 
