@@ -34,4 +34,34 @@ public class Account{
     public String getName(){
         return name;
     } // getName
-} // class
+} // Account class
+
+class Checking extends Account{
+    public Checking(){
+        
+    } // default constructor
+} // Checking class
+
+class Savings extends Account{
+    public Savings(){
+        super();
+    } // default constructor
+} // Savings class
+
+class CreditCard extends Account{
+    public CreditCard(){
+        super();
+    } // default constructor
+} // CreditCard class
+
+class COD extends Account{
+    public COD(){
+        super();
+    } // default constructor
+} // COD class
+
+class MoneyMarket extends Account{
+    public MoneyMarket(){
+        super();
+    } // default constructor
+} // MoneyMarket class
