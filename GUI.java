@@ -41,12 +41,17 @@ public class GUI {
 	private static JScrollPane scrollPane;
 	private static JTable table;
     private static MyTableModel tableModel;
+    private static ListSelectionModel listModel;
+    
+    private static ArrayList<Account> accounts;
 	
     
     
     
 	public static void main(String[] args) {
 		
+        accounts = new ArrayList<Account>();
+        
         // Defines and sets up the Frame and Panel
 		// loads the GUI
 		GUI();
@@ -71,13 +76,10 @@ public class GUI {
 		//table.setPreferredSize(new Dimension(400,300)); // <-- Feel free change this dimensions accordingly for debugging --> My machine current aspect ratio is 1600 x 900
 		table.setFillsViewportHeight(true); // the table fills out the JScrollPane
         table.setAutoResizeMode(1); // table till auto-resize
-        table.setModel(new MyTableModel());
+        table.setModel(tableModel);
 		
-		//scrollpane --> gives the table a scrollbar when the the table entries go outside the space defined for the table on the Frame 
-		scrollPane = new JScrollPane();
-		//scrollPane.setPreferredSize(new Dimension(400,400)); //<-- Feel free change this dimensions accordingly for debugging --> My machine current aspect ratio is 1600 x 900
-		//adds the table to the scrollpane
-		scrollPane.setColumnHeaderView(table);
+		//scrollpane --> gives the table a scrollbar when the the table entries go outside the space defined for the table on the Frame
+		scrollPane = new JScrollPane(table);
 		
 		/**
 		 * creates a Drop Down Select Menu to choose between different categories:
@@ -123,11 +125,7 @@ public class GUI {
 		act_mgmt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				
-				
-				//code for onclick event goes here
-				
-				
+				initTableAccounts();
 			}
 		});
 		
@@ -137,10 +135,7 @@ public class GUI {
 		reports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				
-				
-				//code for onclick event goes here
-				
+				initTableReports();
 			}
 		});
 		
@@ -150,10 +145,7 @@ public class GUI {
 		record_transaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				
-				//code for onclick event goes here
-				
-				
+				initTableTransactions();
 			}
 		});
 		
@@ -213,6 +205,57 @@ public class GUI {
 		
 		
 	} // GUI
+    
+    
+    
+    
+    // setup the table for viewing transactions for the current account
+    private static void initTableTransactions(){
+        tableModel.setColumnCount(0);
+        tableModel.setRowCount(0);
+        
+        tableModel.addColumn("Transactions");
+        tableModel.addColumn("Transactions");
+        tableModel.addColumn("Transactions");
+        
+        tableModel.addRow(new Object[]{});
+        tableModel.addRow(new Object[]{});
+        tableModel.addRow(new Object[]{});
+    } // initTableTransactions
+    
+    
+    
+    
+    // setup the table for viewing accounts
+    private static void initTableAccounts(){
+        tableModel.setColumnCount(0);
+        tableModel.setRowCount(0);
+        
+        tableModel.addColumn("Accounts");
+        tableModel.addColumn("Accounts");
+        tableModel.addColumn("Accounts");
+        
+        tableModel.addRow(new Object[]{});
+        tableModel.addRow(new Object[]{});
+        tableModel.addRow(new Object[]{});
+    } // initTableAccounts
+    
+    
+    
+    
+    // setup the table for viewing reports
+    private static void initTableReports(){
+        tableModel.setColumnCount(0);
+        tableModel.setRowCount(0);
+        
+        tableModel.addColumn("Reports");
+        tableModel.addColumn("Reports");
+        tableModel.addColumn("Reports");
+        
+        tableModel.addRow(new Object[]{});
+        tableModel.addRow(new Object[]{});
+        tableModel.addRow(new Object[]{});
+    } // initTableAccounts
     
     
     
