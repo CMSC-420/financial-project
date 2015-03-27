@@ -82,6 +82,7 @@ public class IO{
     
     
     
+    // rewrite accountData.txt with new account info
     public static void updateAccountData(ArrayList<Account> accounts){
         try{ 
             accountData.delete();

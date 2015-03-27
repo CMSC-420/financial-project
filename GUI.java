@@ -25,28 +25,28 @@ import java.util.*;
 public class GUI {
 	
 	//Basics for every GUI 
-	static JFrame frame;
-	private static JPanel panel;
+	protected static JFrame frame;
+	protected static JPanel panel;
     
-    private static int windowHeight; // current height of the window
-    private static int windowWidth; // current width of the window
-    private static GroupLayout groupLayout; // the layout for the components
+    protected static int windowHeight; // current height of the window
+    protected static int windowWidth; // current width of the window
+    protected static GroupLayout groupLayout; // the layout for the components
     
-	private static JButton act_mgmt, reports, record_transaction, button_1, button_2; // Buttons
-	private static JComboBox view_acct; // User selectable drop down menu to select the account they wish to view
+	protected static JButton act_mgmt, reports, record_transaction, button_1, button_2; // Buttons
+	protected static JComboBox view_acct; // User selectable drop down menu to select the account they wish to view
  
 	// scrollpane for table implementation --> give the table a scrollbar after the limit for viewable entries has been met
-	private static JScrollPane scrollPane;
-	private static JTable table;
-    private static MyTableModel tableModel;
-    private static ListSelectionModel listModel;
+	protected static JScrollPane scrollPane;
+	protected static JTable table;
+    protected static MyTableModel tableModel;
+    protected static ListSelectionModel listModel;
     
     // list of all accounts
-    private static ArrayList<Account> accounts;
+    protected static ArrayList<Account> accounts;
     
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
-    private static int currTab = 0;
+    protected static int currTab = 0;
     
     
     
@@ -458,7 +458,32 @@ public class GUI {
 			Vector rowVector = (Vector)dataVector.elementAt(row);  
 			rowVector.setElementAt(value, col);  
 			fireTableCellUpdated(row, col);
+            
+            switch(currTab){
+                case 0:
+                    setValueAccount(value, row, col);
+                    break;
+                case 1:
+                    //setValueReport(value, row, col);
+                    break;
+                case 2:
+                    //setValueTransaction(value, row, col);
+                    break;
+                default:
+                    System.out.println("ERROR - GUI.MyTableModel - invalid currTab");
+            }
+            
+            IO.updateAccountData(accounts);
 		}
+        
+        // set values of appropriate account
+        private void setValueAccount(Object value, int row, int col){
+            switch(col){
+                case 0:
+                    accounts.get(row).setName(String.valueOf(value));
+                    break;
+            }
+        }
 	} // class MyTableModel
 	
 	
