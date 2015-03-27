@@ -94,7 +94,7 @@ public class GUI {
 		 * 		2) Reports
 		 * 		3) Record Transactions
 		*/
-		view_acct= new JComboBox<String>();
+		view_acct = new JComboBox<String>();
         
         /**
          * makes the X in the titlebar close the program
@@ -298,6 +298,8 @@ public class GUI {
         frame.getContentPane().setLayout(groupLayout);
         frame.addComponentListener(new ResizeListener());
 		frame.setVisible(true);
+        initTableAccounts();
+        
         
 		//Add accounts from AccountData.txt to table
 		Scanner scanner = null;
