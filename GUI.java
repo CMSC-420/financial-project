@@ -13,7 +13,6 @@ import javax.swing.event.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
-
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -21,7 +20,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.FileDialog;
-
 import java.io.*;
 import java.util.*;
 public class GUI {
@@ -49,14 +47,19 @@ public class GUI {
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
     private static int currTab = 0;
-	
     
-    
-    
-	public static void main(String[] args) {
+    //create BW for writing to file and create file name
+    private static File accountData = new File(System.getProperty("user.dir")+"/AccountData.txt");
+
+	public static void main(String[] args) throws IOException {
 		
         accounts = new ArrayList<Account>();
         
+		//create file if not in working directory
+		if (!accountData.exists()) {
+			accountData.createNewFile();
+		}
+		
         // Defines and sets up the Frame and Panel
 		// loads the GUI
 		GUI();
@@ -197,7 +200,7 @@ public class GUI {
                             String name = accName.getText();
                             int balance = Integer.parseInt(accBal.getText());
                             String type = accType.getSelectedItem().toString();
-                            
+                            try{
                             switch(type){ // add account depending on type
                                 case "Checking":
                                     Checking checking = new Checking();
@@ -237,6 +240,10 @@ public class GUI {
                                 default:
                                     System.out.println("Invalid Entry");
                             }
+                            }catch(NullPointerException e1){
+                            	e1.printStackTrace();	
+                            }
+                            updateAccountData();   
                         }
                         break;
                     case 1: // reports
@@ -292,7 +299,59 @@ public class GUI {
         frame.addComponentListener(new ResizeListener());
 		frame.setVisible(true);
         
-        initTableAccounts(); // begin with the accounts view
+		//Add accounts from AccountData.txt to table
+		Scanner scanner = null;
+		try {
+			scanner = new Scanner(accountData);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		while(scanner.hasNextLine()){
+			String type = scanner.next();
+			String name = scanner.next();
+			int balance = scanner.nextInt();
+			
+			switch(type){ // add account depending on type
+                case "Checking":
+                    Checking checking = new Checking();
+                    checking.setBalance(balance);
+                    checking.setName(name);
+                    accounts.add(checking);
+                    initTableAccounts();
+                    break;
+                case "Savings":
+                    Savings savings = new Savings();
+                    savings.setBalance(balance);
+                    savings.setName(name);
+                    accounts.add(savings);
+                    initTableAccounts();
+                    break;
+                case "COD":
+                    COD cod = new COD();
+                    cod.setBalance(balance);
+                    cod.setName(name);
+                    accounts.add(cod);
+                    initTableAccounts();
+                    break;
+                case "Credit Card":
+                    CreditCard card = new CreditCard();
+                    card.setBalance(balance);
+                    card.setName(name);
+                    accounts.add(card);
+                    initTableAccounts();
+                    break;
+                case "Money Market":
+                    MoneyMarket mm = new MoneyMarket();
+                    mm.setBalance(balance);
+                    mm.setName(name);
+                    accounts.add(mm);
+                    initTableAccounts();
+                    break;
+			}//switch
+			scanner.nextLine();
+		}//while
+		scanner.close();
         
         
 		
@@ -410,7 +469,21 @@ public class GUI {
     } // makeLayout
     
     
-    
+    private static void updateAccountData()
+    {
+    	//add account info to AccountData.txt
+    	for(int i=0; i<accounts.size(); i++){
+	        try{    
+				BufferedWriter bw = new BufferedWriter(new FileWriter(accountData,true));
+				bw.write(""+accounts.get(i).getType()+" "+accounts.get(i).getName()+" "+accounts.get(i).getBalance());
+				bw.newLine();
+				bw.close();
+	        }
+	        catch(IOException e1) {
+				e1.printStackTrace();
+			}
+    	}//for
+    }
     
     // update the layout whenever the window is resized
     private static class ResizeListener implements ComponentListener{
