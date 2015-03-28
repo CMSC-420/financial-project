@@ -47,13 +47,7 @@ public class GUI {
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
-<<<<<<< HEAD
     
-    
-    
-=======
-
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
 
 	public static void main(String[] args) throws IOException {
 		
@@ -64,17 +58,14 @@ public class GUI {
         // Defines and sets up the Frame and Panel
 		// loads the GUI
 		GUI();
-<<<<<<< HEAD
 		
 	} // main
     
     
 	
-=======
 
 	} // main
 
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
     
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void GUI(){
@@ -216,10 +207,7 @@ public class GUI {
                                         checking.setBalance(balance);
                                         checking.setName(name);
                                         accounts.add(checking);
-<<<<<<< HEAD
-=======
-                                        view_acct.addItem(name);
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     case "Savings":
@@ -227,10 +215,7 @@ public class GUI {
                                         savings.setBalance(balance);
                                         savings.setName(name);
                                         accounts.add(savings);
-<<<<<<< HEAD
-=======
-                                        view_acct.addItem(name);
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     case "COD":
@@ -238,10 +223,7 @@ public class GUI {
                                         cod.setBalance(balance);
                                         cod.setName(name);
                                         accounts.add(cod);
-<<<<<<< HEAD
-=======
-                                        view_acct.addItem(name);
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     case "Credit Card":
@@ -249,10 +231,7 @@ public class GUI {
                                         card.setBalance(balance);
                                         card.setName(name);
                                         accounts.add(card);
-<<<<<<< HEAD
-=======
-                                        view_acct.addItem(name);
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     case "Money Market":
@@ -260,10 +239,7 @@ public class GUI {
                                         mm.setBalance(balance);
                                         mm.setName(name);
                                         accounts.add(mm);
-<<<<<<< HEAD
-=======
-                                        view_acct.addItem(name);
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     default:
@@ -300,16 +276,9 @@ public class GUI {
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
-<<<<<<< HEAD
-		view_acct.addItem("Account 1");
-		view_acct.addItem("Account 2");
-		view_acct.addItem("Account 3");
-        
-=======
         for(Account a : accounts) {
             view_acct.addItem(a.getName());
         }
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
         
         
         // These define the current height and width of the window.
@@ -372,10 +341,6 @@ public class GUI {
             account = accounts.get(i);
             tableModel.addRow(new Object[]{account.getName(), account.getType(), "$" + account.getBalance()});
         }
-<<<<<<< HEAD
-        
-=======
->>>>>>> 881f1a715430c12a2077e9c181ec0b4f837c8636
         button_1.setText("New Account");
     } // initTableAccounts
     
