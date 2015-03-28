@@ -47,9 +47,7 @@ public class GUI {
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
-    
-    
-    
+
 
 	public static void main(String[] args) throws IOException {
 		
@@ -60,11 +58,9 @@ public class GUI {
         // Defines and sets up the Frame and Panel
 		// loads the GUI
 		GUI();
-		
+
 	} // main
-    
-    
-	
+
     
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void GUI(){
@@ -275,9 +271,10 @@ public class GUI {
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
-		// view_acct.addItem("Account 1");
-		// view_acct.addItem("Account 2");
-		// view_acct.addItem("Account 3");
+        for(Account a : accounts) {
+            view_acct.addItem(a.getName());
+        }
+        
         
         // These define the current height and width of the window.
         windowHeight = frame.getBounds().height;
@@ -339,7 +336,6 @@ public class GUI {
             account = accounts.get(i);
             tableModel.addRow(new Object[]{account.getName(), account.getType(), "$" + account.getBalance()});
         }
-        System.out.println(account.getName());
         button_1.setText("New Account");
     } // initTableAccounts
     
