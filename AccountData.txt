@@ -1,0 +1,3 @@
+Checking testing1 100000
+Savings testing2 500000
+Checking tesing3 9000000

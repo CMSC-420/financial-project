@@ -48,8 +48,6 @@ public class GUI {
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
     
-    
-    
 
 	public static void main(String[] args) throws IOException {
 		
@@ -65,6 +63,9 @@ public class GUI {
     
     
 	
+
+	} // main
+
     
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void GUI(){
@@ -206,6 +207,7 @@ public class GUI {
                                         checking.setBalance(balance);
                                         checking.setName(name);
                                         accounts.add(checking);
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     case "Savings":
@@ -213,6 +215,7 @@ public class GUI {
                                         savings.setBalance(balance);
                                         savings.setName(name);
                                         accounts.add(savings);
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     case "COD":
@@ -220,6 +223,7 @@ public class GUI {
                                         cod.setBalance(balance);
                                         cod.setName(name);
                                         accounts.add(cod);
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     case "Credit Card":
@@ -227,6 +231,7 @@ public class GUI {
                                         card.setBalance(balance);
                                         card.setName(name);
                                         accounts.add(card);
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     case "Money Market":
@@ -234,6 +239,7 @@ public class GUI {
                                         mm.setBalance(balance);
                                         mm.setName(name);
                                         accounts.add(mm);
+                                        view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
                                         break;
                                     default:
@@ -270,10 +276,9 @@ public class GUI {
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
-		view_acct.addItem("Account 1");
-		view_acct.addItem("Account 2");
-		view_acct.addItem("Account 3");
-        
+        for(Account a : accounts) {
+            view_acct.addItem(a.getName());
+        }
         
         
         // These define the current height and width of the window.
@@ -336,7 +341,6 @@ public class GUI {
             account = accounts.get(i);
             tableModel.addRow(new Object[]{account.getName(), account.getType(), "$" + account.getBalance()});
         }
-        
         button_1.setText("New Account");
     } // initTableAccounts
     
