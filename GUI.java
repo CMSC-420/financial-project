@@ -13,7 +13,6 @@ import javax.swing.event.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
-
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -21,42 +20,43 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.FileDialog;
-
 import java.io.*;
 import java.util.*;
 public class GUI {
 	
 	//Basics for every GUI 
-	static JFrame frame;
-	private static JPanel panel;
+	protected static JFrame frame;
+	protected static JPanel panel;
     
-    private static int windowHeight; // current height of the window
-    private static int windowWidth; // current width of the window
-    private static GroupLayout groupLayout; // the layout for the components
+    protected static int windowHeight; // current height of the window
+    protected static int windowWidth; // current width of the window
+    protected static GroupLayout groupLayout; // the layout for the components
     
-	private static JButton act_mgmt, reports, record_transaction, button_1, button_2; // Buttons
-	private static JComboBox view_acct; // User selectable drop down menu to select the account they wish to view
+	protected static JButton act_mgmt, reports, record_transaction, button_1, button_2; // Buttons
+	protected static JComboBox view_acct; // User selectable drop down menu to select the account they wish to view
  
 	// scrollpane for table implementation --> give the table a scrollbar after the limit for viewable entries has been met
-	private static JScrollPane scrollPane;
-	private static JTable table;
-    private static MyTableModel tableModel;
-    private static ListSelectionModel listModel;
+	protected static JScrollPane scrollPane;
+	protected static JTable table;
+    protected static MyTableModel tableModel;
+    protected static ListSelectionModel listModel;
     
     // list of all accounts
-    private static ArrayList<Account> accounts;
+    protected static ArrayList<Account> accounts;
     
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
-    private static int currTab = 0;
-	
+    protected static int currTab = 0;
     
     
     
-	public static void main(String[] args) {
+
+	public static void main(String[] args) throws IOException {
 		
         accounts = new ArrayList<Account>();
         
+        IO.init(accounts);
+		
         // Defines and sets up the Frame and Panel
 		// loads the GUI
 		GUI();
@@ -91,7 +91,7 @@ public class GUI {
 		 * 		2) Reports
 		 * 		3) Record Transactions
 		*/
-		view_acct= new JComboBox<String>();
+		view_acct = new JComboBox<String>();
         
         /**
          * makes the X in the titlebar close the program
@@ -193,50 +193,62 @@ public class GUI {
                         int result = JOptionPane.showConfirmDialog(frame, dialog,
                                         "New Account", JOptionPane.OK_CANCEL_OPTION);
                                         
-                        if(result == JOptionPane.OK_OPTION){
+                        if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
+                            // get the account info from the popup
                             String name = accName.getText();
                             int balance = Integer.parseInt(accBal.getText());
                             String type = accType.getSelectedItem().toString();
                             
-                            switch(type){ // add account depending on type
-                                case "Checking":
-                                    Checking checking = new Checking();
-                                    checking.setBalance(balance);
-                                    checking.setName(name);
-                                    accounts.add(checking);
-                                    initTableAccounts();
-                                    break;
-                                case "Savings":
-                                    Savings savings = new Savings();
-                                    savings.setBalance(balance);
-                                    savings.setName(name);
-                                    accounts.add(savings);
-                                    initTableAccounts();
-                                    break;
-                                case "COD":
-                                    COD cod = new COD();
-                                    cod.setBalance(balance);
-                                    cod.setName(name);
-                                    accounts.add(cod);
-                                    initTableAccounts();
-                                    break;
-                                case "Credit Card":
-                                    CreditCard card = new CreditCard();
-                                    card.setBalance(balance);
-                                    card.setName(name);
-                                    accounts.add(card);
-                                    initTableAccounts();
-                                    break;
-                                case "Money Market":
-                                    MoneyMarket mm = new MoneyMarket();
-                                    mm.setBalance(balance);
-                                    mm.setName(name);
-                                    accounts.add(mm);
-                                    initTableAccounts();
-                                    break;
-                                default:
-                                    System.out.println("Invalid Entry");
+                            try{
+                                switch(type){ // add account depending on type
+                                    case "Checking":
+                                        Checking checking = new Checking();
+                                        checking.setBalance(balance);
+                                        checking.setName(name);
+                                        accounts.add(checking);
+                                        view_acct.addItem(name);
+                                        initTableAccounts();
+                                        break;
+                                    case "Savings":
+                                        Savings savings = new Savings();
+                                        savings.setBalance(balance);
+                                        savings.setName(name);
+                                        accounts.add(savings);
+                                        view_acct.addItem(name);
+                                        initTableAccounts();
+                                        break;
+                                    case "COD":
+                                        COD cod = new COD();
+                                        cod.setBalance(balance);
+                                        cod.setName(name);
+                                        accounts.add(cod);
+                                        view_acct.addItem(name);
+                                        initTableAccounts();
+                                        break;
+                                    case "Credit Card":
+                                        CreditCard card = new CreditCard();
+                                        card.setBalance(balance);
+                                        card.setName(name);
+                                        accounts.add(card);
+                                        view_acct.addItem(name);
+                                        initTableAccounts();
+                                        break;
+                                    case "Money Market":
+                                        MoneyMarket mm = new MoneyMarket();
+                                        mm.setBalance(balance);
+                                        mm.setName(name);
+                                        accounts.add(mm);
+                                        view_acct.addItem(name);
+                                        initTableAccounts();
+                                        break;
+                                    default:
+                                        System.out.println("Invalid Entry");
+                                }
+                            } catch(NullPointerException e1){
+                            	e1.printStackTrace();	
                             }
+                            // write the new account to the file
+                            IO.updateAccountData(accounts);
                         }
                         break;
                     case 1: // reports
@@ -263,11 +275,9 @@ public class GUI {
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
-		view_acct.addItem("Account 1");
-		view_acct.addItem("Account 2");
-		view_acct.addItem("Account 3");
-        
-        
+		// view_acct.addItem("Account 1");
+		// view_acct.addItem("Account 2");
+		// view_acct.addItem("Account 3");
         
         // These define the current height and width of the window.
         windowHeight = frame.getBounds().height;
@@ -291,11 +301,7 @@ public class GUI {
         frame.getContentPane().setLayout(groupLayout);
         frame.addComponentListener(new ResizeListener());
 		frame.setVisible(true);
-        
-        initTableAccounts(); // begin with the accounts view
-        
-        
-		
+        initTableAccounts(); // show the account info in the table
 		
 	} // GUI
     
@@ -333,7 +339,7 @@ public class GUI {
             account = accounts.get(i);
             tableModel.addRow(new Object[]{account.getName(), account.getType(), "$" + account.getBalance()});
         }
-        
+        System.out.println(account.getName());
         button_1.setText("New Account");
     } // initTableAccounts
     
@@ -455,7 +461,32 @@ public class GUI {
 			Vector rowVector = (Vector)dataVector.elementAt(row);  
 			rowVector.setElementAt(value, col);  
 			fireTableCellUpdated(row, col);
+            
+            switch(currTab){
+                case 0:
+                    setValueAccount(value, row, col);
+                    break;
+                case 1:
+                    //setValueReport(value, row, col);
+                    break;
+                case 2:
+                    //setValueTransaction(value, row, col);
+                    break;
+                default:
+                    System.out.println("ERROR - GUI.MyTableModel - invalid currTab");
+            }
+            
+            IO.updateAccountData(accounts);
 		}
+        
+        // set values of appropriate account
+        private void setValueAccount(Object value, int row, int col){
+            switch(col){
+                case 0:
+                    accounts.get(row).setName(String.valueOf(value));
+                    break;
+            }
+        }
 	} // class MyTableModel
 	
 	
