@@ -60,11 +60,6 @@ public class GUI {
 		GUI();
 		
 	} // main
-    
-    
-	
-
-	} // main
 
     
 	@SuppressWarnings({ "rawtypes", "unchecked" })
