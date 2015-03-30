@@ -49,6 +49,8 @@ public class GUI {
     protected static int currTab = 0;
     
 
+    
+    
 	public static void main(String[] args) throws IOException {
 		
         // create the array list that holds the accounts
@@ -62,6 +64,8 @@ public class GUI {
 		
 	} // main
 
+    
+    
     
     // setup the main window
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -265,16 +269,27 @@ public class GUI {
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				switch(currTab){
-                    case 0: // Accounts
+                    case 0: // Accounts - delete button
                         int row = table.getSelectedRow();
-                        accounts.remove(row);
-                        view_acct.removeAllItems();
-                        // adds components to the Drop down menu for user to select the account they wish to view
-                        for(Account a : accounts) {
-                            view_acct.addItem(a.getName());
+                        
+                        // confirm the user's choice to delete
+                        int result = JOptionPane.showConfirmDialog(frame, 
+                                        "Are you sure you want to delete this account?",
+                                        "Comfirm Delete", 
+                                        JOptionPane.OK_CANCEL_OPTION);
+                        
+                        if(result == JOptionPane.OK_OPTION){ // user confirmed
+                            accounts.remove(row); // remove the selected account from the array list
+                            view_acct.removeAllItems(); // clear the dropdown
+                            // update the dropdown with the new array list
+                            for(Account a : accounts) {
+                                view_acct.addItem(a.getName());
+                            }
+                            initTableAccounts(); // update the table
+                            IO.updateAccountData(accounts); // update the text file
+                        } else { // user canceled
+                            // do nothing
                         }
-                        initTableAccounts();
-                        IO.updateAccountData(accounts);
                         break;
                     case 1: // Reports
                         break;
@@ -285,7 +300,6 @@ public class GUI {
                 }
 			}
 		});
-        //button_2.setVisible(false); // this button may not be necessary at all times
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
