@@ -51,6 +51,7 @@ public class GUI {
 
 	public static void main(String[] args) throws IOException {
 		
+        // create the array list that holds the accounts
         accounts = new ArrayList<Account>();
         
         IO.init(accounts);
@@ -62,6 +63,7 @@ public class GUI {
 	} // main
 
     
+    // setup the main window
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void GUI(){
 	

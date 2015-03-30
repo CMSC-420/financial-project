@@ -12,7 +12,7 @@ public class IO{
     private static File accountData = new File(System.getProperty("user.dir")+"/AccountData.txt");
     
     // create all necessary files if they don't already exist
-    // also load in any saved information if the files do exist
+    // load in any saved information if the files do exist
     @SuppressWarnings("unchecked")
     public static void init(ArrayList<Account> accounts){
         
