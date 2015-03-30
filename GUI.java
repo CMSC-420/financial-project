@@ -264,12 +264,28 @@ public class GUI {
 		button_2 = new JButton("Button 2");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				
-				//code for onclick event goes here
+				switch(currTab){
+                    case 0: // Accounts
+                        int row = table.getSelectedRow();
+                        accounts.remove(row);
+                        view_acct.removeAllItems();
+                        // adds components to the Drop down menu for user to select the account they wish to view
+                        for(Account a : accounts) {
+                            view_acct.addItem(a.getName());
+                        }
+                        initTableAccounts();
+                        IO.updateAccountData(accounts);
+                        break;
+                    case 1: // Reports
+                        break;
+                    case 2: // Transactions
+                        break;
+                    default:
+                        System.out.println("ERROR - GUI.button_2 - invalid currTab");
+                }
 			}
 		});
-        button_2.setVisible(false); // this button may not be necessary at all times
+        //button_2.setVisible(false); // this button may not be necessary at all times
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
@@ -319,6 +335,10 @@ public class GUI {
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
+        
+        button_1.setText("Placeholder");
+        button_2.setText("Placeholder");
+        button_2.setVisible(false);
     } // initTableTransactions
     
     
@@ -339,6 +359,8 @@ public class GUI {
             tableModel.addRow(new Object[]{account.getName(), account.getType(), "$" + account.getBalance()});
         }
         button_1.setText("New Account");
+        button_2.setText("Delete Account");
+        button_2.setVisible(true);
     } // initTableAccounts
     
     
@@ -356,6 +378,10 @@ public class GUI {
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
+        
+        button_1.setText("Placeholder");
+        button_2.setText("Placeholder");
+        button_2.setVisible(false);
     } // initTableAccounts
     
     
