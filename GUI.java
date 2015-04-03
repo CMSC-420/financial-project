@@ -523,7 +523,10 @@ public class GUI {
         private void setValueAccount(Object value, int row, int col){
             switch(col){
                 case 0:
-                    accounts.get(row).setName(String.valueOf(value));
+                    accounts.get(row).setName(String.valueOf(value)); // rename the account
+                    view_acct.removeAllItems(); // clear the dropdown
+                    for(Account a : accounts) // update the dropdown
+                        view_acct.addItem(a.getName());
                     break;
             }
         }
