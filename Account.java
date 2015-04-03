@@ -7,18 +7,32 @@
 
 public class Account{
     
+    protected ArrayList<Transaction> transactions; // all of the transactions within this account
     protected String type; // what type of account is this?
-    private int balance; // balance of the account
-    private String name; // name of the account
+    protected int balance; // balance of the account
+    protected String name; // name of the account
+    
     
     public Account(){
         balance = 0;
         name = "NEW ACCOUNT";
+        transactions = new ArrayList<>();
     } // default constructor
+    
     
     /*
      * Properties
      */
+     
+    public void addTransaction(Transaction newTransaction){
+        transactions.add(newTransaction);
+    } // addTransaction
+    
+    public void getTransactions(){
+        return transactions;
+    } // getTransactions
+    
+    
      
     public void setBalance(int balance){
         this.balance = balance;
