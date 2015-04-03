@@ -4,6 +4,8 @@
  * 
  * This class holds the basic information and operations common to all accounts.
  */
+ 
+import java.util.*;
 
 public class Account{
     
@@ -28,7 +30,7 @@ public class Account{
         transactions.add(newTransaction);
     } // addTransaction
     
-    public void getTransactions(){
+    public ArrayList getTransactions(){
         return transactions;
     } // getTransactions
     

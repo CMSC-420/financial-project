@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class Transaction{
     private double amount; // the amount of money involved
     private boolean isIncome; // whether this is an income or spending transaction
@@ -24,8 +26,8 @@ public class Transaction{
         this.amount = amount;
     } // setAmount
     
-    public void setIsIncome(Boolean income){
-        this.income = income;
+    public void setIsIncome(Boolean isIncome){
+        this.isIncome = isIncome;
     } // setIncome
     
     public double getAmount(){
