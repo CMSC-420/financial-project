@@ -91,7 +91,7 @@ class Savings extends Account{
 class CreditCard extends Account{
     public CreditCard(){
         super();
-        type = "Credit Card";
+        type = "CreditCard";
     } // default constructor
 } // CreditCard class
 
@@ -111,6 +111,6 @@ class COD extends Account{
 class MoneyMarket extends Account{
     public MoneyMarket(){
         super();
-        type = "Money Market";
+        type = "MoneyMarket";
     } // default constructor
 } // MoneyMarket class
