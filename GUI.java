@@ -344,9 +344,12 @@ public class GUI {
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
-        tableModel.addColumn("Transactions");
-        tableModel.addColumn("Transactions");
-        tableModel.addColumn("Transactions");
+        tableModel.addColumn("Date");
+        tableModel.addColumn("Payee");
+        tableModel.addColumn("Type");
+        tableModel.addColumn("Category");
+        tableModel.addColumn("Amount");
+        tableModel.addColumn("Comments");
         
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
