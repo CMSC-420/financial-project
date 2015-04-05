@@ -381,9 +381,9 @@ public class GUI {
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
         
-        button_1.setText("Placeholder");
-        button_2.setText("Placeholder");
-        button_2.setVisible(false);
+        button_1.setText("New Transaction");
+        button_2.setText("Delete Transaction");
+        button_2.setVisible(true);
     } // initTableTransactions
     
     
