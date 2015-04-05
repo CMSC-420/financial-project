@@ -207,10 +207,37 @@ public class GUI {
 							*	its parsed value to an integer variable --> so it does not crash the program.
 							*
 							*/
+							//checks the case that the user flat forgets to enter information into the field
 							while(accBal.getText().equals("")){
 								JOptionPane.showMessageDialog(null,"Please enter an initial balance");
 								result = JOptionPane.showConfirmDialog(frame, dialog,
                                         "New Account", JOptionPane.OK_CANCEL_OPTION);
+							}
+							//the case that information is enter but contains illegal characters
+							while(!accBal.getText().equals("")){
+								//temporary string to hold the account balance data for test purposes
+								String bal_content_test=accBal.getText();
+								int non_digit_count=0; // counter that tracks the number of non digital characters 
+								//iterates through the contents the the enter balance and checks for non numeric characters
+								for(int i=0; i<bal_content_test.length(); i++){
+									if(!Character.isDigit(bal_content_test.charAt(i))){
+										//if a non numeric is found increments a counter that tracks the total
+										// number of non numeric characters found
+										non_digit_count++;
+									}
+								}
+								
+								// if the counter is at least one output an error to inform the user
+								// else return as the contents of the data enter is valid
+								if(non_digit_count>0){ 
+								JOptionPane.showMessageDialog(null, "Non numeric characters detected!");
+								JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for account the balance!");
+								result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+								}
+								// break out of the while as no non numeric values where found
+								else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
+																		// the entire program will freeze 
 							}
 							
                             int balance = Integer.parseInt(accBal.getText());
