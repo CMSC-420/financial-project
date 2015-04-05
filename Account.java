@@ -30,6 +30,10 @@ public class Account{
         transactions.add(newTransaction);
     } // addTransaction
     
+    public void removeTransaction(Transaction transaction){
+        transactions.remove(transaction);
+    } // removeTransaction
+    
     public ArrayList getTransactions(){
         return transactions;
     } // getTransactions
