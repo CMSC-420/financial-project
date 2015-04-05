@@ -211,6 +211,9 @@ public class GUI {
                                         accounts.add(checking);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = checking;
                                         break;
                                     case "Savings":
                                         Savings savings = new Savings();
@@ -219,6 +222,9 @@ public class GUI {
                                         accounts.add(savings);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = savings;
                                         break;
                                     case "COD":
                                         COD cod = new COD();
@@ -227,6 +233,9 @@ public class GUI {
                                         accounts.add(cod);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = cod;
                                         break;
                                     case "Credit Card":
                                         CreditCard card = new CreditCard();
@@ -235,6 +244,9 @@ public class GUI {
                                         accounts.add(card);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = card;
                                         break;
                                     case "Money Market":
                                         MoneyMarket mm = new MoneyMarket();
@@ -243,6 +255,9 @@ public class GUI {
                                         accounts.add(mm);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = mm;
                                         break;
                                     default:
                                         System.out.println("Invalid Entry");
@@ -275,10 +290,10 @@ public class GUI {
                         
                         if(row > -1){ // if something is selected
                             // confirm the user's choice to delete
-                            int result = JOptionPane.showConfirmDialog(frame, 
-                                            "Are you sure you want to delete this account?",
-                                            "Comfirm Delete", 
-                                            JOptionPane.OK_CANCEL_OPTION);
+                            int result = JOptionPane.showConfirmDialog(frame, // frame
+                                            "Are you sure you want to delete this account?", // message
+                                            "Comfirm Delete", // title
+                                            JOptionPane.OK_CANCEL_OPTION); // options
                             
                             if(result == JOptionPane.OK_OPTION){ // user confirmed
                                 accounts.remove(row); // remove the selected account from the array list
@@ -299,7 +314,7 @@ public class GUI {
                     case 2: // Transactions
                         break;
                     default:
-                        System.out.println("ERROR - GUI.button_2 - invalid currTab");
+                        System.out.println("\n\nERROR - GUI.button_2 - invalid currTab\n");
                 }
 			}
 		});
@@ -309,6 +324,16 @@ public class GUI {
         for(Account a : accounts) {
             view_acct.addItem(a.getName());
         }
+        
+        // keep track of the currently selected account
+        view_acct.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                int index = view_acct.getSelectedIndex();
+                
+                if(index > 0)
+                    currAccount = accounts.get(index);
+            }
+        });
         
         
         // These define the current height and width of the window.
