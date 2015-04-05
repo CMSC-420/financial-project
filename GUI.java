@@ -47,6 +47,7 @@ public class GUI {
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
+    protected static Account currAccount; // the currently selected account
     
 
     
@@ -210,6 +211,9 @@ public class GUI {
                                         accounts.add(checking);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = checking;
                                         break;
                                     case "Savings":
                                         Savings savings = new Savings();
@@ -218,6 +222,9 @@ public class GUI {
                                         accounts.add(savings);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = savings;
                                         break;
                                     case "COD":
                                         COD cod = new COD();
@@ -226,6 +233,9 @@ public class GUI {
                                         accounts.add(cod);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = cod;
                                         break;
                                     case "Credit Card":
                                         CreditCard card = new CreditCard();
@@ -234,6 +244,9 @@ public class GUI {
                                         accounts.add(card);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = card;
                                         break;
                                     case "Money Market":
                                         MoneyMarket mm = new MoneyMarket();
@@ -242,6 +255,9 @@ public class GUI {
                                         accounts.add(mm);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = mm;
                                         break;
                                     default:
                                         System.out.println("Invalid Entry");
@@ -272,23 +288,25 @@ public class GUI {
                     case 0: // Accounts - delete button
                         int row = table.getSelectedRow();
                         
-                        // confirm the user's choice to delete
-                        int result = JOptionPane.showConfirmDialog(frame, 
-                                        "Are you sure you want to delete this account?",
-                                        "Comfirm Delete", 
-                                        JOptionPane.OK_CANCEL_OPTION);
-                        
-                        if(result == JOptionPane.OK_OPTION){ // user confirmed
-                            accounts.remove(row); // remove the selected account from the array list
-                            view_acct.removeAllItems(); // clear the dropdown
-                            // update the dropdown with the new array list
-                            for(Account a : accounts) {
-                                view_acct.addItem(a.getName());
+                        if(row > -1){ // if something is selected
+                            // confirm the user's choice to delete
+                            int result = JOptionPane.showConfirmDialog(frame, // frame
+                                            "Are you sure you want to delete this account?", // message
+                                            "Comfirm Delete", // title
+                                            JOptionPane.OK_CANCEL_OPTION); // options
+                            
+                            if(result == JOptionPane.OK_OPTION){ // user confirmed
+                                accounts.remove(row); // remove the selected account from the array list
+                                view_acct.removeAllItems(); // clear the dropdown
+                                // update the dropdown with the new array list
+                                for(Account a : accounts) {
+                                    view_acct.addItem(a.getName());
+                                }
+                                initTableAccounts(); // update the table
+                                IO.updateAccountData(accounts); // update the text file
+                            } else { // user canceled
+                                // do nothing
                             }
-                            initTableAccounts(); // update the table
-                            IO.updateAccountData(accounts); // update the text file
-                        } else { // user canceled
-                            // do nothing
                         }
                         break;
                     case 1: // Reports
@@ -296,7 +314,7 @@ public class GUI {
                     case 2: // Transactions
                         break;
                     default:
-                        System.out.println("ERROR - GUI.button_2 - invalid currTab");
+                        System.out.println("\n\nERROR - GUI.button_2 - invalid currTab\n");
                 }
 			}
 		});
@@ -306,6 +324,16 @@ public class GUI {
         for(Account a : accounts) {
             view_acct.addItem(a.getName());
         }
+        
+        // keep track of the currently selected account
+        view_acct.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                int index = view_acct.getSelectedIndex();
+                
+                if(index > 0)
+                    currAccount = accounts.get(index);
+            }
+        });
         
         
         // These define the current height and width of the window.
@@ -342,17 +370,20 @@ public class GUI {
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
-        tableModel.addColumn("Transactions");
-        tableModel.addColumn("Transactions");
-        tableModel.addColumn("Transactions");
+        tableModel.addColumn("Date");
+        tableModel.addColumn("Payee");
+        tableModel.addColumn("Type");
+        tableModel.addColumn("Category");
+        tableModel.addColumn("Amount");
+        tableModel.addColumn("Comments");
         
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
         
-        button_1.setText("Placeholder");
-        button_2.setText("Placeholder");
-        button_2.setVisible(false);
+        button_1.setText("New Transaction");
+        button_2.setText("Delete Transaction");
+        button_2.setVisible(true);
     } // initTableTransactions
     
     
@@ -521,7 +552,10 @@ public class GUI {
         private void setValueAccount(Object value, int row, int col){
             switch(col){
                 case 0:
-                    accounts.get(row).setName(String.valueOf(value));
+                    accounts.get(row).setName(String.valueOf(value)); // rename the account
+                    view_acct.removeAllItems(); // clear the dropdown
+                    for(Account a : accounts) // update the dropdown
+                        view_acct.addItem(a.getName());
                     break;
             }
         }
