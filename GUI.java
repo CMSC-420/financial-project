@@ -47,6 +47,7 @@ public class GUI {
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
+    protected static Account currAccount; // the currently selected account
     
 
     
