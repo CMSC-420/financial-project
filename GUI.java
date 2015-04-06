@@ -47,6 +47,13 @@ public class GUI {
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
+<<<<<<< HEAD
+    protected static Account currAccount; // the currently selected account
+=======
+	
+	//global variable to check user input upon account creation
+	static boolean valid_input=true;  // set to false --> assume user has not correctly input data correctly until proven otherwise
+>>>>>>> ecb01a97e88a03fce6f4f56a379bce3e9db1b2f9
     
 
     
@@ -197,10 +204,97 @@ public class GUI {
                                         
                         if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
                             // get the account info from the popup
+							
                             String name = accName.getText();
+							/**
+							*	Checks to to see if the input taken from the account balance field is not null before assigning
+							*	its parsed value to an integer variable --> so it does not crash the program.
+							*
+							*/
+							//checks the case that the user flat forgets to enter information into the field
+							while(accBal.getText().equals("")){
+								JOptionPane.showMessageDialog(null,"Please enter an initial balance");
+								result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+							}
+							//the case that information is enter but contains illegal characters
+							while(!accBal.getText().equals("")){
+								//temporary string to hold the account balance data for test purposes
+								String bal_content_test=accBal.getText();
+								int non_digit_count=0; // counter that tracks the number of non digital characters 
+								//iterates through the contents the the enter balance and checks for non numeric characters
+								for(int i=0; i<bal_content_test.length(); i++){
+									if(!Character.isDigit(bal_content_test.charAt(i))){
+										//if a non numeric is found increments a counter that tracks the total
+										// number of non numeric characters found
+										non_digit_count++;
+									}
+								}
+								
+								// if the counter is at least one output an error to inform the user
+								// else return as the contents of the data enter is valid
+								if(non_digit_count>0){ 
+								JOptionPane.showMessageDialog(null, "Non numeric characters detected!");
+								JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for account the balance!");
+								result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+								}
+								// break out of the while as no non numeric values where found
+								else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
+																		// the entire program will freeze 
+							}
+							
                             int balance = Integer.parseInt(accBal.getText());
-                            String type = accType.getSelectedItem().toString();
-                            
+							
+							String type = accType.getSelectedItem().toString();
+							
+							/**
+							*		Method to check user input
+							*		if anything is found that should be present but not input outputs a
+							*		dialogue message that tells the user the date they gave was  invalid
+							*		and tells them what should be fixed
+							*	
+							*		Only checks the name of the account and value given to the balance as he type cannot be 
+							*		incorrectly selected with the current implementation
+							*/
+							
+							//check_valid is a boolean flag to test for user data correctness -- check_input is the method that checks for correctness
+							boolean check_valid = check_input(name, balance); 
+							
+							/** All fields are checked once and if it passes the first time it adds the information to the table
+							* else it will check all input again for correctness and until the user inputs all fields correctly
+							* the program will continuously prompt the user for correct input and inform the user where the user made a mistake 
+							*/
+							
+							while(check_valid ==false){ 
+							result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+									 if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
+                            // get the account info from the popup
+							
+                             name = accName.getText();
+							/**
+							*	Checks to to see if the input taken from the account balance field is not null before assigning
+							*	its parsed value to an integer variable --> so it does not crash the program.
+							*
+							*/
+								if(accBal.getText().equals("")){
+									JOptionPane.showMessageDialog(null,"Please enter an initial balance");
+									result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+								}
+							
+								balance = Integer.parseInt(accBal.getText());
+							
+								type = accType.getSelectedItem().toString();
+									
+								}
+									check_valid = check_input(name, balance);// check the user input again after the user has re attempted to input the data correctly
+							
+							}//end user check
+						
+							
+                         
                             try{
                                 switch(type){ // add account depending on type
                                     case "Checking":
@@ -210,6 +304,9 @@ public class GUI {
                                         accounts.add(checking);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = checking;
                                         break;
                                     case "Savings":
                                         Savings savings = new Savings();
@@ -218,6 +315,9 @@ public class GUI {
                                         accounts.add(savings);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = savings;
                                         break;
                                     case "COD":
                                         COD cod = new COD();
@@ -226,6 +326,9 @@ public class GUI {
                                         accounts.add(cod);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = cod;
                                         break;
                                     case "Credit Card":
                                         CreditCard card = new CreditCard();
@@ -234,6 +337,9 @@ public class GUI {
                                         accounts.add(card);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = card;
                                         break;
                                     case "Money Market":
                                         MoneyMarket mm = new MoneyMarket();
@@ -242,9 +348,12 @@ public class GUI {
                                         accounts.add(mm);
                                         view_acct.addItem(name); // add new account to dropdown
                                         initTableAccounts();
+                                        
+                                        if(currAccount == null)
+                                            currAccount = mm;
                                         break;
                                     default:
-                                        System.out.println("Invalid Entry");
+                                        JOptionPane.showMessageDialog(null,"Invalid Entry"); //<-- change to a dialog prompt rather the command line prompt
                                 }
                             } catch(NullPointerException e1){
                             	e1.printStackTrace();	
@@ -252,6 +361,11 @@ public class GUI {
                             // write the new account to the file
                             IO.updateAccountData(accounts);
                         }
+						else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
+							//need to be abel to close the frame if the cancel option is choicemn
+							JOptionPane.showMessageDialog(null,"Cancel Selected");
+							
+						}
                         break;
                     case 1: // reports
                         break;
@@ -272,23 +386,25 @@ public class GUI {
                     case 0: // Accounts - delete button
                         int row = table.getSelectedRow();
                         
-                        // confirm the user's choice to delete
-                        int result = JOptionPane.showConfirmDialog(frame, 
-                                        "Are you sure you want to delete this account?",
-                                        "Comfirm Delete", 
-                                        JOptionPane.OK_CANCEL_OPTION);
-                        
-                        if(result == JOptionPane.OK_OPTION){ // user confirmed
-                            accounts.remove(row); // remove the selected account from the array list
-                            view_acct.removeAllItems(); // clear the dropdown
-                            // update the dropdown with the new array list
-                            for(Account a : accounts) {
-                                view_acct.addItem(a.getName());
+                        if(row > -1){ // if something is selected
+                            // confirm the user's choice to delete
+                            int result = JOptionPane.showConfirmDialog(frame, // frame
+                                            "Are you sure you want to delete this account?", // message
+                                            "Comfirm Delete", // title
+                                            JOptionPane.OK_CANCEL_OPTION); // options
+                            
+                            if(result == JOptionPane.OK_OPTION){ // user confirmed
+                                accounts.remove(row); // remove the selected account from the array list
+                                view_acct.removeAllItems(); // clear the dropdown
+                                // update the dropdown with the new array list
+                                for(Account a : accounts) {
+                                    view_acct.addItem(a.getName());
+                                }
+                                initTableAccounts(); // update the table
+                                IO.updateAccountData(accounts); // update the text file
+                            } else { // user canceled
+                                // do nothing
                             }
-                            initTableAccounts(); // update the table
-                            IO.updateAccountData(accounts); // update the text file
-                        } else { // user canceled
-                            // do nothing
                         }
                         break;
                     case 1: // Reports
@@ -296,7 +412,7 @@ public class GUI {
                     case 2: // Transactions
                         break;
                     default:
-                        System.out.println("ERROR - GUI.button_2 - invalid currTab");
+                        System.out.println("\n\nERROR - GUI.button_2 - invalid currTab\n");
                 }
 			}
 		});
@@ -306,6 +422,16 @@ public class GUI {
         for(Account a : accounts) {
             view_acct.addItem(a.getName());
         }
+        
+        // keep track of the currently selected account
+        view_acct.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                int index = view_acct.getSelectedIndex();
+                
+                if(index > 0)
+                    currAccount = accounts.get(index);
+            }
+        });
         
         
         // These define the current height and width of the window.
@@ -342,17 +468,20 @@ public class GUI {
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
-        tableModel.addColumn("Transactions");
-        tableModel.addColumn("Transactions");
-        tableModel.addColumn("Transactions");
+        tableModel.addColumn("Date");
+        tableModel.addColumn("Payee");
+        tableModel.addColumn("Type");
+        tableModel.addColumn("Category");
+        tableModel.addColumn("Amount");
+        tableModel.addColumn("Comments");
         
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
         tableModel.addRow(new Object[]{});
         
-        button_1.setText("Placeholder");
-        button_2.setText("Placeholder");
-        button_2.setVisible(false);
+        button_1.setText("New Transaction");
+        button_2.setText("Delete Transaction");
+        button_2.setVisible(true);
     } // initTableTransactions
     
     
@@ -377,7 +506,32 @@ public class GUI {
         button_2.setVisible(true);
     } // initTableAccounts
     
-    
+    // method that checks the validity of the user input upon account creation
+	public static boolean check_input(String name, int balance){
+		
+		if(name.equals("")){
+			JOptionPane.showMessageDialog(null, "The account must have a name!");
+			valid_input=false;
+		}
+		
+		else if (balance ==0){  
+			JOptionPane.showMessageDialog(null, "The account must have money!");
+			valid_input=false;
+		}
+		else if (balance <0){  
+			JOptionPane.showMessageDialog(null, "The account balance cannot be negative!");
+			valid_input=false;
+		}
+		else valid_input =true; //all user input data has correct form
+		
+		//if the all user data has correct form return true else return false
+		if(valid_input==false){
+			return false;
+		}
+		else return true;
+		
+		
+	}
     
     
     // setup the table for viewing reports
@@ -521,7 +675,10 @@ public class GUI {
         private void setValueAccount(Object value, int row, int col){
             switch(col){
                 case 0:
-                    accounts.get(row).setName(String.valueOf(value));
+                    accounts.get(row).setName(String.valueOf(value)); // rename the account
+                    view_acct.removeAllItems(); // clear the dropdown
+                    for(Account a : accounts) // update the dropdown
+                        view_acct.addItem(a.getName());
                     break;
             }
         }

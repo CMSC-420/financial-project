@@ -59,13 +59,13 @@ public class IO{
                         cod.setName(name);
                         accounts.add(cod);
                         break;
-                    case "Credit Card":
+                    case "CreditCard":
                         CreditCard card = new CreditCard();
                         card.setBalance(balance);
                         card.setName(name);
                         accounts.add(card);
                         break;
-                    case "Money Market":
+                    case "MoneyMarket":
                         MoneyMarket mm = new MoneyMarket();
                         mm.setBalance(balance);
                         mm.setName(name);
