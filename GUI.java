@@ -47,13 +47,10 @@ public class GUI {
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
-<<<<<<< HEAD
     protected static Account currAccount; // the currently selected account
-=======
 	
 	//global variable to check user input upon account creation
 	static boolean valid_input=true;  // set to false --> assume user has not correctly input data correctly until proven otherwise
->>>>>>> ecb01a97e88a03fce6f4f56a379bce3e9db1b2f9
     
 
     
