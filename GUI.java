@@ -48,6 +48,9 @@ public class GUI {
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
     protected static Account currAccount; // the currently selected account
+	
+	//global variable to check user input upon account creation
+	static boolean valid_input=true;  // set to false --> assume user has not correctly input data correctly until proven otherwise
     
 
     
@@ -198,10 +201,97 @@ public class GUI {
                                         
                         if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
                             // get the account info from the popup
+							
                             String name = accName.getText();
+							/**
+							*	Checks to to see if the input taken from the account balance field is not null before assigning
+							*	its parsed value to an integer variable --> so it does not crash the program.
+							*
+							*/
+							//checks the case that the user flat forgets to enter information into the field
+							while(accBal.getText().equals("")){
+								JOptionPane.showMessageDialog(null,"Please enter an initial balance");
+								result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+							}
+							//the case that information is enter but contains illegal characters
+							while(!accBal.getText().equals("")){
+								//temporary string to hold the account balance data for test purposes
+								String bal_content_test=accBal.getText();
+								int non_digit_count=0; // counter that tracks the number of non digital characters 
+								//iterates through the contents the the enter balance and checks for non numeric characters
+								for(int i=0; i<bal_content_test.length(); i++){
+									if(!Character.isDigit(bal_content_test.charAt(i))){
+										//if a non numeric is found increments a counter that tracks the total
+										// number of non numeric characters found
+										non_digit_count++;
+									}
+								}
+								
+								// if the counter is at least one output an error to inform the user
+								// else return as the contents of the data enter is valid
+								if(non_digit_count>0){ 
+								JOptionPane.showMessageDialog(null, "Non numeric characters detected!");
+								JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for account the balance!");
+								result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+								}
+								// break out of the while as no non numeric values where found
+								else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
+																		// the entire program will freeze 
+							}
+							
                             int balance = Integer.parseInt(accBal.getText());
-                            String type = accType.getSelectedItem().toString();
-                            
+							
+							String type = accType.getSelectedItem().toString();
+							
+							/**
+							*		Method to check user input
+							*		if anything is found that should be present but not input outputs a
+							*		dialogue message that tells the user the date they gave was  invalid
+							*		and tells them what should be fixed
+							*	
+							*		Only checks the name of the account and value given to the balance as he type cannot be 
+							*		incorrectly selected with the current implementation
+							*/
+							
+							//check_valid is a boolean flag to test for user data correctness -- check_input is the method that checks for correctness
+							boolean check_valid = check_input(name, balance); 
+							
+							/** All fields are checked once and if it passes the first time it adds the information to the table
+							* else it will check all input again for correctness and until the user inputs all fields correctly
+							* the program will continuously prompt the user for correct input and inform the user where the user made a mistake 
+							*/
+							
+							while(check_valid ==false){ 
+							result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+									 if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
+                            // get the account info from the popup
+							
+                             name = accName.getText();
+							/**
+							*	Checks to to see if the input taken from the account balance field is not null before assigning
+							*	its parsed value to an integer variable --> so it does not crash the program.
+							*
+							*/
+								if(accBal.getText().equals("")){
+									JOptionPane.showMessageDialog(null,"Please enter an initial balance");
+									result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+								}
+							
+								balance = Integer.parseInt(accBal.getText());
+							
+								type = accType.getSelectedItem().toString();
+									
+								}
+									check_valid = check_input(name, balance);// check the user input again after the user has re attempted to input the data correctly
+							
+							}//end user check
+						
+							
+                         
                             try{
                                 switch(type){ // add account depending on type
                                     case "Checking":
@@ -260,7 +350,7 @@ public class GUI {
                                             currAccount = mm;
                                         break;
                                     default:
-                                        System.out.println("Invalid Entry");
+                                        JOptionPane.showMessageDialog(null,"Invalid Entry"); //<-- change to a dialog prompt rather the command line prompt
                                 }
                             } catch(NullPointerException e1){
                             	e1.printStackTrace();	
@@ -268,6 +358,11 @@ public class GUI {
                             // write the new account to the file
                             IO.updateAccountData(accounts);
                         }
+						else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
+							//need to be abel to close the frame if the cancel option is choicemn
+							JOptionPane.showMessageDialog(null,"Cancel Selected");
+							
+						}
                         break;
                     case 1: // reports
                         break;
@@ -408,7 +503,32 @@ public class GUI {
         button_2.setVisible(true);
     } // initTableAccounts
     
-    
+    // method that checks the validity of the user input upon account creation
+	public static boolean check_input(String name, int balance){
+		
+		if(name.equals("")){
+			JOptionPane.showMessageDialog(null, "The account must have a name!");
+			valid_input=false;
+		}
+		
+		else if (balance ==0){  
+			JOptionPane.showMessageDialog(null, "The account must have money!");
+			valid_input=false;
+		}
+		else if (balance <0){  
+			JOptionPane.showMessageDialog(null, "The account balance cannot be negative!");
+			valid_input=false;
+		}
+		else valid_input =true; //all user input data has correct form
+		
+		//if the all user data has correct form return true else return false
+		if(valid_input==false){
+			return false;
+		}
+		else return true;
+		
+		
+	}
     
     
     // setup the table for viewing reports
