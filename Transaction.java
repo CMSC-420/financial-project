@@ -74,7 +74,7 @@ public class Transaction{
     } // getComments
     
     public String getCategory(){
-        return category
+        return category;
     } // getCategory
     
     public Boolean isIncome(){
