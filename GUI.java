@@ -430,6 +430,48 @@ public class GUI {
     
     
     
+    
+    // method that checks the validity of the user input upon account creation
+	public static boolean check_input(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
+		
+        boolean valid_input = true;
+        
+		if(name.equals("")){
+			JOptionPane.showMessageDialog(null, "The account must have a name!");
+            
+            int result = JOptionPane.showConfirmDialog(frame, dialog,
+                                "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                
+			if(result == JOptionPane.OK_OPTION){
+                check_input(accName.getText(), accBal.getText(), dialog, accName, accBal);
+            } else {
+                valid_input = false;
+            }
+		} 
+        
+        else {
+            try{
+                Double.parseDouble(balance);
+            } catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
+                
+                int result = JOptionPane.showConfirmDialog(frame, dialog,
+                                "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                
+                if(result == JOptionPane.OK_OPTION){
+                    check_input(accName.getText(), accBal.getText(), dialog, accName, accBal);
+                } else {
+                    valid_input = false;
+                }
+            }
+        }
+        
+		return valid_input;
+	} // check_input
+    
+    
+    
+    
     // setup the table for viewing transactions for the current account
     private static void initTableTransactions(){
         tableModel.setColumnCount(0);
@@ -504,47 +546,6 @@ public class GUI {
         button_2.setText("Placeholder");
         button_2.setVisible(false);
     } // initTableAccounts
-    
-    
-    
-    
-    // method that checks the validity of the user input upon account creation
-	public static boolean check_input(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
-		
-        boolean valid_input = true;
-        
-		if(name.equals("")){
-			JOptionPane.showMessageDialog(null, "The account must have a name!");
-            
-            int result = JOptionPane.showConfirmDialog(frame, dialog,
-                                "New Account", JOptionPane.OK_CANCEL_OPTION);
-                                
-			if(result == JOptionPane.OK_OPTION){
-                check_input(accName.getText(), accBal.getText(), dialog, accName, accBal);
-            } else {
-                valid_input = false;
-            }
-		} 
-        
-        else {
-            try{
-                Double.parseDouble(balance);
-            } catch(Exception e){
-                JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
-                
-                int result = JOptionPane.showConfirmDialog(frame, dialog,
-                                "New Account", JOptionPane.OK_CANCEL_OPTION);
-                                
-                if(result == JOptionPane.OK_OPTION){
-                    check_input(accName.getText(), accBal.getText(), dialog, accName, accBal);
-                } else {
-                    valid_input = false;
-                }
-            }
-        }
-        
-		return valid_input;
-	} // check_input
     
     
     
