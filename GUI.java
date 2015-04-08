@@ -61,6 +61,10 @@ public class GUI {
         accounts = new ArrayList<Account>();
         
         IO.init(accounts);
+        
+        if(!accounts.isEmpty()){
+            currAccount = accounts.get(0);
+        }
 		
         // Defines and sets up the Frame and Panel
 		// loads the GUI
@@ -476,12 +480,23 @@ public class GUI {
         tableModel.addColumn("Payee");
         tableModel.addColumn("Type");
         tableModel.addColumn("Category");
-        tableModel.addColumn("Amount");
         tableModel.addColumn("Comments");
+        tableModel.addColumn("Amount");
         
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
+        ArrayList<Transaction> transactions = currAccount.getTransactions();
+        Transaction trans; // current transaction
+        
+        for(int i = 0; i < transactions.size(); i++){
+            trans = transactions.get(i);
+            tableModel.addRow(new Object[]{
+                trans.getDate(),
+                trans.getPayee(),
+                trans.isIncome() ? "Income" : "Spending",
+                trans.getCategory(),
+                trans.getComments(),
+                trans.getAmount()
+            });
+        }
         
         button_1.setText("New Transaction");
         button_2.setText("Delete Transaction");
