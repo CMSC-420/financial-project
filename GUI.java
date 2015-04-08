@@ -583,6 +583,30 @@ public class GUI {
         button_2.setVisible(true);
     } // initTableAccounts
     
+
+    
+    
+    // setup the table for viewing reports
+    private static void initTableReports(){
+        tableModel.setColumnCount(0);
+        tableModel.setRowCount(0);
+        
+        tableModel.addColumn("Reports");
+        tableModel.addColumn("Reports");
+        tableModel.addColumn("Reports");
+        
+        tableModel.addRow(new Object[]{});
+        tableModel.addRow(new Object[]{});
+        tableModel.addRow(new Object[]{});
+        
+        button_1.setText("Placeholder");
+        button_2.setText("Placeholder");
+        button_2.setVisible(false);
+    } // initTableAccounts
+    
+    
+    
+    
     // method that checks the validity of the user input upon account creation
 	public static boolean check_input(String name, int balance){
 		
@@ -608,26 +632,7 @@ public class GUI {
 		else return true;
 		
 		
-	}
-    
-    
-    // setup the table for viewing reports
-    private static void initTableReports(){
-        tableModel.setColumnCount(0);
-        tableModel.setRowCount(0);
-        
-        tableModel.addColumn("Reports");
-        tableModel.addColumn("Reports");
-        tableModel.addColumn("Reports");
-        
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
-        
-        button_1.setText("Placeholder");
-        button_2.setText("Placeholder");
-        button_2.setVisible(false);
-    } // initTableAccounts
+	} // check_input
     
     
     
