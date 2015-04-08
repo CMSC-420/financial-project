@@ -309,7 +309,7 @@ public class GUI {
         
         if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
             
-            if(check_input(accName.getText(), accBal.getText(), dialog, accName, accBal)){
+            if(check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal)){
                 name = accName.getText();
                 balance = Double.parseDouble(accBal.getText());
                 type = accType.getSelectedItem().toString();
@@ -425,6 +425,33 @@ public class GUI {
         // prompt the user for basic account info
         result = JOptionPane.showConfirmDialog(frame, dialog,
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
+                        
+        if(result == JOptionPane.OK_OPTION){
+            if(check_input_trans()){
+                String date = transDate.getText();
+                String payee = transDate.getText();
+                String type = transType.getSelectedItem().toString();
+                String category = transCategory.getText();
+                String comments = transComments.getText();
+                double amount = Double.parseDouble(transAmount.getText());
+                
+                Transaction newTransaction = new Transaction();
+                newTransaction.setDate(date);
+                newTransaction.setPayee(payee);
+                newTransaction.setCategory(category);
+                newTransaction.setComments(comments);
+                newTransaction.setAmount(amount);
+                
+                if(type.equals("Spending")){
+                    newTransaction.setIsIncome(false);
+                } else {
+                    newTransaction.setIsIncome(true);
+                }
+                
+                currAccount.addTransaction(newTransaction);
+                initTableTransactions();
+            }
+        }
     } // addTransactionPopup
     
     
@@ -432,7 +459,7 @@ public class GUI {
     
     
     // method that checks the validity of the user input upon account creation
-	public static boolean check_input(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
+	public static boolean check_input_account(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
 		
         boolean valid_input = true;
         
@@ -443,7 +470,7 @@ public class GUI {
                                 "New Account", JOptionPane.OK_CANCEL_OPTION);
                                 
 			if(result == JOptionPane.OK_OPTION){
-                check_input(accName.getText(), accBal.getText(), dialog, accName, accBal);
+                check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal);
             } else {
                 valid_input = false;
             }
@@ -459,7 +486,7 @@ public class GUI {
                                 "New Account", JOptionPane.OK_CANCEL_OPTION);
                                 
                 if(result == JOptionPane.OK_OPTION){
-                    check_input(accName.getText(), accBal.getText(), dialog, accName, accBal);
+                    check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal);
                 } else {
                     valid_input = false;
                 }
@@ -467,7 +494,15 @@ public class GUI {
         }
         
 		return valid_input;
-	} // check_input
+	} // check_input_account
+    
+    
+    
+    
+    // method that checks the validity of the user input upon transaction creation
+    private static boolean check_input_trans(){
+        return true;
+    } // check_input_trans
     
     
     
