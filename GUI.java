@@ -61,6 +61,10 @@ public class GUI {
         accounts = new ArrayList<Account>();
         
         IO.init(accounts);
+        
+        if(!accounts.isEmpty()){
+            currAccount = accounts.get(0);
+        }
 		
         // Defines and sets up the Frame and Panel
 		// loads the GUI
@@ -213,6 +217,8 @@ public class GUI {
 								JOptionPane.showMessageDialog(null,"Please enter an initial balance");
 								result = JOptionPane.showConfirmDialog(frame, dialog,
                                         "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                if(result == JOptionPane.CANCEL_OPTION)
+                                    break;
 							}
 							//the case that information is enter but contains illegal characters
 							while(!accBal.getText().equals("")){
@@ -231,10 +237,12 @@ public class GUI {
 								// if the counter is at least one output an error to inform the user
 								// else return as the contents of the data enter is valid
 								if(non_digit_count>0){ 
-								JOptionPane.showMessageDialog(null, "Non numeric characters detected!");
-								JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for account the balance!");
-								result = JOptionPane.showConfirmDialog(frame, dialog,
-                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                    //JOptionPane.showMessageDialog(null, "Non numeric characters detected!");
+                                    JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for the account balance!");
+                                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                                            "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                    if(result == JOptionPane.CANCEL_OPTION)
+                                        break;
 								}
 								// break out of the while as no non numeric values where found
 								else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
@@ -264,31 +272,34 @@ public class GUI {
 							*/
 							
 							while(check_valid ==false){ 
-							result = JOptionPane.showConfirmDialog(frame, dialog,
-                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-									 if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
-                            // get the account info from the popup
-							
-                             name = accName.getText();
-							/**
-							*	Checks to to see if the input taken from the account balance field is not null before assigning
-							*	its parsed value to an integer variable --> so it does not crash the program.
-							*
-							*/
-								if(accBal.getText().equals("")){
-									JOptionPane.showMessageDialog(null,"Please enter an initial balance");
-									result = JOptionPane.showConfirmDialog(frame, dialog,
-                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-								}
-							
-								balance = Integer.parseInt(accBal.getText());
-							
-								type = accType.getSelectedItem().toString();
-									
-								}
-									check_valid = check_input(name, balance);// check the user input again after the user has re attempted to input the data correctly
-							
-							}//end user check
+                                result = JOptionPane.showConfirmDialog(frame, dialog,
+                                            "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                            
+                                if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
+                                    // get the account info from the popup
+                                    
+                                    name = accName.getText();
+                                    /**
+                                    *	Checks to to see if the input taken from the account balance field is not null before assigning
+                                    *	its parsed value to an integer variable --> so it does not crash the program.
+                                    *
+                                    */
+                                    if(accBal.getText().equals("")){
+                                        JOptionPane.showMessageDialog(null,"Please enter an initial balance");
+                                        result = JOptionPane.showConfirmDialog(frame, dialog,
+                                            "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                        if(result == JOptionPane.CANCEL_OPTION)
+                                            break;
+                                    }
+                                    
+                                    balance = Integer.parseInt(accBal.getText());
+                                
+                                    type = accType.getSelectedItem().toString();
+                                        
+                                }
+                                check_valid = check_input(name, balance);// check the user input again after the user has re attempted to input the data correctly
+                                
+                            }//end user check
 						
 							
                          
@@ -350,7 +361,7 @@ public class GUI {
                                             currAccount = mm;
                                         break;
                                     default:
-                                        JOptionPane.showMessageDialog(null,"Invalid Entry"); //<-- change to a dialog prompt rather the command line prompt
+                                        JOptionPane.showMessageDialog(null,"Invalid Entry");
                                 }
                             } catch(NullPointerException e1){
                             	e1.printStackTrace();	
@@ -359,7 +370,7 @@ public class GUI {
                             IO.updateAccountData(accounts);
                         }
 						else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
-							//need to be abel to close the frame if the cancel option is choicemn
+							//need to be able to close the frame if the cancel option is choicemn
 							JOptionPane.showMessageDialog(null,"Cancel Selected");
 							
 						}
@@ -367,6 +378,34 @@ public class GUI {
                     case 1: // reports
                         break;
                     case 2: // transactions
+                        // setup the JOptionPane for adding a transaction
+                        labels.add(new JLabel("Date"));
+                        labels.add(new JLabel("Payee"));
+                        labels.add(new JLabel("Account Type"));
+                        labels.add(new JLabel("Category"));
+                        labels.add(new JLabel("Comments"));
+                        labels.add(new JLabel("Amount"));
+                        dialog.add(labels, BorderLayout.WEST);
+                        
+                        JTextField transDate = new JTextField();
+                        JTextField transPayee = new JTextField();
+                        JComboBox transType = new JComboBox();
+                        JTextField transCategory = new JTextField();
+                        JTextField transComments = new JTextField();
+                        JTextField transAmount = new JTextField();
+                        transType.addItem("Spending");
+                        transType.addItem("Income");
+                        fields.add(transDate);
+                        fields.add(transPayee);
+                        fields.add(transType);
+                        fields.add(transCategory);
+                        fields.add(transComments);
+                        fields.add(transAmount);
+                        dialog.add(fields, BorderLayout.CENTER);
+                
+                        // prompt the user for basic account info
+                        result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
                         break;
                     default:
                         System.out.println("ERROR - GUI button_1 - invalid currTab");
@@ -469,12 +508,23 @@ public class GUI {
         tableModel.addColumn("Payee");
         tableModel.addColumn("Type");
         tableModel.addColumn("Category");
-        tableModel.addColumn("Amount");
         tableModel.addColumn("Comments");
+        tableModel.addColumn("Amount");
         
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
+        ArrayList<Transaction> transactions = currAccount.getTransactions();
+        Transaction trans; // current transaction
+        
+        for(int i = 0; i < transactions.size(); i++){
+            trans = transactions.get(i);
+            tableModel.addRow(new Object[]{
+                trans.getDate(),
+                trans.getPayee(),
+                trans.isIncome() ? "Income" : "Spending",
+                trans.getCategory(),
+                trans.getComments(),
+                trans.getAmount()
+            });
+        }
         
         button_1.setText("New Transaction");
         button_2.setText("Delete Transaction");
