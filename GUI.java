@@ -61,6 +61,10 @@ public class GUI {
         accounts = new ArrayList<Account>();
         
         IO.init(accounts);
+        
+        if(!accounts.isEmpty()){
+            currAccount = accounts.get(0);
+        }
 		
         // Defines and sets up the Frame and Panel
 		// loads the GUI
@@ -166,207 +170,18 @@ public class GUI {
 		button_1 = new JButton("Button 1");
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                
-                // temporary panel for the JOptionPane
-                JPanel dialog = new JPanel(new BorderLayout(5,5));
-                // all of the labels for the JOptionPane
-                JPanel labels = new JPanel(new GridLayout(0,1,2,2));
-                // all of the input fields for the JOptionPane
-                JPanel fields = new JPanel(new GridLayout(0,1,2,2));
 				
 				switch(currTab){
                     case 0: // this button will add an account
-                        // setup the JOptionPane for adding an account
-                        labels.add(new JLabel("Account Name "));
-                        labels.add(new JLabel("Starting Balance ($)"));
-                        labels.add(new JLabel("Account Type"));
-                        dialog.add(labels, BorderLayout.WEST);
                         
-                        JTextField accName = new JTextField();
-                        JTextField accBal = new JTextField();
-                        JComboBox accType = new JComboBox();
-                        accType.addItem("Checking");
-                        accType.addItem("Savings");
-                        accType.addItem("COD");
-                        accType.addItem("Credit Card");
-                        accType.addItem("Money Market");
-                        fields.add(accName);
-                        fields.add(accBal);
-                        fields.add(accType);
-                        dialog.add(fields, BorderLayout.CENTER);
-                
                         // prompt the user for basic account info
-                        int result = JOptionPane.showConfirmDialog(frame, dialog,
-                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-                                        
-                        if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
-                            // get the account info from the popup
-							
-                            String name = accName.getText();
-							/**
-							*	Checks to to see if the input taken from the account balance field is not null before assigning
-							*	its parsed value to an integer variable --> so it does not crash the program.
-							*
-							*/
-							//checks the case that the user flat forgets to enter information into the field
-							while(accBal.getText().equals("")){
-								JOptionPane.showMessageDialog(null,"Please enter an initial balance");
-								result = JOptionPane.showConfirmDialog(frame, dialog,
-                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-							}
-							//the case that information is enter but contains illegal characters
-							while(!accBal.getText().equals("")){
-								//temporary string to hold the account balance data for test purposes
-								String bal_content_test=accBal.getText();
-								int non_digit_count=0; // counter that tracks the number of non digital characters 
-								//iterates through the contents the the enter balance and checks for non numeric characters
-								for(int i=0; i<bal_content_test.length(); i++){
-									if(!Character.isDigit(bal_content_test.charAt(i))){
-										//if a non numeric is found increments a counter that tracks the total
-										// number of non numeric characters found
-										non_digit_count++;
-									}
-								}
-								
-								// if the counter is at least one output an error to inform the user
-								// else return as the contents of the data enter is valid
-								if(non_digit_count>0){ 
-								JOptionPane.showMessageDialog(null, "Non numeric characters detected!");
-								JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for account the balance!");
-								result = JOptionPane.showConfirmDialog(frame, dialog,
-                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-								}
-								// break out of the while as no non numeric values where found
-								else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
-																		// the entire program will freeze 
-							}
-							
-                            int balance = Integer.parseInt(accBal.getText());
-							
-							String type = accType.getSelectedItem().toString();
-							
-							/**
-							*		Method to check user input
-							*		if anything is found that should be present but not input outputs a
-							*		dialogue message that tells the user the date they gave was  invalid
-							*		and tells them what should be fixed
-							*	
-							*		Only checks the name of the account and value given to the balance as he type cannot be 
-							*		incorrectly selected with the current implementation
-							*/
-							
-							//check_valid is a boolean flag to test for user data correctness -- check_input is the method that checks for correctness
-							boolean check_valid = check_input(name, balance); 
-							
-							/** All fields are checked once and if it passes the first time it adds the information to the table
-							* else it will check all input again for correctness and until the user inputs all fields correctly
-							* the program will continuously prompt the user for correct input and inform the user where the user made a mistake 
-							*/
-							
-							while(check_valid ==false){ 
-							result = JOptionPane.showConfirmDialog(frame, dialog,
-                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-									 if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
-                            // get the account info from the popup
-							
-                             name = accName.getText();
-							/**
-							*	Checks to to see if the input taken from the account balance field is not null before assigning
-							*	its parsed value to an integer variable --> so it does not crash the program.
-							*
-							*/
-								if(accBal.getText().equals("")){
-									JOptionPane.showMessageDialog(null,"Please enter an initial balance");
-									result = JOptionPane.showConfirmDialog(frame, dialog,
-                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-								}
-							
-								balance = Integer.parseInt(accBal.getText());
-							
-								type = accType.getSelectedItem().toString();
-									
-								}
-									check_valid = check_input(name, balance);// check the user input again after the user has re attempted to input the data correctly
-							
-							}//end user check
-						
-							
-                         
-                            try{
-                                switch(type){ // add account depending on type
-                                    case "Checking":
-                                        Checking checking = new Checking();
-                                        checking.setBalance(balance);
-                                        checking.setName(name);
-                                        accounts.add(checking);
-                                        view_acct.addItem(name); // add new account to dropdown
-                                        initTableAccounts();
-                                        
-                                        if(currAccount == null)
-                                            currAccount = checking;
-                                        break;
-                                    case "Savings":
-                                        Savings savings = new Savings();
-                                        savings.setBalance(balance);
-                                        savings.setName(name);
-                                        accounts.add(savings);
-                                        view_acct.addItem(name); // add new account to dropdown
-                                        initTableAccounts();
-                                        
-                                        if(currAccount == null)
-                                            currAccount = savings;
-                                        break;
-                                    case "COD":
-                                        COD cod = new COD();
-                                        cod.setBalance(balance);
-                                        cod.setName(name);
-                                        accounts.add(cod);
-                                        view_acct.addItem(name); // add new account to dropdown
-                                        initTableAccounts();
-                                        
-                                        if(currAccount == null)
-                                            currAccount = cod;
-                                        break;
-                                    case "Credit Card":
-                                        CreditCard card = new CreditCard();
-                                        card.setBalance(balance);
-                                        card.setName(name);
-                                        accounts.add(card);
-                                        view_acct.addItem(name); // add new account to dropdown
-                                        initTableAccounts();
-                                        
-                                        if(currAccount == null)
-                                            currAccount = card;
-                                        break;
-                                    case "Money Market":
-                                        MoneyMarket mm = new MoneyMarket();
-                                        mm.setBalance(balance);
-                                        mm.setName(name);
-                                        accounts.add(mm);
-                                        view_acct.addItem(name); // add new account to dropdown
-                                        initTableAccounts();
-                                        
-                                        if(currAccount == null)
-                                            currAccount = mm;
-                                        break;
-                                    default:
-                                        JOptionPane.showMessageDialog(null,"Invalid Entry"); //<-- change to a dialog prompt rather the command line prompt
-                                }
-                            } catch(NullPointerException e1){
-                            	e1.printStackTrace();	
-                            }
-                            // write the new account to the file
-                            IO.updateAccountData(accounts);
-                        }
-						else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
-							//need to be abel to close the frame if the cancel option is choicemn
-							JOptionPane.showMessageDialog(null,"Cancel Selected");
-							
-						}
+                        addAccountPopup();
+                        
                         break;
                     case 1: // reports
                         break;
                     case 2: // transactions
+                        addTransactionPopup();
                         break;
                     default:
                         System.out.println("ERROR - GUI button_1 - invalid currTab");
@@ -460,6 +275,260 @@ public class GUI {
     
     
     
+    // creates a popup for adding an account
+    // should be split into several submethods
+    private static void addAccountPopup(){
+        int result;
+        
+        // temporary panel for the JOptionPane
+        JPanel dialog = new JPanel(new BorderLayout(5,5));
+        // all of the labels for the JOptionPane
+        JPanel labels = new JPanel(new GridLayout(0,1,2,2));
+        // all of the input fields for the JOptionPane
+        JPanel fields = new JPanel(new GridLayout(0,1,2,2));
+        
+        // setup the JOptionPane for adding an account
+        labels.add(new JLabel("Account Name "));
+        labels.add(new JLabel("Starting Balance ($)"));
+        labels.add(new JLabel("Account Type"));
+        dialog.add(labels, BorderLayout.WEST);
+        
+        JTextField accName = new JTextField();
+        JTextField accBal = new JTextField();
+        JComboBox accType = new JComboBox();
+        accType.addItem("Checking");
+        accType.addItem("Savings");
+        accType.addItem("COD");
+        accType.addItem("Credit Card");
+        accType.addItem("Money Market");
+        fields.add(accName);
+        fields.add(accBal);
+        fields.add(accType);
+        dialog.add(fields, BorderLayout.CENTER);
+
+        // prompt the user for basic account info
+        result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+        
+        // get the account info from the popup
+							
+        String name = accName.getText();
+        /**
+        *	Checks to to see if the input taken from the account balance field is not null before assigning
+        *	its parsed value to an integer variable --> so it does not crash the program.
+        *
+        */
+        //checks the case that the user flat forgets to enter information into the field
+        while(accBal.getText().equals("")){
+            JOptionPane.showMessageDialog(null,"Please enter an initial balance");
+            result = JOptionPane.showConfirmDialog(frame, dialog,
+                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+            if(result == JOptionPane.CANCEL_OPTION)
+                break;
+        }
+        //the case that information is enter but contains illegal characters
+        while(!accBal.getText().equals("")){
+            //temporary string to hold the account balance data for test purposes
+            String bal_content_test=accBal.getText();
+            int non_digit_count=0; // counter that tracks the number of non digital characters 
+            //iterates through the contents the the enter balance and checks for non numeric characters
+            for(int i=0; i<bal_content_test.length(); i++){
+                if(!Character.isDigit(bal_content_test.charAt(i))){
+                    //if a non numeric is found increments a counter that tracks the total
+                    // number of non numeric characters found
+                    non_digit_count++;
+                }
+            }
+            
+            // if the counter is at least one output an error to inform the user
+            // else return as the contents of the data enter is valid
+            if(non_digit_count>0){ 
+                //JOptionPane.showMessageDialog(null, "Non numeric characters detected!");
+                JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for the account balance!");
+                result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+                if(result == JOptionPane.CANCEL_OPTION)
+                    break;
+            }
+            // break out of the while as no non numeric values where found
+            else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
+                                                    // the entire program will freeze 
+        }
+        
+        int balance = Integer.parseInt(accBal.getText());
+        
+        String type = accType.getSelectedItem().toString();
+        
+        /**
+        *		Method to check user input
+        *		if anything is found that should be present but not input outputs a
+        *		dialogue message that tells the user the date they gave was  invalid
+        *		and tells them what should be fixed
+        *	
+        *		Only checks the name of the account and value given to the balance as he type cannot be 
+        *		incorrectly selected with the current implementation
+        */
+        
+        //check_valid is a boolean flag to test for user data correctness -- check_input is the method that checks for correctness
+        boolean check_valid = check_input(name, balance); 
+        
+        /** All fields are checked once and if it passes the first time it adds the information to the table
+        * else it will check all input again for correctness and until the user inputs all fields correctly
+        * the program will continuously prompt the user for correct input and inform the user where the user made a mistake 
+        */
+        
+        while(check_valid ==false){ 
+            result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+                        
+            if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
+                // get the account info from the popup
+                
+                name = accName.getText();
+                /**
+                *	Checks to to see if the input taken from the account balance field is not null before assigning
+                *	its parsed value to an integer variable --> so it does not crash the program.
+                *
+                */
+                if(accBal.getText().equals("")){
+                    JOptionPane.showMessageDialog(null,"Please enter an initial balance");
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    if(result == JOptionPane.CANCEL_OPTION)
+                        break;
+                }
+                
+                balance = Integer.parseInt(accBal.getText());
+            
+                type = accType.getSelectedItem().toString();
+                    
+            }
+            check_valid = check_input(name, balance);// check the user input again after the user has re attempted to input the data correctly
+            
+        }//end user check
+        
+        if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
+                            
+            try{
+                switch(type){ // add account depending on type
+                    case "Checking":
+                        Checking checking = new Checking();
+                        checking.setBalance(balance);
+                        checking.setName(name);
+                        accounts.add(checking);
+                        view_acct.addItem(name); // add new account to dropdown
+                        initTableAccounts();
+                        
+                        if(currAccount == null)
+                            currAccount = checking;
+                        break;
+                    case "Savings":
+                        Savings savings = new Savings();
+                        savings.setBalance(balance);
+                        savings.setName(name);
+                        accounts.add(savings);
+                        view_acct.addItem(name); // add new account to dropdown
+                        initTableAccounts();
+                        
+                        if(currAccount == null)
+                            currAccount = savings;
+                        break;
+                    case "COD":
+                        COD cod = new COD();
+                        cod.setBalance(balance);
+                        cod.setName(name);
+                        accounts.add(cod);
+                        view_acct.addItem(name); // add new account to dropdown
+                        initTableAccounts();
+                        
+                        if(currAccount == null)
+                            currAccount = cod;
+                        break;
+                    case "Credit Card":
+                        CreditCard card = new CreditCard();
+                        card.setBalance(balance);
+                        card.setName(name);
+                        accounts.add(card);
+                        view_acct.addItem(name); // add new account to dropdown
+                        initTableAccounts();
+                        
+                        if(currAccount == null)
+                            currAccount = card;
+                        break;
+                    case "Money Market":
+                        MoneyMarket mm = new MoneyMarket();
+                        mm.setBalance(balance);
+                        mm.setName(name);
+                        accounts.add(mm);
+                        view_acct.addItem(name); // add new account to dropdown
+                        initTableAccounts();
+                        
+                        if(currAccount == null)
+                            currAccount = mm;
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null,"Invalid Entry");
+                }
+            } catch(NullPointerException e1){
+                e1.printStackTrace();	
+            }
+            // write the new account to the file
+            IO.updateAccountData(accounts);
+        }
+        else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
+            //need to be able to close the frame if the cancel option is choicemn
+            JOptionPane.showMessageDialog(null,"Cancel Selected");
+            
+        }
+    
+    } // addAccountPopup
+    
+    
+    
+    
+    private static void addTransactionPopup(){
+        int result;
+        
+        // temporary panel for the JOptionPane
+        JPanel dialog = new JPanel(new BorderLayout(5,5));
+        // all of the labels for the JOptionPane
+        JPanel labels = new JPanel(new GridLayout(0,1,2,2));
+        // all of the input fields for the JOptionPane
+        JPanel fields = new JPanel(new GridLayout(0,1,2,2));
+        
+        // setup the JOptionPane for adding a transaction
+        labels.add(new JLabel("Date"));
+        labels.add(new JLabel("Payee"));
+        labels.add(new JLabel("Account Type"));
+        labels.add(new JLabel("Category"));
+        labels.add(new JLabel("Comments"));
+        labels.add(new JLabel("Amount"));
+        dialog.add(labels, BorderLayout.WEST);
+        
+        JTextField transDate = new JTextField();
+        JTextField transPayee = new JTextField();
+        JComboBox transType = new JComboBox();
+        JTextField transCategory = new JTextField();
+        JTextField transComments = new JTextField();
+        JTextField transAmount = new JTextField();
+        transType.addItem("Spending");
+        transType.addItem("Income");
+        fields.add(transDate);
+        fields.add(transPayee);
+        fields.add(transType);
+        fields.add(transCategory);
+        fields.add(transComments);
+        fields.add(transAmount);
+        dialog.add(fields, BorderLayout.CENTER);
+
+        // prompt the user for basic account info
+        result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+    } // addTransactionPopup
+    
+    
+    
+    
     // setup the table for viewing transactions for the current account
     private static void initTableTransactions(){
         tableModel.setColumnCount(0);
@@ -469,12 +538,23 @@ public class GUI {
         tableModel.addColumn("Payee");
         tableModel.addColumn("Type");
         tableModel.addColumn("Category");
-        tableModel.addColumn("Amount");
         tableModel.addColumn("Comments");
+        tableModel.addColumn("Amount");
         
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
+        ArrayList<Transaction> transactions = currAccount.getTransactions();
+        Transaction trans; // current transaction
+        
+        for(int i = 0; i < transactions.size(); i++){
+            trans = transactions.get(i);
+            tableModel.addRow(new Object[]{
+                trans.getDate(),
+                trans.getPayee(),
+                trans.isIncome() ? "Income" : "Spending",
+                trans.getCategory(),
+                trans.getComments(),
+                trans.getAmount()
+            });
+        }
         
         button_1.setText("New Transaction");
         button_2.setText("Delete Transaction");
