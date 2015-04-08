@@ -462,7 +462,7 @@ public class GUI {
     
     
     // method that checks the validity of the user input upon account creation
-	public static boolean check_input_account(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
+	private static boolean check_input_account(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
 		
         boolean valid_input = true;
         
