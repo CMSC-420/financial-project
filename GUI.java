@@ -427,7 +427,8 @@ public class GUI {
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
                         
         if(result == JOptionPane.OK_OPTION){
-            if(check_input_trans()){
+            if(check_input_trans()){ // check validity of user's input
+                // get info from popup
                 String date = transDate.getText();
                 String payee = transDate.getText();
                 String type = transType.getSelectedItem().toString();
@@ -435,6 +436,7 @@ public class GUI {
                 String comments = transComments.getText();
                 double amount = Double.parseDouble(transAmount.getText());
                 
+                // make the new transaction
                 Transaction newTransaction = new Transaction();
                 newTransaction.setDate(date);
                 newTransaction.setPayee(payee);
@@ -448,6 +450,7 @@ public class GUI {
                     newTransaction.setIsIncome(true);
                 }
                 
+                // add the new transction to the current account
                 currAccount.addTransaction(newTransaction);
                 initTableTransactions();
             }
@@ -463,9 +466,10 @@ public class GUI {
 		
         boolean valid_input = true;
         
-		if(name.equals("")){
+		if(name.equals("")){ // empty name field
 			JOptionPane.showMessageDialog(null, "The account must have a name!");
             
+            // try again
             int result = JOptionPane.showConfirmDialog(frame, dialog,
                                 "New Account", JOptionPane.OK_CANCEL_OPTION);
                                 
@@ -477,11 +481,13 @@ public class GUI {
 		} 
         
         else {
-            try{
+            try{ // try to parse the accBal field
                 Double.parseDouble(balance);
             } catch(Exception e){
+                // if accBal cannot be parsed, then the input is invalid
                 JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
                 
+                // try again
                 int result = JOptionPane.showConfirmDialog(frame, dialog,
                                 "New Account", JOptionPane.OK_CANCEL_OPTION);
                                 
