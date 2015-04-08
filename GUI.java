@@ -378,6 +378,34 @@ public class GUI {
                     case 1: // reports
                         break;
                     case 2: // transactions
+                        // setup the JOptionPane for adding a transaction
+                        labels.add(new JLabel("Date"));
+                        labels.add(new JLabel("Payee"));
+                        labels.add(new JLabel("Account Type"));
+                        labels.add(new JLabel("Category"));
+                        labels.add(new JLabel("Comments"));
+                        labels.add(new JLabel("Amount"));
+                        dialog.add(labels, BorderLayout.WEST);
+                        
+                        JTextField transDate = new JTextField();
+                        JTextField transPayee = new JTextField();
+                        JComboBox transType = new JComboBox();
+                        JTextField transCategory = new JTextField();
+                        JTextField transComments = new JTextField();
+                        JTextField transAmount = new JTextField();
+                        transType.addItem("Spending");
+                        transType.addItem("Income");
+                        fields.add(transDate);
+                        fields.add(transPayee);
+                        fields.add(transType);
+                        fields.add(transCategory);
+                        fields.add(transComments);
+                        fields.add(transAmount);
+                        dialog.add(fields, BorderLayout.CENTER);
+                
+                        // prompt the user for basic account info
+                        result = JOptionPane.showConfirmDialog(frame, dialog,
+                                        "New Account", JOptionPane.OK_CANCEL_OPTION);
                         break;
                     default:
                         System.out.println("ERROR - GUI button_1 - invalid currTab");
