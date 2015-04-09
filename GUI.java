@@ -52,6 +52,7 @@ public class GUI {
 	//global variable to check user input upon account creation
 	static boolean valid_input=true;  // set to false --> assume user has not correctly input data correctly until proven otherwise
     
+	
 
     
     
@@ -488,6 +489,14 @@ public class GUI {
     
     private static void addTransactionPopup(){
         int result;
+		//Constructs a Date Object to pull the current date automatically
+		 Calendar current_date = Calendar.getInstance();
+		 int day = current_date.get(Calendar.DAY_OF_MONTH);
+		 int month = current_date.get(Calendar.MONTH)+1;
+		 int year = current_date.get(Calendar.YEAR);
+		
+			//current date string to pass to the panel	
+			String date = Integer.toString(month) + "/" +Integer.toString(day) + "/" +Integer.toString(year);
         
         // temporary panel for the JOptionPane
         JPanel dialog = new JPanel(new BorderLayout(5,5));
@@ -497,6 +506,7 @@ public class GUI {
         JPanel fields = new JPanel(new GridLayout(0,1,2,2));
         
         // setup the JOptionPane for adding a transaction
+		
         labels.add(new JLabel("Date"));
         labels.add(new JLabel("Payee"));
         labels.add(new JLabel("Account Type"));
@@ -505,7 +515,7 @@ public class GUI {
         labels.add(new JLabel("Amount"));
         dialog.add(labels, BorderLayout.WEST);
         
-        JTextField transDate = new JTextField();
+        JLabel transDate = new JLabel(date);
         JTextField transPayee = new JTextField();
         JComboBox transType = new JComboBox();
         JTextField transCategory = new JTextField();
@@ -513,7 +523,7 @@ public class GUI {
         JTextField transAmount = new JTextField();
         transType.addItem("Spending");
         transType.addItem("Income");
-        fields.add(transDate);
+		fields.add(transDate);
         fields.add(transPayee);
         fields.add(transType);
         fields.add(transCategory);
