@@ -11,7 +11,7 @@ public class Account{
     
     protected ArrayList<Transaction> transactions; // all of the transactions within this account
     protected String type; // what type of account is this?
-    protected int balance; // balance of the account
+    protected double balance; // balance of the account
     protected String name; // name of the account
     
     
@@ -40,11 +40,11 @@ public class Account{
     
     
      
-    public void setBalance(int balance){
+    public void setBalance(double balance){
         this.balance = balance;
     } // setBalance
     
-    public int getBalance(){
+    public double getBalance(){
         return balance;
     } // getBalance
     

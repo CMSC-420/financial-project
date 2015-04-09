@@ -33,12 +33,12 @@ public class IO{
             
             String type;
             String name;
-            int balance;
+            double balance;
             
             while(scanner.hasNextLine()){
                 type = scanner.next();
                 name = scanner.next();
-                balance = scanner.nextInt();
+                balance = scanner.nextDouble();
                 
                 switch(type){ // add account depending on type
                     case "Checking":
