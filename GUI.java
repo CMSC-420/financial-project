@@ -52,6 +52,9 @@ public class GUI {
 	//global variable to check user input upon account creation
 	static boolean valid_input=true;  // set to false --> assume user has not correctly input data correctly until proven otherwise
     
+	//label to contain he sum of the all balances
+	static JLabel sum_lab = new JLabel("0");
+	static int sum_bal=0;
 	
 
     
@@ -91,6 +94,7 @@ public class GUI {
 		table.setFillsViewportHeight(true); // the table fills out the JScrollPane
         table.setAutoResizeMode(1); // table till auto-resize
         table.setModel(tableModel);
+		
 		
 		//scrollpane --> gives the table a scrollbar when the the table entries go outside the space defined for the table on the Frame
 		scrollPane = new JScrollPane(table);
@@ -232,9 +236,17 @@ public class GUI {
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
-        for(Account a : accounts) {
-            view_acct.addItem(a.getName());
+        int sum_test=0;  //<-- checks the ballance of all accounts onload to see if the the balance needs to be up to date
+		for(Account a : accounts) {
+             
+			view_acct.addItem(a.getName());
+			sum_test+=a.getBalance();
         }
+		//if onload the balance is greater than 0 update the label else do nothing
+		if(sum_test>0){
+			sum_lab.setText(Integer.toString(sum_test));
+			
+		}
         
         // keep track of the currently selected account
         view_acct.addActionListener(new ActionListener(){
@@ -410,6 +422,15 @@ public class GUI {
         
         if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
                             
+					for(Account a: accounts){
+						if(a.getBalance()<=0){
+							sum_lab.setText("0");
+						}
+						else{ 
+							sum_bal+=a.getBalance();
+							sum_lab.setText(Integer.toString(sum_bal));
+						}
+					}
             try{
                 switch(type){ // add account depending on type
                     case "Checking":
@@ -663,6 +684,8 @@ public class GUI {
                         .addComponent(button_1)
                         .addGap(10)
                         .addComponent(button_2)
+						.addGap(600)
+						.addComponent(sum_lab)
                     )
                 )
         );
@@ -686,6 +709,8 @@ public class GUI {
                         .addComponent(button_1)
                         .addGap(10)
                         .addComponent(button_2)
+						.addGap(600)
+						.addComponent(sum_lab)
                     )
                 )
         );
