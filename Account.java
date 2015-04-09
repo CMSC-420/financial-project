@@ -4,27 +4,47 @@
  * 
  * This class holds the basic information and operations common to all accounts.
  */
+ 
+import java.util.*;
 
 public class Account{
     
+    protected ArrayList<Transaction> transactions; // all of the transactions within this account
     protected String type; // what type of account is this?
-    private int balance; // balance of the account
-    private String name; // name of the account
+    protected double balance; // balance of the account
+    protected String name; // name of the account
+    
     
     public Account(){
         balance = 0;
         name = "NEW ACCOUNT";
+        transactions = new ArrayList<>();
     } // default constructor
+    
     
     /*
      * Properties
      */
      
-    public void setBalance(int balance){
+    public void addTransaction(Transaction newTransaction){
+        transactions.add(newTransaction);
+    } // addTransaction
+    
+    public void removeTransaction(Transaction transaction){
+        transactions.remove(transaction);
+    } // removeTransaction
+    
+    public ArrayList getTransactions(){
+        return transactions;
+    } // getTransactions
+    
+    
+     
+    public void setBalance(double balance){
         this.balance = balance;
     } // setBalance
     
-    public int getBalance(){
+    public double getBalance(){
         return balance;
     } // getBalance
     
@@ -71,7 +91,7 @@ class Savings extends Account{
 class CreditCard extends Account{
     public CreditCard(){
         super();
-        type = "Credit Card";
+        type = "CreditCard";
     } // default constructor
 } // CreditCard class
 
@@ -91,6 +111,6 @@ class COD extends Account{
 class MoneyMarket extends Account{
     public MoneyMarket(){
         super();
-        type = "Money Market";
+        type = "MoneyMarket";
     } // default constructor
 } // MoneyMarket class
