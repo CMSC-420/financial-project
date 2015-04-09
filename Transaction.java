@@ -2,6 +2,9 @@ import java.util.*;
 import java.util.Date;
 
 public class Transaction{
+	//type to identify the transaction that is being recorded
+	public String type; //< -- this should be private to ensure encapsulation but for some reason I got an		
+						// error stating: "type has private access" so switched to public for testing and debugging
     private double amount; // the amount of money involved
     private String date; // the date the transaction occurred
     private String payee; // where the money came from or went to
@@ -54,6 +57,11 @@ public class Transaction{
     public void setIsIncome(Boolean isIncome){
         this.isIncome = isIncome;
     } // setIncome
+	
+	public void setType(String type){
+		
+		this.type=type;
+	}
     
     
     
@@ -80,4 +88,43 @@ public class Transaction{
     public Boolean isIncome(){
         return isIncome;
     } // isIncome
+	
+	public String getType(){
+		
+		return type;
+	}
 } // class
+
+
+
+//class for different sub type constructors
+class Income extends Transaction{
+    public Income(){
+        super();
+        type = "Income";
+    } // default constructor
+} // Income class
+
+
+
+
+class Spending extends Transaction{
+    public Spending(){
+        super();
+        type = "Spending";
+    } // default constructor
+} // Spending class
+
+
+
+
+class Transfer extends Transaction{
+    public Transfer(){
+        super();
+        type = "Transaction";
+    } // default constructor
+} // Transfer class
+
+
+
+
