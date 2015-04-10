@@ -475,12 +475,12 @@ public class GUI {
                         
 		if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
             // get the account info from the popup
-			String  date = transDate.getText();
-			String payee = transPayee.getText();
-			String cat = transCategory.getText();
+			String  date = transDate.getText().toString();
+			String payee = transPayee.getText().toString();
+			String cat = transCategory.getText().toString();
 			int amount = Integer.parseInt(transAmount.getText());
 			String type = transType.getSelectedItem().toString();
-			String comment = transComments.getText();
+			String comment = transComments.getText().toString();
             
             
             try{
