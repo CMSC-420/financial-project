@@ -570,32 +570,53 @@ public class GUI {
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
 		if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
                 // get the account info from the popup
-						
-			/**			transDate = new JLabel(date);
-        JTextField transPayee = new JTextField();        <--     Pasted here soley to make it easier for me to write the get method below
-        JComboBox transType = new JComboBox();
-        JTextField transCategory = new JTextField();
-        JTextField transComments = new JTextField();
-        JTextField transAmount = new JTextField(); */
+	
 			
 			
 			String  date = transDate.getText();
+			//this test was a success: --> the date is being switched at some other point -- > will keep searching
+			System.out.println("Testind Data Line 577: " + date);
 			String payee = transPayee.getText();
 			String cat = transCategory.getText();
-			int amount = Integer.parseInt(transAmount.getText());
+			//tests for null entry in the transaction ammount before it parse the value for a numeric digit --> this will cause 
+			// number format exception in java and will crash the program before if not handled
+			while(transAmount.getText().equals("")){
+				JOptionPane.showMessageDialog(null,"The transaction must have an amount!");
+				 result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+						
+			}int amount = Integer.parseInt(transAmount.getText());
 			String type = transType.getSelectedItem().toString();
 			String comment = transComments.getText();
 			
-				/**
-						Model for the bellow form Account 
-							MoneyMarket mm = new MoneyMarket();
-                        mm.setBalance(balance);
-                        mm.setName(name);
-                        accounts.add(mm);
-                        view_acct.addItem(name); // add new account to dropdown
-                        initTableAccounts();
-						
-						*/
+					
+		//check for null inputs and output if the error if detects null input
+	
+		while(transPayee.getText().equals("") || transCategory.getText().equals("") || transAmount.getText().equals("") || transComments.getText().equals("")){
+			//System.out.println("Test");
+			if(transPayee.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "A recipient must be entered!");
+				result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);			
+			}
+			else if(transCategory.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "There must a category!");	
+			result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+			}
+			else if(transAmount.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "You must enter an amount!");
+			result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+			}
+			 else if(transComments.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "A Description of the transaction must be given!");	
+			result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+			}
+			else break; // if all cases have been tested and no error is found then exit the loop as all fields contain data--> checking for correctness will be done else where
+		}
+			
 					
 					
 					
@@ -609,7 +630,10 @@ public class GUI {
 						income.setComments(comment);
 						income.setCategory(cat);
 						//income.setIsIncome(isIncome);  <-- needs to be updated
-                        trans.add(income);
+						//Test was a success: the data must be added here in order to update the actual data in the table and not just display: --> "today""
+						//System.out.println("Testing Data: switch loop line 633" + curr_date);
+                        income.setDate(curr_date);
+						trans.add(income);
 						initTableTransactions();
                         break;
                     case "Spending":
@@ -619,7 +643,8 @@ public class GUI {
 						spending.setComments(comment);
 						spending.setCategory(cat);
 						//spending.setIsIncome(isIncome);  <--needs to be updated
-                        trans.add(spending);
+                       spending.setDate(curr_date);
+						trans.add(spending);
 						initTableTransactions();
                         break;
                     case "Transfer":
@@ -629,7 +654,8 @@ public class GUI {
 						transfer.setComments(comment);
 						transfer.setCategory(cat);
 						//transfer.setIsIncome(isIncome);  <-- needs to be updated
-                        trans.add(transfer);
+                        transfer.setDate(curr_date);
+						trans.add(transfer);
 						initTableTransactions();
                         break;
                     default:
