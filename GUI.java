@@ -58,7 +58,9 @@ public class GUI {
     
 	//label to contain he sum of the all balances
 	static JLabel sum_lab = new JLabel("0");
+	// variable to contain the sum of all balances for all accounts
 	static int sum_bal=0;
+	static int sum_tran=0;
 	
 
     
@@ -168,6 +170,8 @@ public class GUI {
 				
                 currTab = 1;
 				initTableReports();
+				
+				
 			}
 		});
 		
@@ -522,6 +526,7 @@ public class GUI {
     
     private static void addTransactionPopup(){
         int result;
+		
 		//Constructs a Date Object to pull the current date automatically
 		 Calendar current_date = Calendar.getInstance();
 		 int day = current_date.get(Calendar.DAY_OF_MONTH);
@@ -616,6 +621,19 @@ public class GUI {
 			}
 			else break; // if all cases have been tested and no error is found then exit the loop as all fields contain data--> checking for correctness will be done else where
 		}
+		
+		//below updates the transaction sum: the sum of all he transactions for the user
+		if(result==JOptionPane.OK_OPTION){
+		for(Transaction t: trans){
+						if(t.getAmount()<=0){
+							sum_lab.setText("0");
+						}
+						else{ 
+							sum_tran+=t.getAmount();
+							sum_lab.setText(Integer.toString(sum_tran));
+						}
+					}
+		}//end for
 			
 					
 					
@@ -681,7 +699,22 @@ public class GUI {
     
     // setup the table for viewing transactions for the current account
     private static void initTableTransactions(){
+		//once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amout
+		// else if no transactions exits sets the balancce to 0
+		
+		//sets the amount to 0 initially then preforms the check to see if anything exits
+		sum_tran=0;
+		for(Transaction t:trans){
+			if(t.getAmount()<=0){
+							sum_lab.setText("0");
+						}
+						else{ 
+							sum_tran+=t.getAmount();
+							sum_lab.setText(Integer.toString(sum_tran));
+						}
+		}
         Transaction transaction = new Transaction();
+		
 		
 		tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
@@ -719,6 +752,20 @@ public class GUI {
     
     // setup the table for viewing accounts
     private static void initTableAccounts(){
+		//once the account screen is loaded: checks the all accounts for a sum and updates the sum amout
+		// else if no accounts exits sets the balancce to 0
+		
+		//sets the balance to 0 initially then preforms the check to see if anything exits
+		sum_bal=0;
+		for(Account a:accounts){
+			if(a.getBalance()<=0){
+							sum_lab.setText("0");
+						}
+						else{ 
+							sum_bal+=a.getBalance();
+							sum_lab.setText(Integer.toString(sum_bal));
+						}
+		}
         Account account = new Account();
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
@@ -766,7 +813,11 @@ public class GUI {
     
     // setup the table for viewing reports
     private static void initTableReports(){
-        tableModel.setColumnCount(0);
+			
+		JOptionPane.showMessageDialog(null,"This section is still to come, stay tuned!");
+					
+					
+		tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
         tableModel.addColumn("Reports");
@@ -780,6 +831,8 @@ public class GUI {
         button_1.setText("Placeholder");
         button_2.setText("Placeholder");
         button_2.setVisible(false);
+			
+		
     } // initTableAccounts
     
     
@@ -877,8 +930,10 @@ public class GUI {
 			try{
 				temp = getValueAt(0, index).getClass();
 			} catch(NullPointerException npe){
-                System.out.println("NullPointerException - GUI.MyTableModel.getColumnClass");
-            }
+                //System.out.println("NullPointerException - GUI.MyTableModel.getColumnClass");
+				System.out.println("This section is a work in progress");
+				
+			}
 			
 			return temp;
 		}
