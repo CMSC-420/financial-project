@@ -113,7 +113,7 @@ public class IO{
                 payee= scanner.next();
 				comments = scanner.next();
 				category = scanner.next();
-				isIncome=scanner.nextBoolean();
+				//isIncome=scanner.nextBoolean();
 				
                 switch(type){ // add account depending on type
                     case "Income":
@@ -122,7 +122,7 @@ public class IO{
                         income.setPayee(payee);
 						income.setComments(comments);
 						income.setCategory(category);
-						income.setIsIncome(isIncome);
+						//income.setIsIncome(isIncome);
                         trans.add(income);
                         break;
                     case "Spending":
@@ -131,7 +131,7 @@ public class IO{
 						spending.setPayee(payee);
 						spending.setComments(comments);
 						spending.setCategory(category);
-						spending.setIsIncome(isIncome);
+						//spending.setIsIncome(isIncome);
                         trans.add(spending);
                         break;
                     case "Transfer":
@@ -140,7 +140,7 @@ public class IO{
                         transfer.setPayee(payee);
 						transfer.setComments(comments);
 						transfer.setCategory(category);
-						transfer.setIsIncome(isIncome);
+						//transfer.setIsIncome(isIncome);
                         trans.add(transfer);
                         break;
                   
@@ -195,7 +195,7 @@ public class IO{
             BufferedWriter bw = new BufferedWriter(new FileWriter(tranData,true));
             
             for(int i = 0; i < trans.size(); i++){
-                
+                System.out.println("Testing Date: " +trans.get(i).getDate());
                 bw.write(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
 				//System.out.println(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
 
