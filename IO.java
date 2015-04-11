@@ -196,8 +196,21 @@ public class IO{
             
             for(int i = 0; i < trans.size(); i++){
                 System.out.println("Testing Date: " +trans.get(i).getDate());
-                bw.write(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
-				//System.out.println(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
+                bw.write(trans.get(i).getType() + " " 
+                    + trans.get(i).getAmount() + " " 
+                    + trans.get(i).getDate() + " " 
+                    + trans.get(i).getPayee() + " " 
+                    + trans.get(i).getComments() + " " 
+                    + trans.get(i).getCategory() + " " 
+                    + trans.get(i).isIncome());
+				/*System.out.println(trans.get(i).getType() + " " 
+                    + trans.get(i).getAmount() + " " 
+                    + trans.get(i).getDate() + " " 
+                    + trans.get(i).getPayee() + " " 
+                    + trans.get(i).getComments() + " " 
+                    + trans.get(i).getCategory() + " " 
+                    + trans.get(i).isIncome());
+                */
 
 			   bw.newLine();
 				
