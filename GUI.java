@@ -307,6 +307,7 @@ public class GUI {
         String name;
         double balance;
         String type;
+        boolean accExists, valid_input;
         
         // temporary panel for the JOptionPane
         JPanel dialog = new JPanel(new BorderLayout(5,5));
@@ -355,72 +356,97 @@ public class GUI {
                         sum_lab.setText(Integer.toString(sum_bal));
                     }
                 }
-            
-                try{
-                    switch(type){ // add account depending on type
-                        case "Checking":
-                            Checking checking = new Checking();
-                            checking.setBalance(balance);
-                            checking.setName(name);
-                            accounts.add(checking);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = checking;
-                            break;
-                        case "Savings":
-                            Savings savings = new Savings();
-                            savings.setBalance(balance);
-                            savings.setName(name);
-                            accounts.add(savings);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = savings;
-                            break;
-                        case "COD":
-                            COD cod = new COD();
-                            cod.setBalance(balance);
-                            cod.setName(name);
-                            accounts.add(cod);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = cod;
-                            break;
-                        case "Credit Card":
-                            CreditCard card = new CreditCard();
-                            card.setBalance(balance);
-                            card.setName(name);
-                            accounts.add(card);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = card;
-                            break;
-                        case "Money Market":
-                            MoneyMarket mm = new MoneyMarket();
-                            mm.setBalance(balance);
-                            mm.setName(name);
-                            accounts.add(mm);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = mm;
-                            break;
-                        default:
-                            JOptionPane.showMessageDialog(null,"Invalid Entry");
+                
+                //check to see if account name already exists
+                accExists=false;
+                for(int i=0;i<accounts.size();i++){
+                	if(accounts.get(i).getName().toLowerCase().equals(name.toLowerCase())){
+                		accExists=true;
+                	}
+                }//for
+                
+                //add new account or show error message for dupe
+                if(!accExists){
+	                try{
+	                    switch(type){ // add account depending on type
+	                        case "Checking":
+	                            Checking checking = new Checking();
+	                            checking.setBalance(balance);
+	                            checking.setName(name);
+	                            accounts.add(checking);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = checking;
+	                            break;
+	                        case "Savings":
+	                            Savings savings = new Savings();
+	                            savings.setBalance(balance);
+	                            savings.setName(name);
+	                            accounts.add(savings);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = savings;
+	                            break;
+	                        case "COD":
+	                            COD cod = new COD();
+	                            cod.setBalance(balance);
+	                            cod.setName(name);
+	                            accounts.add(cod);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = cod;
+	                            break;
+	                        case "Credit Card":
+	                            CreditCard card = new CreditCard();
+	                            card.setBalance(balance);
+	                            card.setName(name);
+	                            accounts.add(card);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = card;
+	                            break;
+	                        case "Money Market":
+	                            MoneyMarket mm = new MoneyMarket();
+	                            mm.setBalance(balance);
+	                            mm.setName(name);
+	                            accounts.add(mm);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = mm;
+	                            break;
+	                        default:
+	                            JOptionPane.showMessageDialog(null,"Invalid Entry");
+	                    }//switch
+	                } catch(NullPointerException e1){
+	                    e1.printStackTrace();	
+	                	}
+	                // write the new account to the file
+	                IO.updateAccountData(accounts);
+                }//if
+				
+                else{
+                	JOptionPane.showMessageDialog(null, "Account name already exists!");
+                	
+                	// try again
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                    
+                    if(result == JOptionPane.OK_OPTION){
+                        check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal);
+                    } else {
+                        valid_input = false;
                     }
-                } catch(NullPointerException e1){
-                    e1.printStackTrace();	
-                }
-                // write the new account to the file
-                IO.updateAccountData(accounts);
+                }//else
             }
         }
     
