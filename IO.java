@@ -3,6 +3,7 @@
  * Keeping it separate will clean up the main code and make it easier to track down bugs.
  */
  
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
@@ -135,7 +136,7 @@ public class IO{
             BufferedWriter bw = new BufferedWriter(new FileWriter(tranData,true));
             
             for(int i = 0; i < trans.size(); i++){
-                //System.out.println("Testing Date: " +trans.get(i).getDate());
+                //System.out.println("Testing Date: " + trans.get(i).getDate());
                 bw.write(trans.get(i).getType() + "/./" 
                     + trans.get(i).getAmount() + "/./" 
                     + trans.get(i).getDate() + "/./" 
@@ -154,5 +155,16 @@ public class IO{
             e1.printStackTrace();
         }
     } // updateAccountData
+    
+    public static void updateTranDataName(String oldName, String newName){
+        File oldFile = new File(oldName + ".txt");
+        File newFile = new File(newName + ".txt");
+        
+        if(newFile.exists()){
+            JOptionPane.showMessageDialog(null, "That account name already exists!");
+        } else {
+            oldFile.renameTo(newFile);
+        }
+    } // updateTranDataName
     
 } // class

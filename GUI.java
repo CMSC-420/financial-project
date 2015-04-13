@@ -640,7 +640,7 @@ public class GUI {
         
 		// once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amount
 		// else if no transactions exits sets the balance to 0
-		//sets the amount to 0 initially then preforms the check to see if anything exits
+		// sets the amount to 0 initially then preforms the check to see if anything exits
 		sum_tran = 0;
 		for(Transaction t:trans){
 			if(t.getAmount()<=0){
@@ -872,19 +872,25 @@ public class GUI {
                 default:
                     System.out.println("ERROR - GUI.MyTableModel - invalid currTab");
             }
-            
-            IO.updateAccountData(accounts);
-			IO.updateTranData(trans, currAccount);
 		}
         
         // set values of appropriate account
         private void setValueAccount(Object value, int row, int col){
             switch(col){
                 case 0:
-                    accounts.get(row).setName(String.valueOf(value)); // rename the account
-                    view_acct.removeAllItems(); // clear the dropdown
-                    for(Account a : accounts) // update the dropdown
-                        view_acct.addItem(a.getName());
+                    if(String.valueOf(value) == ""){
+                        JOptionPane.showMessageDialog(null, "The account must have a name!");
+                    } else {
+                        String oldName = accounts.get(row).getName();
+                        IO.updateTranDataName(oldName, String.valueOf(value)); // rename transaction file
+                        
+                        accounts.get(row).setName(String.valueOf(value)); // rename the account
+                        view_acct.removeAllItems(); // clear the dropdown
+                        for(Account a : accounts) // update the dropdown
+                            view_acct.addItem(a.getName());
+                            
+                        IO.updateAccountData(accounts);
+                    }
                     break;
 			}
         }
@@ -908,6 +914,8 @@ public class GUI {
                     //trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // change the comments
                     break;
 			}
+            
+            IO.updateTranData(currAccount.getTransactions(), currAccount);
         }
 	} // class MyTableModel
 	
