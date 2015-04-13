@@ -59,7 +59,7 @@ public class GUI {
 	static int sum_tran=0;
 	
 
-    
+ 
     
 	public static void main(String[] args) throws IOException {
 		
@@ -76,6 +76,7 @@ public class GUI {
 		// loads the GUI
 		GUI();
 		
+
 	} // main
 
     
@@ -276,8 +277,11 @@ public class GUI {
             public void actionPerformed(ActionEvent e){
                 int index = view_acct.getSelectedIndex();
                 
-                if(index > 0)
+                if(index >= 0){
                     currAccount = accounts.get(index);
+                    if(currTab == 2)
+                        initTableTransactions();
+                }
             }
         });
         
@@ -411,6 +415,7 @@ public class GUI {
                         Account acc = new Account();
                         acc.setBalance(balance);
                         acc.setName(name);
+                        acc.setType(type);
                         
                         accounts.add(acc);
                         view_acct.addItem(name); // add new account to dropdown
@@ -576,11 +581,6 @@ public class GUI {
                 IO.updateTranData(trans, currAccount);
             }
         }
-        else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
-            //need to be able to close the frame if the cancel option is chosen
-            JOptionPane.showMessageDialog(null,"Cancel Selected");
-            
-        }
     } // addTransactionPopup
     
     
@@ -656,7 +656,6 @@ public class GUI {
 		
 		tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
-        
         tableModel.addColumn("Date");
         tableModel.addColumn("Payee");
         tableModel.addColumn("Type");
@@ -728,7 +727,7 @@ public class GUI {
 		JOptionPane.showMessageDialog(null,"This section is still to come, stay tuned!");
 					
 					
-		tableModel.setColumnCount(0);
+		/*tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
         tableModel.addColumn("Reports");
@@ -742,7 +741,7 @@ public class GUI {
         button_1.setText("Placeholder");
         button_2.setText("Placeholder");
         button_2.setVisible(false);
-			
+        */
 		
     } // initTableAccounts
     

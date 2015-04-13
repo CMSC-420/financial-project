@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-public class IO{
+public class IO extends GUI {
     
     // a text file to hold account information
     private static File accountData = new File("AccountData.txt");
@@ -18,13 +18,13 @@ public class IO{
     @SuppressWarnings("unchecked")
     public static void initAccount(ArrayList<Account> accounts){
         
-		if (!accountData.exists()) { // create account data file if it doesn't exist
+        if (!accountData.exists()) { // create account data file if it doesn't exist
             try{
                 accountData.createNewFile();
             } catch(Exception e){
                 e.printStackTrace();
             }
-		} else { // Load account data if the file already exists
+        } else { // Load account data if the file already exists
         
             Scanner scanner = null;
             try {
@@ -67,7 +67,10 @@ public class IO{
         
         if(!tranData.exists()){
             try{
-                tranData.createNewFile();
+                for (Account a : accounts) {
+                 tranData.createNewFile();
+                    // tranData = new File(System.getProperty("user.dir")+"0"+a.getName()+"TransactionData.txt");
+                }
             } catch(Exception e){
                 e.printStackTrace();
             }
@@ -144,9 +147,9 @@ public class IO{
                     + trans.get(i).getCategory() + "/./"
                     + trans.get(i).getComments() + "/./" );
 
-			   bw.newLine();
-				
-			
+               bw.newLine();
+                
+            
                 
             }// for
             
