@@ -200,9 +200,11 @@ public class GUI {
 		button_2 = new JButton("Button 2");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+                int row;
+                
 				switch(currTab){
                     case 0: // Accounts - delete button
-                        int row = table.getSelectedRow();
+                        row = table.getSelectedRow();
                         
                         if(row > -1){ // if something is selected
                             // confirm the user's choice to delete
@@ -228,6 +230,26 @@ public class GUI {
                     case 1: // Reports
                         break;
                     case 2: // Transactions
+                        trans = currAccount.getTransactions();
+                        row = table.getSelectedRow();
+                        
+                        if(row > -1){ // if something is selected
+                            // confirm the user's choice to delete
+                            int result = JOptionPane.showConfirmDialog(frame, // frame
+                                            "Are you sure you want to delete this transaction?", // message
+                                            "Comfirm Delete", // title
+                                            JOptionPane.OK_CANCEL_OPTION); // options
+                            
+                            if(result == JOptionPane.OK_OPTION){ // user confirmed
+                                trans.remove(row); // remove the selected transaction from the array list
+                                
+                                
+                                initTableTransactions(); // update the table
+                                IO.updateTranData(trans, currAccount); // update the text file
+                            } else { // user canceled
+                                // do nothing
+                            }
+                        }
                         break;
                     default:
                         System.out.println("\n\nERROR - GUI.button_2 - invalid currTab\n");
