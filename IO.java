@@ -10,8 +10,8 @@ import java.util.*;
 public class IO{
     
     // a text file to hold account information
-    private static File accountData = new File(System.getProperty("user.dir")+"/AccountData.txt");
-    private static File tranData;// = new File(System.getProperty("user.dir")+"/TransactionData.txt");
+    private static File accountData = new File("AccountData.txt");
+    private static File tranData;
     
     // create all necessary files if they don't already exist
     // load in any saved information if the files do exist
@@ -63,11 +63,11 @@ public class IO{
     
     
     private static void initTrans(Account acc){
-        tranData = new File(System.getProperty("user.dir") + "/" + acc.getName() + ".txt");
+        tranData = new File(acc.getName() + ".txt");
         
         if(!tranData.exists()){
             try{
-                accountData.createNewFile();
+                tranData.createNewFile();
             } catch(Exception e){
                 e.printStackTrace();
             }
