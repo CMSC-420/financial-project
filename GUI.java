@@ -520,12 +520,15 @@ public class GUI {
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
 			}
 			
-			//the case where the value is zero which is syntacically valid, but not ideal: nothing is free...
-			while(transAmount.getText().equals("0")){
+			
+			int amount_test=Integer.parseInt(transAmount.getText());
+			//the case where the value is not positive which is syntacically valid, but not ideal: nothing is free...not can you buy something for a negative amount
+			while(amount_test<=0){
 				System.out.println("TEstsodgiunbsip");
-				JOptionPane.showMessageDialog(null,"The transaction amount cannot be 0!");
+				JOptionPane.showMessageDialog(null,"The transaction amount must be positive!");
                 result = JOptionPane.showConfirmDialog(frame, dialog,
                         "New Account", JOptionPane.OK_CANCEL_OPTION);	
+						amount_test=Integer.parseInt(transAmount.getText());
 			}
 			
 				//the case that information is enter but contains illegal characters
