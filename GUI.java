@@ -251,11 +251,45 @@ public class GUI {
         
         // adds components to the Drop down menu for user to select the account they wish to view
         int sum_test=0;  //<-- checks the ballance of all accounts onload to see if the the balance needs to be up to date
-		for(Account a : accounts) {
-             
-			view_acct.addItem(a.getName());
-			sum_test+=a.getBalance();
-        }
+        int lineCount = 0; //line count
+        //count number of line in the file to determine how many account are there
+        try (BufferedReader br = new BufferedReader(new FileReader("AccountData.txt"))) {
+    		String line;
+    		while ((line = br.readLine()) != null) {
+       			lineCount++;
+    		}
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
+        final String[] accountName = new String[lineCount]; //String array of accounts        
+			// view_acct.addItem(a.getName());
+			// sum_test+=a.getBalance();
+		for (int i = 0; i < accountName.length; i++) {	//get account name to array
+
+				accountName[i]= accounts.get(i).getName();	//add each account name into the array 
+			
+		}
+		//check output
+        // for (String i : accountName) {
+        // 	System.out.println(i);
+        // }
+        // for (Account a : accounts) {
+        // 	System.out.println(a.getName());
+        // }
+        //create ActionListen and choose selected item
+        view_acct = new JComboBox(accountName); //add accounts to dropdown menu
+        view_acct.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e) {
+        		String selectedAccount = (String) view_acct.getSelectedItem();		//make selected Item into string
+   				for (int i = 0; i <= accountName.length; i++) {
+   					if (accounts.contains(selectedAccount)) {
+   						initTableTransactions();			//initate table for selected account
+   					}
+   				}
+        	}
+        });
+
 		//if onload the balance is greater than 0 update the label else do nothing
 		if(sum_test>0){
 			sum_lab.setText(Integer.toString(sum_test));
@@ -749,7 +783,6 @@ public class GUI {
 		
 		tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
-        
         tableModel.addColumn("Date");
         tableModel.addColumn("Payee");
         tableModel.addColumn("Type");

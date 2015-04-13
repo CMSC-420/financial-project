@@ -10,8 +10,8 @@ public class IO extends GUI {
     
     // a text file to hold account information
     private static File accountData = new File(System.getProperty("user.dir")+"/AccountData.txt");
-//    private static File tranData = new File(System.getProperty("user.dir")+"/TransactionData.txt");
-    private static File tranData = new File("");
+   private static File tranData = new File(System.getProperty("user.dir")+"/TransactionData.txt");
+    // private static File tranData = new File("");
     // create all necessary files if they don't already exist
     // load in any saved information if the files do exist
     @SuppressWarnings("unchecked")
@@ -87,8 +87,8 @@ public class IO extends GUI {
         if (!tranData.exists()) { // create transaction data file if it doesn't exist
             try{
                 for (Account a : accounts) {
-//                  tranData.createNewFile();
-                    tranData = new File(System.getProperty("user.dir")+"0"+a.getName()+"TransactionData.txt");
+                 tranData.createNewFile();
+                    // tranData = new File(System.getProperty("user.dir")+"0"+a.getName()+"TransactionData.txt");
                 }
             } catch(Exception e){
                 e.printStackTrace();
@@ -201,7 +201,7 @@ public class IO extends GUI {
             for(int i = 0; i < trans.size(); i++){
                 
                 bw.write(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
-                //System.out.println(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
+                // System.out.println(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
 
                bw.newLine();
                 
