@@ -3,14 +3,15 @@
  * Keeping it separate will clean up the main code and make it easier to track down bugs.
  */
  
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
 public class IO{
     
     // a text file to hold account information
-    private static File accountData = new File(System.getProperty("user.dir")+"/AccountData.txt");
-    private static File tranData;// = new File(System.getProperty("user.dir")+"/TransactionData.txt");
+    private static File accountData = new File("AccountData.txt");
+    private static File tranData;
     
     // create all necessary files if they don't already exist
     // load in any saved information if the files do exist
@@ -62,11 +63,11 @@ public class IO{
     
     
     private static void initTrans(Account acc){
-        tranData = new File(System.getProperty("user.dir") + "/" + acc.getName() + ".txt");
+        tranData = new File(acc.getName() + ".txt");
         
         if(!tranData.exists()){
             try{
-                accountData.createNewFile();
+                tranData.createNewFile();
             } catch(Exception e){
                 e.printStackTrace();
             }
@@ -135,7 +136,7 @@ public class IO{
             BufferedWriter bw = new BufferedWriter(new FileWriter(tranData,true));
             
             for(int i = 0; i < trans.size(); i++){
-                //System.out.println("Testing Date: " +trans.get(i).getDate());
+                //System.out.println("Testing Date: " + trans.get(i).getDate());
                 bw.write(trans.get(i).getType() + "/./" 
                     + trans.get(i).getAmount() + "/./" 
                     + trans.get(i).getDate() + "/./" 
@@ -154,5 +155,16 @@ public class IO{
             e1.printStackTrace();
         }
     } // updateAccountData
+    
+    public static void updateTranDataName(String oldName, String newName){
+        File oldFile = new File(oldName + ".txt");
+        File newFile = new File(newName + ".txt");
+        
+        if(newFile.exists()){
+            JOptionPane.showMessageDialog(null, "That account name already exists!");
+        } else {
+            oldFile.renameTo(newFile);
+        }
+    } // updateTranDataName
     
 } // class

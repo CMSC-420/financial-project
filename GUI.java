@@ -52,10 +52,6 @@ public class GUI {
     protected static int currTab = 0;
     protected static Account currAccount; // the currently selected account
     
-	protected static Transaction currTrans; // the currently selected trans
-	//global variable to check user input upon account creation
-	//static boolean valid_input=true;  // set to false --> assume user has not correctly input data correctly until proven otherwise
-    
 	//label to contain he sum of the all balances
 	static JLabel sum_lab = new JLabel("0");
 	// variable to contain the sum of all balances for all accounts
@@ -204,9 +200,11 @@ public class GUI {
 		button_2 = new JButton("Button 2");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+                int row;
+                
 				switch(currTab){
                     case 0: // Accounts - delete button
-                        int row = table.getSelectedRow();
+                        row = table.getSelectedRow();
                         
                         if(row > -1){ // if something is selected
                             // confirm the user's choice to delete
@@ -232,6 +230,26 @@ public class GUI {
                     case 1: // Reports
                         break;
                     case 2: // Transactions
+                        trans = currAccount.getTransactions();
+                        row = table.getSelectedRow();
+                        
+                        if(row > -1){ // if something is selected
+                            // confirm the user's choice to delete
+                            int result = JOptionPane.showConfirmDialog(frame, // frame
+                                            "Are you sure you want to delete this transaction?", // message
+                                            "Comfirm Delete", // title
+                                            JOptionPane.OK_CANCEL_OPTION); // options
+                            
+                            if(result == JOptionPane.OK_OPTION){ // user confirmed
+                                trans.remove(row); // remove the selected transaction from the array list
+                                
+                                
+                                initTableTransactions(); // update the table
+                                IO.updateTranData(trans, currAccount); // update the text file
+                            } else { // user canceled
+                                // do nothing
+                            }
+                        }
                         break;
                     default:
                         System.out.println("\n\nERROR - GUI.button_2 - invalid currTab\n");
@@ -622,7 +640,7 @@ public class GUI {
         
 		// once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amount
 		// else if no transactions exits sets the balance to 0
-		//sets the amount to 0 initially then preforms the check to see if anything exits
+		// sets the amount to 0 initially then preforms the check to see if anything exits
 		sum_tran = 0;
 		for(Transaction t:trans){
 			if(t.getAmount()<=0){
@@ -849,48 +867,56 @@ public class GUI {
                     //setValueReport(value, row, col);
                     break;
                 case 2:
-                    //setValueTransaction(value, row, col);
+                    setValueTransaction(value, row, col);
                     break;
                 default:
                     System.out.println("ERROR - GUI.MyTableModel - invalid currTab");
             }
-            
-            IO.updateAccountData(accounts);
-			IO.updateTranData(trans, currAccount);
 		}
         
         // set values of appropriate account
-		//account
         private void setValueAccount(Object value, int row, int col){
             switch(col){
                 case 0:
-                    accounts.get(row).setName(String.valueOf(value)); // rename the account
-                    view_acct.removeAllItems(); // clear the dropdown
-                    for(Account a : accounts) // update the dropdown
-                        view_acct.addItem(a.getName());
+                    if(String.valueOf(value) == ""){
+                        JOptionPane.showMessageDialog(null, "The account must have a name!");
+                    } else {
+                        String oldName = accounts.get(row).getName();
+                        IO.updateTranDataName(oldName, String.valueOf(value)); // rename transaction file
+                        
+                        accounts.get(row).setName(String.valueOf(value)); // rename the account
+                        view_acct.removeAllItems(); // clear the dropdown
+                        for(Account a : accounts) // update the dropdown
+                            view_acct.addItem(a.getName());
+                            
+                        IO.updateAccountData(accounts);
+                    }
                     break;
-					
-		
 			}
         }
 		
 		
-		
-		/*private void setValueTransaction(Object value, int row, int col){
+		// set values of appropriate transaction
+		private void setValueTransaction(Object value, int row, int col){
 			
             switch(col){
 				
-                case 0: 
-                    System.out.println("reached case 0 of setValTrans");
-                    trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // rename the account
-                    view_acct.removeAllItems(); // clear the dropdown
-                    for(Transaction t: trans){ // update the dropdown
-                            view_acct.addItem(t.getAmount());
-                    System.out.println(t.getAmount());}
+                case 1: 
+                    trans.get(row).setPayee(String.valueOf(value)); // change the payee
                     break;
-					
+                case 3:
+                    trans.get(row).setCategory(String.valueOf(value)); // change the category
+                    break;
+                case 4:
+                    trans.get(row).setComments(String.valueOf(value)); // change the comments
+                    break;
+                case 5:
+                    //trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // change the comments
+                    break;
 			}
-        }*/
+            
+            IO.updateTranData(currAccount.getTransactions(), currAccount);
+        }
 	} // class MyTableModel
 	
 	
