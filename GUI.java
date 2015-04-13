@@ -520,6 +520,47 @@ public class GUI {
                 result = JOptionPane.showConfirmDialog(frame, dialog,
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
 			}
+			
+			
+			int amount_test=Integer.parseInt(transAmount.getText());
+			//the case where the value is not positive which is syntacically valid, but not ideal: nothing is free...not can you buy something for a negative amount
+			while(amount_test<=0){
+				System.out.println("TEstsodgiunbsip");
+				JOptionPane.showMessageDialog(null,"The transaction amount must be positive!");
+                result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+						amount_test=Integer.parseInt(transAmount.getText());
+			}
+			
+				//the case that information is enter but contains illegal characters
+        while(!transAmount.getText().equals("")){
+            //temporary string to hold the account balance data for test purposes
+            String amount_content_test=transAmount.getText();
+			
+            int non_digit_count=0; // counter that tracks the number of non digital characters 
+            //iterates through the contents the the enter balance and checks for non numeric characters
+            for(int i=0; i<amount_content_test.length(); i++){
+                if(!Character.isDigit(amount_content_test.charAt(i))){
+                    //if a non numeric is found increments a counter that tracks the total
+                    // number of non numeric characters found
+                    non_digit_count++;
+                }
+            }
+            
+            // if the counter is at least one output an error to inform the user
+            // else return as the contents of the data enter is valid
+            if(non_digit_count>0){ 
+                
+                JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for the account amount!");
+                result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+                if(result == JOptionPane.CANCEL_OPTION)
+                    break;
+            }
+            // break out of the while as no non numeric values where found
+            else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
+                                                    // the entire program will freeze 
+        }
             int amount = Integer.parseInt(transAmount.getText());
 			String type = transType.getSelectedItem().toString();
 			String comment = transComments.getText();
@@ -527,29 +568,37 @@ public class GUI {
 					
 		//check for null inputs and output if the error if detects null input
 	
-		while(transPayee.getText().equals("") || transCategory.getText().equals("") || transAmount.getText().equals("")){
+		while(transComments.getText().equals("") ||transPayee.getText().equals("") || transCategory.getText().equals("") || transAmount.getText().equals("")){
 			//System.out.println("Test");
 			if(transPayee.getText().equals("")){
 			JOptionPane.showMessageDialog(null, "A recipient must be entered!");
 				result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);			
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);		
+							if(result==JOptionPane.CANCEL_OPTION)
+								break;	
 			}
 			else if(transCategory.getText().equals("")){
 			JOptionPane.showMessageDialog(null, "There must a category!");	
 			result = JOptionPane.showConfirmDialog(frame, dialog,
                         "New Account", JOptionPane.OK_CANCEL_OPTION);	
+							if(result==JOptionPane.CANCEL_OPTION)
+								break;	
 			}
 			else if(transAmount.getText().equals("")){
 			JOptionPane.showMessageDialog(null, "You must enter an amount!");
 			result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+							if(result==JOptionPane.CANCEL_OPTION)
+								break;	
 			}
-			/*else if(transComments.getText().equals("")){
-			JOptionPane.showMessageDialog(null, "A Description of the transaction must be given!");	
+			else if(transComments.getText().equals("")){
+				JOptionPane.showMessageDialog(null, "The Transaction must have a Description!");
 			result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+				if(result==JOptionPane.CANCEL_OPTION)
+					break;						
 			}
-            */
+			
 			else break; // if all cases have been tested and no error is found then exit the loop as all fields contain data--> checking for correctness will be done else where
 		}
 		
