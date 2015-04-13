@@ -867,7 +867,7 @@ public class GUI {
                     //setValueReport(value, row, col);
                     break;
                 case 2:
-                    //setValueTransaction(value, row, col);
+                    setValueTransaction(value, row, col);
                     break;
                 default:
                     System.out.println("ERROR - GUI.MyTableModel - invalid currTab");
@@ -887,28 +887,29 @@ public class GUI {
                     for(Account a : accounts) // update the dropdown
                         view_acct.addItem(a.getName());
                     break;
-					
-		
 			}
         }
 		
 		
 		
-		/*private void setValueTransaction(Object value, int row, int col){
+		private void setValueTransaction(Object value, int row, int col){
 			
             switch(col){
 				
-                case 0: 
-                    System.out.println("reached case 0 of setValTrans");
-                    trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // rename the account
-                    view_acct.removeAllItems(); // clear the dropdown
-                    for(Transaction t: trans){ // update the dropdown
-                            view_acct.addItem(t.getAmount());
-                    System.out.println(t.getAmount());}
+                case 1: 
+                    trans.get(row).setPayee(String.valueOf(value)); // change the payee
                     break;
-					
+                case 3:
+                    trans.get(row).setCategory(String.valueOf(value)); // change the category
+                    break;
+                case 4:
+                    trans.get(row).setComments(String.valueOf(value)); // change the comments
+                    break;
+                case 5:
+                    //trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // change the comments
+                    break;
 			}
-        }*/
+        }
 	} // class MyTableModel
 	
 	
