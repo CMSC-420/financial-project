@@ -69,9 +69,6 @@ public class GUI {
 		
         // create the array list that holds the accounts
         accounts = new ArrayList<Account>();
-		
-		//create the array that holds the accounts
-		trans = new ArrayList<Transaction>();
         
         IO.initAccount(accounts);
         
@@ -244,14 +241,14 @@ public class GUI {
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
-        int sum_test=0;  //<-- checks the ballance of all accounts onload to see if the the balance needs to be up to date
+        int sum_test = 0;  //<-- checks the balance of all accounts on load to see if the the balance needs to be up to date
 		for(Account a : accounts) {
              
 			view_acct.addItem(a.getName());
-			sum_test+=a.getBalance();
+			sum_test += a.getBalance();
         }
-		//if onload the balance is greater than 0 update the label else do nothing
-		if(sum_test>0){
+		//if on load the balance is greater than 0 update the label else do nothing
+		if(sum_test > 0){
 			sum_lab.setText(Integer.toString(sum_test));
 			
 		}
@@ -337,7 +334,36 @@ public class GUI {
         
         if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
             
-            if(check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal)){
+            // index indicating what type of error has occurred
+            int inputError = check_input_account(accName.getText(), accBal.getText());
+            
+            // keep trying until no errors or user cancels
+            while(inputError > 0){
+                if(inputError == 1){ // empty name field
+                    JOptionPane.showMessageDialog(null, "The account must have a name!");
+                    
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    
+                    if(result == JOptionPane.OK_OPTION)
+                        inputError = check_input_account(accName.getText(), accBal.getText());
+                    else
+                        break;
+                    
+                } else if(inputError == 2){ // balance is not a number
+                    JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
+                    
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    
+                    if(result == JOptionPane.OK_OPTION)
+                        inputError = check_input_account(accName.getText(), accBal.getText());
+                    else
+                        break;
+                }
+            }
+            
+            if(inputError == 0){ // no errors
                 name = accName.getText();
                 balance = Double.parseDouble(accBal.getText());
                 type = accType.getSelectedItem().toString();
@@ -353,75 +379,27 @@ public class GUI {
                 }
                 
                 //check to see if account name already exists
-                accExists=false;
-                for(int i=0;i<accounts.size();i++){
+                accExists = false;
+                for(int i = 0; i < accounts.size(); i++){
                 	if(accounts.get(i).getName().toLowerCase().equals(name.toLowerCase())){
-                		accExists=true;
+                		accExists = true;
                 	}
                 }//for
                 
                 //add new account or show error message for dupe
                 if(!accExists){
 	                try{
-	                    switch(type){ // add account depending on type
-	                        case "Checking":
-	                            Checking checking = new Checking();
-	                            checking.setBalance(balance);
-	                            checking.setName(name);
-	                            accounts.add(checking);
-	                            view_acct.addItem(name); // add new account to dropdown
-	                            initTableAccounts();
-	                            
-	                            if(currAccount == null)
-	                                currAccount = checking;
-	                            break;
-	                        case "Savings":
-	                            Savings savings = new Savings();
-	                            savings.setBalance(balance);
-	                            savings.setName(name);
-	                            accounts.add(savings);
-	                            view_acct.addItem(name); // add new account to dropdown
-	                            initTableAccounts();
-	                            
-	                            if(currAccount == null)
-	                                currAccount = savings;
-	                            break;
-	                        case "COD":
-	                            COD cod = new COD();
-	                            cod.setBalance(balance);
-	                            cod.setName(name);
-	                            accounts.add(cod);
-	                            view_acct.addItem(name); // add new account to dropdown
-	                            initTableAccounts();
-	                            
-	                            if(currAccount == null)
-	                                currAccount = cod;
-	                            break;
-	                        case "Credit Card":
-	                            CreditCard card = new CreditCard();
-	                            card.setBalance(balance);
-	                            card.setName(name);
-	                            accounts.add(card);
-	                            view_acct.addItem(name); // add new account to dropdown
-	                            initTableAccounts();
-	                            
-	                            if(currAccount == null)
-	                                currAccount = card;
-	                            break;
-	                        case "Money Market":
-	                            MoneyMarket mm = new MoneyMarket();
-	                            mm.setBalance(balance);
-	                            mm.setName(name);
-	                            accounts.add(mm);
-	                            view_acct.addItem(name); // add new account to dropdown
-	                            initTableAccounts();
-	                            
-	                            if(currAccount == null)
-	                                currAccount = mm;
-	                            break;
-	                        default:
-	                            JOptionPane.showMessageDialog(null,"Invalid Entry");
-	                    }//switch
+                        Account acc = new Account();
+                        acc.setBalance(balance);
+                        acc.setName(name);
+                        
+                        accounts.add(acc);
+                        view_acct.addItem(name); // add new account to dropdown
+                        initTableAccounts();
+                        
+                        if(currAccount == null)
+                            currAccount = acc;
+                        
 	                } catch(NullPointerException e1){
 	                    e1.printStackTrace();	
 	                	}
@@ -437,7 +415,7 @@ public class GUI {
                                     "New Account", JOptionPane.OK_CANCEL_OPTION);
                                     
                     if(result == JOptionPane.OK_OPTION){
-                        check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal);
+                        //check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal);
                     } else {
                         valid_input = false;
                     }
@@ -675,9 +653,27 @@ public class GUI {
     
     
     
+    private static int check_input_account(String name, String balance){
+		
+        int valid_input = 0;
+        
+		if(name.equals("")){ // empty name field
+			valid_input = 1;
+		} 
+        
+        else {
+            try{ // try to parse the accBal field
+                Double.parseDouble(balance);
+            } catch(Exception e){
+                valid_input = 2;
+            }
+        }
+        
+		return valid_input;
+	} // check_input_account
     
     // method that checks the validity of the user input upon account creation
-	private static boolean check_input_account(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
+	/*private static boolean check_input_account(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
 		
         boolean valid_input = true;
         
@@ -716,6 +712,7 @@ public class GUI {
         
 		return valid_input;
 	} // check_input_account
+    */
     
     
     
