@@ -334,6 +334,7 @@ public class GUI {
         
         if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
             
+
             // index indicating what type of error has occurred
             int inputError = check_input_account(accName.getText(), accBal.getText());
             
@@ -653,8 +654,10 @@ public class GUI {
     
     
     
+    // check input for errors
     private static int check_input_account(String name, String balance){
 		
+        // index that indicates what type of error occurred
         int valid_input = 0;
         
 		if(name.equals("")){ // empty name field
