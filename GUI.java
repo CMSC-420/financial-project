@@ -52,10 +52,6 @@ public class GUI {
     protected static int currTab = 0;
     protected static Account currAccount; // the currently selected account
     
-	protected static Transaction currTrans; // the currently selected trans
-	//global variable to check user input upon account creation
-	//static boolean valid_input=true;  // set to false --> assume user has not correctly input data correctly until proven otherwise
-    
 	//label to contain he sum of the all balances
 	static JLabel sum_lab = new JLabel("0");
 	// variable to contain the sum of all balances for all accounts
