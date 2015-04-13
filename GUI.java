@@ -878,7 +878,6 @@ public class GUI {
 		}
         
         // set values of appropriate account
-		//account
         private void setValueAccount(Object value, int row, int col){
             switch(col){
                 case 0:
@@ -891,7 +890,7 @@ public class GUI {
         }
 		
 		
-		
+		// set values of appropriate transaction
 		private void setValueTransaction(Object value, int row, int col){
 			
             switch(col){
