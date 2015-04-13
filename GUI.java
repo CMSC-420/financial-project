@@ -479,170 +479,83 @@ public class GUI {
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
                         
 		if(result == JOptionPane.OK_OPTION){ // if the user clicked OK
-            // get the account info from the popup
-            String date = transDate.getText();
-			String payee = transPayee.getText();
-			String cat = transCategory.getText();
             
-			// tests for null entry in the transaction amount before it parse the value for a numeric digit --> this will cause 
-			// number format exception in java and will crash the program before if not handled
-			/*while(transAmount.getText().equals("")){
-				JOptionPane.showMessageDialog(null,"The transaction must have an amount!");
-                result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-			}
-			
-			
-			int amount_test=Integer.parseInt(transAmount.getText());
-			// the case where the value is not positive
-			while(amount_test<=0){
-				JOptionPane.showMessageDialog(null,"The transaction amount must be positive!");
-                result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
-						amount_test=Integer.parseInt(transAmount.getText());
-			}
-			
-            //the case that information is enter but contains illegal characters
-            while(!transAmount.getText().equals("")){
-                //temporary string to hold the account balance data for test purposes
-                String amount_content_test=transAmount.getText();
-                
-                int non_digit_count=0; // counter that tracks the number of non digital characters 
-                //iterates through the contents the the enter balance and checks for non numeric characters
-                for(int i=0; i<amount_content_test.length(); i++){
-                    if(!Character.isDigit(amount_content_test.charAt(i))){
-                        //if a non numeric is found increments a counter that tracks the total
-                        // number of non numeric characters found
-                        non_digit_count++;
-                    }
-                }
-                
-                // if the counter is at least one output an error to inform the user
-                // else return as the contents of the data enter is valid
-                if(non_digit_count>0){ 
+            int inputError = check_input_trans(transPayee.getText(), transCategory.getText(), transAmount.getText());
+            
+            // keep trying until no errors or user cancels
+            while(inputError > 0){
+                if(inputError == 1){ // empty payee field
+                    JOptionPane.showMessageDialog(null, "The transaction must have a payee!");
                     
-                    JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for the account amount!");
                     result = JOptionPane.showConfirmDialog(frame, dialog,
-                            "New Account", JOptionPane.OK_CANCEL_OPTION);
-                    if(result == JOptionPane.CANCEL_OPTION)
+                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    
+                    if(result == JOptionPane.OK_OPTION)
+                        inputError = check_input_trans(transPayee.getText(), transCategory.getText(), transAmount.getText());
+                    else
+                        break;
+                    
+                } 
+                else if(inputError == 2){
+                    JOptionPane.showMessageDialog(null, "The transaction must have a category!");
+                    
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    
+                    if(result == JOptionPane.OK_OPTION)
+                        inputError = check_input_trans(transPayee.getText(), transCategory.getText(), transAmount.getText());
+                    else
                         break;
                 }
-                // break out of the while as no non numeric values where found
-                else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
-                                                        // the entire program will freeze 
-                
-                
-                try{
-                    Double.parseDouble(transAmount.getText());
-                } catch (Exception e){
+                else if(inputError == 3){ // amount is not a number
                     JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
                     
                     result = JOptionPane.showConfirmDialog(frame, dialog,
-                            "New Account", JOptionPane.OK_CANCEL_OPTION);
-                            
-                    if(result == JOptionPane.CANCEL_OPTION)
+                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    
+                    if(result == JOptionPane.OK_OPTION)
+                        inputError = check_input_trans(transPayee.getText(), transCategory.getText(), transAmount.getText());
+                    else
                         break;
                 }
-            }*/
-            
-            double amount = Double.parseDouble(transAmount.getText());
-			String type = transType.getSelectedItem().toString();
-			String comment = transComments.getText();
-			
-					
-            //check for null inputs and output if the error if detects null input
-            
-            /*while(transComments.getText().equals("") ||transPayee.getText().equals("") || transCategory.getText().equals("") || transAmount.getText().equals("")){
-                //System.out.println("Test");
-                if(transPayee.getText().equals("")){
-                JOptionPane.showMessageDialog(null, "A recipient must be entered!");
-                    result = JOptionPane.showConfirmDialog(frame, dialog,
-                            "New Account", JOptionPane.OK_CANCEL_OPTION);		
-                                if(result==JOptionPane.CANCEL_OPTION)
-                                    break;	
-                }
-                else if(transCategory.getText().equals("")){
-                JOptionPane.showMessageDialog(null, "There must a category!");	
-                result = JOptionPane.showConfirmDialog(frame, dialog,
-                            "New Account", JOptionPane.OK_CANCEL_OPTION);	
-                                if(result==JOptionPane.CANCEL_OPTION)
-                                    break;	
-                }
-                else if(transAmount.getText().equals("")){
-                JOptionPane.showMessageDialog(null, "You must enter an amount!");
-                result = JOptionPane.showConfirmDialog(frame, dialog,
-                            "New Account", JOptionPane.OK_CANCEL_OPTION);
-                                if(result==JOptionPane.CANCEL_OPTION)
-                                    break;	
-                }
-                else if(transComments.getText().equals("")){
-                    JOptionPane.showMessageDialog(null, "The Transaction must have a Description!");
-                result = JOptionPane.showConfirmDialog(frame, dialog,
-                            "New Account", JOptionPane.OK_CANCEL_OPTION);
-                    if(result==JOptionPane.CANCEL_OPTION)
-                        break;						
-                }
-                
-                else break; // if all cases have been tested and no error is found then exit the loop as all fields contain data--> checking for correctness will be done else where
-            }*/
-		
-            //below updates the transaction sum: the sum of all the transactions for the user
-            if(result==JOptionPane.OK_OPTION){
-                for(Transaction t: trans){
-                    if(t.getAmount()<=0){
-                        sum_lab.setText("0");
-                    }
-                    else{ 
-                        sum_tran+=t.getAmount();
-                        sum_lab.setText(Integer.toString(sum_tran));
-                    }
-                }
-            }//end for
-			
-					
-					
-					
-					
-            try{
-               switch(type){ // add account depending on type
-                    case "Income":
-                        Income income = new Income();
-                        income.setAmount(amount);
-                        income.setPayee(payee);
-						income.setComments(comment);
-						income.setCategory(cat);
-                        income.setDate(curr_date);
-						trans.add(income);
-						initTableTransactions();
-                        break;
-                    case "Spending":
-                        Spending spending = new Spending();
-                        spending.setAmount(amount);
-						spending.setPayee(payee);
-						spending.setComments(comment);
-						spending.setCategory(cat);
-                       spending.setDate(curr_date);
-						trans.add(spending);
-						initTableTransactions();
-                        break;
-                    case "Transfer":
-						Transfer transfer = new Transfer();
-                        transfer.setAmount(amount);
-                        transfer.setPayee(payee);
-						transfer.setComments(comment);
-						transfer.setCategory(cat);
-                        transfer.setDate(curr_date);
-						trans.add(transfer);
-						initTableTransactions();
-                        break;
-                    default:
-                        JOptionPane.showMessageDialog(null,"Invalid Entry");
-                }
-            } catch(NullPointerException e1){
-                e1.printStackTrace();	
             }
-            // write the new account to the file
-            IO.updateTranData(trans, currAccount);
+            
+            if(inputError == 0){
+                // get the account info from the popup
+                String date = transDate.getText();
+                String payee = transPayee.getText();
+                String cat = transCategory.getText();
+                double amount = Double.parseDouble(transAmount.getText());
+                String type = transType.getSelectedItem().toString();
+                String comment = transComments.getText();
+            
+                //below updates the transaction sum: the sum of all the transactions for the user
+                if(result==JOptionPane.OK_OPTION){
+                    for(Transaction t: trans){
+                        if(t.getAmount()<=0){
+                            sum_lab.setText("0");
+                        }
+                        else{ 
+                            sum_tran+=t.getAmount();
+                            sum_lab.setText(Integer.toString(sum_tran));
+                        }
+                    }
+                }//end for
+                
+               
+                Transaction transaction = new Transaction();
+                transaction.setAmount(amount);
+                transaction.setPayee(payee);
+                transaction.setComments(comment);
+                transaction.setCategory(cat);
+                transaction.setDate(curr_date);
+                trans.add(transaction);
+                
+                initTableTransactions();
+                
+                // write the new account to the file
+                IO.updateTranData(trans, currAccount);
+            }
         }
         else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
             //need to be able to close the frame if the cancel option is chosen
@@ -675,54 +588,28 @@ public class GUI {
 		return valid_input;
 	} // check_input_account
     
-    // method that checks the validity of the user input upon account creation
-	/*private static boolean check_input_account(String name, String balance, JPanel dialog, JTextField accName, JTextField accBal){
-		
-        boolean valid_input = true;
+    
+    
+    
+    // check input for errors
+    private static int check_input_trans(String payee, String category, String amount){
+        int valid_input = 0;
         
-		if(name.equals("")){ // empty name field
-			JOptionPane.showMessageDialog(null, "The account must have a name!");
-            
-            // try again
-            int result = JOptionPane.showConfirmDialog(frame, dialog,
-                                "New Account", JOptionPane.OK_CANCEL_OPTION);
-                                
-			if(result == JOptionPane.OK_OPTION){
-                check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal);
-            } else {
-                valid_input = false;
-            }
-		} 
-        
-        else {
-            try{ // try to parse the accBal field
-                Double.parseDouble(balance);
+        if(payee.equals("")){
+            valid_input = 1;
+        }
+        else if(category.equals("")){
+            valid_input = 2;
+        }
+        else{
+            try{
+                Double.parseDouble(amount);
             } catch(Exception e){
-                // if accBal cannot be parsed, then the input is invalid
-                JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
-                
-                // try again
-                int result = JOptionPane.showConfirmDialog(frame, dialog,
-                                "New Account", JOptionPane.OK_CANCEL_OPTION);
-                                
-                if(result == JOptionPane.OK_OPTION){
-                    check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal);
-                } else {
-                    valid_input = false;
-                }
+                valid_input = 3;
             }
         }
         
-		return valid_input;
-	} // check_input_account
-    */
-    
-    
-    
-    
-    // method that checks the validity of the user input upon transaction creation
-    private static boolean check_input_trans(){
-        return true;
+        return valid_input;
     } // check_input_trans
     
     
