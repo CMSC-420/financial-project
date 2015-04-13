@@ -58,7 +58,9 @@ public class GUI {
     
 	//label to contain he sum of the all balances
 	static JLabel sum_lab = new JLabel("0");
+	// variable to contain the sum of all balances for all accounts
 	static int sum_bal=0;
+	static int sum_tran=0;
 	
 
     
@@ -168,6 +170,8 @@ public class GUI {
 				
                 currTab = 1;
 				initTableReports();
+				
+				
 			}
 		});
 		
@@ -303,6 +307,7 @@ public class GUI {
         String name;
         double balance;
         String type;
+        boolean accExists, valid_input;
         
         // temporary panel for the JOptionPane
         JPanel dialog = new JPanel(new BorderLayout(5,5));
@@ -351,72 +356,97 @@ public class GUI {
                         sum_lab.setText(Integer.toString(sum_bal));
                     }
                 }
-            
-                try{
-                    switch(type){ // add account depending on type
-                        case "Checking":
-                            Checking checking = new Checking();
-                            checking.setBalance(balance);
-                            checking.setName(name);
-                            accounts.add(checking);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = checking;
-                            break;
-                        case "Savings":
-                            Savings savings = new Savings();
-                            savings.setBalance(balance);
-                            savings.setName(name);
-                            accounts.add(savings);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = savings;
-                            break;
-                        case "COD":
-                            COD cod = new COD();
-                            cod.setBalance(balance);
-                            cod.setName(name);
-                            accounts.add(cod);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = cod;
-                            break;
-                        case "Credit Card":
-                            CreditCard card = new CreditCard();
-                            card.setBalance(balance);
-                            card.setName(name);
-                            accounts.add(card);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = card;
-                            break;
-                        case "Money Market":
-                            MoneyMarket mm = new MoneyMarket();
-                            mm.setBalance(balance);
-                            mm.setName(name);
-                            accounts.add(mm);
-                            view_acct.addItem(name); // add new account to dropdown
-                            initTableAccounts();
-                            
-                            if(currAccount == null)
-                                currAccount = mm;
-                            break;
-                        default:
-                            JOptionPane.showMessageDialog(null,"Invalid Entry");
+                
+                //check to see if account name already exists
+                accExists=false;
+                for(int i=0;i<accounts.size();i++){
+                	if(accounts.get(i).getName().toLowerCase().equals(name.toLowerCase())){
+                		accExists=true;
+                	}
+                }//for
+                
+                //add new account or show error message for dupe
+                if(!accExists){
+	                try{
+	                    switch(type){ // add account depending on type
+	                        case "Checking":
+	                            Checking checking = new Checking();
+	                            checking.setBalance(balance);
+	                            checking.setName(name);
+	                            accounts.add(checking);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = checking;
+	                            break;
+	                        case "Savings":
+	                            Savings savings = new Savings();
+	                            savings.setBalance(balance);
+	                            savings.setName(name);
+	                            accounts.add(savings);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = savings;
+	                            break;
+	                        case "COD":
+	                            COD cod = new COD();
+	                            cod.setBalance(balance);
+	                            cod.setName(name);
+	                            accounts.add(cod);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = cod;
+	                            break;
+	                        case "Credit Card":
+	                            CreditCard card = new CreditCard();
+	                            card.setBalance(balance);
+	                            card.setName(name);
+	                            accounts.add(card);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = card;
+	                            break;
+	                        case "Money Market":
+	                            MoneyMarket mm = new MoneyMarket();
+	                            mm.setBalance(balance);
+	                            mm.setName(name);
+	                            accounts.add(mm);
+	                            view_acct.addItem(name); // add new account to dropdown
+	                            initTableAccounts();
+	                            
+	                            if(currAccount == null)
+	                                currAccount = mm;
+	                            break;
+	                        default:
+	                            JOptionPane.showMessageDialog(null,"Invalid Entry");
+	                    }//switch
+	                } catch(NullPointerException e1){
+	                    e1.printStackTrace();	
+	                	}
+	                // write the new account to the file
+	                IO.updateAccountData(accounts);
+                }//if
+				
+                else{
+                	JOptionPane.showMessageDialog(null, "Account name already exists!");
+                	
+                	// try again
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                    
+                    if(result == JOptionPane.OK_OPTION){
+                        check_input_account(accName.getText(), accBal.getText(), dialog, accName, accBal);
+                    } else {
+                        valid_input = false;
                     }
-                } catch(NullPointerException e1){
-                    e1.printStackTrace();	
-                }
-                // write the new account to the file
-                IO.updateAccountData(accounts);
+                }//else
             }
         }
     
@@ -427,6 +457,7 @@ public class GUI {
     
     private static void addTransactionPopup(){
         int result;
+		
 		//Constructs a Date Object to pull the current date automatically
         Calendar current_date = Calendar.getInstance();
         int day = current_date.get(Calendar.DAY_OF_MONTH);
@@ -475,15 +506,70 @@ public class GUI {
                         
 		if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
             // get the account info from the popup
-			String  date = transDate.getText().toString();
-			String payee = transPayee.getText().toString();
-			String cat = transCategory.getText().toString();
-			int amount = Integer.parseInt(transAmount.getText());
+            String  date = transDate.getText();
+			//this test was a success: --> the date is being switched at some other point -- > will keep searching
+			//System.out.println("Testind Data Line 577: " + date);
+			String payee = transPayee.getText();
+			String cat = transCategory.getText();
+            
+			//tests for null entry in the transaction ammount before it parse the value for a numeric digit --> this will cause 
+			// number format exception in java and will crash the program before if not handled
+			while(transAmount.getText().equals("")){
+				JOptionPane.showMessageDialog(null,"The transaction must have an amount!");
+                result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+			}
+            int amount = Integer.parseInt(transAmount.getText());
 			String type = transType.getSelectedItem().toString();
-			String comment = transComments.getText().toString();
-            
-            
-            try{
+			String comment = transComments.getText();
+			
+					
+		//check for null inputs and output if the error if detects null input
+	
+		while(transPayee.getText().equals("") || transCategory.getText().equals("") || transAmount.getText().equals("")){
+			//System.out.println("Test");
+			if(transPayee.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "A recipient must be entered!");
+				result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);			
+			}
+			else if(transCategory.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "There must a category!");	
+			result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+			}
+			else if(transAmount.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "You must enter an amount!");
+			result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+			}
+			/*else if(transComments.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "A Description of the transaction must be given!");	
+			result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+			}
+            */
+			else break; // if all cases have been tested and no error is found then exit the loop as all fields contain data--> checking for correctness will be done else where
+		}
+		
+		//below updates the transaction sum: the sum of all he transactions for the user
+		if(result==JOptionPane.OK_OPTION){
+		for(Transaction t: trans){
+						if(t.getAmount()<=0){
+							sum_lab.setText("0");
+						}
+						else{ 
+							sum_tran+=t.getAmount();
+							sum_lab.setText(Integer.toString(sum_tran));
+						}
+					}
+		}//end for
+			
+					
+					
+					
+					
+					 try{
                switch(type){ // add account depending on type
                     case "Income":
                         Income income = new Income();
@@ -491,7 +577,11 @@ public class GUI {
                         income.setPayee(payee);
 						income.setComments(comment);
 						income.setCategory(cat);
-                        trans.add(income);
+						//income.setIsIncome(isIncome);  <-- needs to be updated
+						//Test was a success: the data must be added here in order to update the actual data in the table and not just display: --> "today""
+						//System.out.println("Testing Data: switch loop line 633" + curr_date);
+                        income.setDate(curr_date);
+						trans.add(income);
 						initTableTransactions();
                         break;
                     case "Spending":
@@ -500,7 +590,9 @@ public class GUI {
 						spending.setPayee(payee);
 						spending.setComments(comment);
 						spending.setCategory(cat);
-                        trans.add(spending);
+						//spending.setIsIncome(isIncome);  <--needs to be updated
+                       spending.setDate(curr_date);
+						trans.add(spending);
 						initTableTransactions();
                         break;
                     case "Transfer":
@@ -509,7 +601,9 @@ public class GUI {
                         transfer.setPayee(payee);
 						transfer.setComments(comment);
 						transfer.setCategory(cat);
-                        trans.add(transfer);
+						//transfer.setIsIncome(isIncome);  <-- needs to be updated
+                        transfer.setDate(curr_date);
+						trans.add(transfer);
 						initTableTransactions();
                         break;
                     default:
@@ -522,7 +616,7 @@ public class GUI {
             IO.updateTranData(trans);
         }
         else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
-            //need to be able to close the frame if the cancel option is choicemn
+            //need to be able to close the frame if the cancel option is chosen
             JOptionPane.showMessageDialog(null,"Cancel Selected");
             
         }
@@ -586,7 +680,22 @@ public class GUI {
     
     // setup the table for viewing transactions for the current account
     private static void initTableTransactions(){
+		//once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amout
+		// else if no transactions exits sets the balancce to 0
+		
+		//sets the amount to 0 initially then preforms the check to see if anything exits
+		sum_tran = 0;
+		for(Transaction t:trans){
+			if(t.getAmount()<=0){
+                sum_lab.setText("0");
+            }
+            else{ 
+                sum_tran += t.getAmount();
+                sum_lab.setText(Integer.toString(sum_tran));
+            }
+		}
         Transaction transaction = new Transaction();
+		
 		
 		tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
@@ -606,7 +715,7 @@ public class GUI {
             tableModel.addRow(new Object[]{
                 transaction.getDate(),
                 transaction.getPayee(),
-                "Spending/Income/Transfer",//transaction.isIncome() ? "Income" : "Spending",   //  Transfer???  
+                transaction.getType(), 
                 transaction.getCategory(),
                 transaction.getComments(),
                 "$" + transaction.getAmount()
@@ -623,6 +732,20 @@ public class GUI {
     
     // setup the table for viewing accounts
     private static void initTableAccounts(){
+		//once the account screen is loaded: checks the all accounts for a sum and updates the sum amout
+		// else if no accounts exits sets the balancce to 0
+		
+		//sets the balance to 0 initially then preforms the check to see if anything exits
+		sum_bal=0;
+		for(Account a:accounts){
+			if(a.getBalance()<=0){
+                sum_lab.setText("0");
+            }
+            else{ 
+                sum_bal += a.getBalance();
+                sum_lab.setText(Integer.toString(sum_bal));
+            }
+		}
         Account account = new Account();
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
@@ -645,7 +768,11 @@ public class GUI {
     
     // setup the table for viewing reports
     private static void initTableReports(){
-        tableModel.setColumnCount(0);
+			
+		JOptionPane.showMessageDialog(null,"This section is still to come, stay tuned!");
+					
+					
+		tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
         tableModel.addColumn("Reports");
@@ -659,6 +786,8 @@ public class GUI {
         button_1.setText("Placeholder");
         button_2.setText("Placeholder");
         button_2.setVisible(false);
+			
+		
     } // initTableAccounts
     
     
@@ -756,8 +885,10 @@ public class GUI {
 			try{
 				temp = getValueAt(0, index).getClass();
 			} catch(NullPointerException npe){
-                System.out.println("NullPointerException - GUI.MyTableModel.getColumnClass");
-            }
+                //System.out.println("NullPointerException - GUI.MyTableModel.getColumnClass");
+				System.out.println("This section is a work in progress");
+				
+			}
 			
 			return temp;
 		}
