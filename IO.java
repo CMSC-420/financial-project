@@ -6,23 +6,24 @@
 import java.io.*;
 import java.util.*;
 
-public class IO{
+public class IO extends GUI {
     
     // a text file to hold account information
     private static File accountData = new File(System.getProperty("user.dir")+"/AccountData.txt");
-    private static File tranData = new File(System.getProperty("user.dir")+"/TransactionData.txt");
+//    private static File tranData = new File(System.getProperty("user.dir")+"/TransactionData.txt");
+    private static File tranData = new File("");
     // create all necessary files if they don't already exist
     // load in any saved information if the files do exist
     @SuppressWarnings("unchecked")
     public static void initAccount(ArrayList<Account> accounts){
         
-		if (!accountData.exists()) { // create account data file if it doesn't exist
+        if (!accountData.exists()) { // create account data file if it doesn't exist
             try{
                 accountData.createNewFile();
             } catch(Exception e){
                 e.printStackTrace();
             }
-		} else { // Load account data if the file already exists
+        } else { // Load account data if the file already exists
         
             Scanner scanner = null;
             try {
@@ -78,18 +79,21 @@ public class IO{
         }
         
     } // init Accounts
-	
-	
-	
-	public static void initTrans(ArrayList<Transaction> trans){  // compiler error" name clash init--> Account and Transaction have the same erasure  "
+    
+    
+    
+    public static void initTrans(ArrayList<Transaction> trans){  // compiler error" name clash init--> Account and Transaction have the same erasure  "
         
-		if (!tranData.exists()) { // create transaction data file if it doesn't exist
+        if (!tranData.exists()) { // create transaction data file if it doesn't exist
             try{
-                tranData.createNewFile();
+                for (Account a : accounts) {
+//                  tranData.createNewFile();
+                    tranData = new File(System.getProperty("user.dir")+"0"+a.getName()+"TransactionData.txt");
+                }
             } catch(Exception e){
                 e.printStackTrace();
             }
-		} else { // Load tran data if the file already exists
+        } else { // Load tran data if the file already exists
         
             Scanner scanner = null;
             try {
@@ -99,48 +103,48 @@ public class IO{
             }
             
             double amount; // the amount of money involved
-			String date; // the date the transaction occurred
-			String payee; // where the money came from or went to
-			String comments; // any comments the user would like to make about the transaction
-			String category; // e.g. groceries, bills, phone, gas, etc
-			boolean isIncome; //
-			String type; // income, spending or transfer
+            String date; // the date the transaction occurred
+            String payee; // where the money came from or went to
+            String comments; // any comments the user would like to make about the transaction
+            String category; // e.g. groceries, bills, phone, gas, etc
+            boolean isIncome; //
+            String type; // income, spending or transfer
             
             while(scanner.hasNextLine()){
-				type = scanner.next();
+                type = scanner.next();
                amount = scanner.nextDouble();
                 date = scanner.next();
                 payee= scanner.next();
-				comments = scanner.next();
-				category = scanner.next();
-				//isIncome=scanner.nextBoolean();
-				
+                comments = scanner.next();
+                category = scanner.next();
+//              isIncome=scanner.nextBoolean();
+                
                 switch(type){ // add account depending on type
                     case "Income":
                         Income income = new Income();
                         income.setAmount(amount);
                         income.setPayee(payee);
-						income.setComments(comments);
-						income.setCategory(category);
-						//income.setIsIncome(isIncome);
+                        income.setComments(comments);
+                        income.setCategory(category);
+//                      income.setIsIncome(isIncome);
                         trans.add(income);
                         break;
                     case "Spending":
                         Spending spending = new Spending();
                         spending.setAmount(amount);
-						spending.setPayee(payee);
-						spending.setComments(comments);
-						spending.setCategory(category);
-						//spending.setIsIncome(isIncome);
+                        spending.setPayee(payee);
+                        spending.setComments(comments);
+                        spending.setCategory(category);
+//                      spending.setIsIncome(isIncome);
                         trans.add(spending);
                         break;
                     case "Transfer":
-						Transfer transfer = new Transfer();
+                        Transfer transfer = new Transfer();
                         transfer.setAmount(amount);
                         transfer.setPayee(payee);
-						transfer.setComments(comments);
-						transfer.setCategory(category);
-						//transfer.setIsIncome(isIncome);
+                        transfer.setComments(comments);
+                        transfer.setCategory(category);
+//                      transfer.setIsIncome(isIncome);
                         trans.add(transfer);
                         break;
                   
@@ -151,16 +155,16 @@ public class IO{
         }
         
     } // init Transaction
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -184,10 +188,10 @@ public class IO{
             e1.printStackTrace();
         }
     } // updateAccountData
-	
-	
-	
-	// rewrite tranData.txt with new account info
+    
+    
+    
+    // rewrite tranData.txt with new account info
     public static void updateTranData(ArrayList<Transaction> trans){
         try{ 
             tranData.delete();
@@ -195,26 +199,13 @@ public class IO{
             BufferedWriter bw = new BufferedWriter(new FileWriter(tranData,true));
             
             for(int i = 0; i < trans.size(); i++){
-                System.out.println("Testing Date: " +trans.get(i).getDate());
-                bw.write(trans.get(i).getType() + " " 
-                    + trans.get(i).getAmount() + " " 
-                    + trans.get(i).getDate() + " " 
-                    + trans.get(i).getPayee() + " " 
-                    + trans.get(i).getComments() + " " 
-                    + trans.get(i).getCategory() + " " 
-                    + trans.get(i).isIncome());
-				/*System.out.println(trans.get(i).getType() + " " 
-                    + trans.get(i).getAmount() + " " 
-                    + trans.get(i).getDate() + " " 
-                    + trans.get(i).getPayee() + " " 
-                    + trans.get(i).getComments() + " " 
-                    + trans.get(i).getCategory() + " " 
-                    + trans.get(i).isIncome());
-                */
+                
+                bw.write(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
+                //System.out.println(trans.get(i).getType() + " " + trans.get(i).getAmount() + " " + trans.get(i).getDate() + " " + trans.get(i).getPayee() + " " +trans.get(i).getComments() + " " +trans.get(i).getCategory() + " " +trans.get(i).isIncome());
 
-			   bw.newLine();
-				
-			
+               bw.newLine();
+                
+            
                 
             }// for
             

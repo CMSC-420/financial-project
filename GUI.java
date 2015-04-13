@@ -63,7 +63,7 @@ public class GUI {
 	static int sum_tran=0;
 	
 
-    
+ 
     
 	public static void main(String[] args) throws IOException {
 		
@@ -88,6 +88,7 @@ public class GUI {
 		// loads the GUI
 		GUI();
 		
+
 	} // main
 
     
