@@ -549,6 +549,7 @@ public class GUI {
                 transaction.setComments(comment);
                 transaction.setCategory(cat);
                 transaction.setDate(curr_date);
+                transaction.setType(type);
                 trans.add(transaction);
                 
                 initTableTransactions();
