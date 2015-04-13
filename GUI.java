@@ -74,14 +74,9 @@ public class GUI {
 		trans = new ArrayList<Transaction>();
         
         IO.initAccount(accounts);
-		IO.initTrans(trans);
         
         if(!accounts.isEmpty()){
             currAccount = accounts.get(0);
-        }
-		if(!trans.isEmpty()){
-            currTrans = trans.get(0); // Compiler error: Transaction cannot be converted to Account
-			
         }
 		
         // Defines and sets up the Frame and Panel
@@ -119,7 +114,7 @@ public class GUI {
 		 *    	1) Account Management
 		 * 		2) Reports
 		 * 		3) Record Transactions
-		*/
+		 */
 		view_acct = new JComboBox<String>();
         
         /**
@@ -504,17 +499,15 @@ public class GUI {
         result = JOptionPane.showConfirmDialog(frame, dialog,
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
                         
-		if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
+		if(result == JOptionPane.OK_OPTION){ // if the user clicked OK
             // get the account info from the popup
-            String  date = transDate.getText();
-			//this test was a success: --> the date is being switched at some other point -- > will keep searching
-			//System.out.println("Testind Data Line 577: " + date);
+            String date = transDate.getText();
 			String payee = transPayee.getText();
 			String cat = transCategory.getText();
             
-			//tests for null entry in the transaction ammount before it parse the value for a numeric digit --> this will cause 
+			// tests for null entry in the transaction amount before it parse the value for a numeric digit --> this will cause 
 			// number format exception in java and will crash the program before if not handled
-			while(transAmount.getText().equals("")){
+			/*while(transAmount.getText().equals("")){
 				JOptionPane.showMessageDialog(null,"The transaction must have an amount!");
                 result = JOptionPane.showConfirmDialog(frame, dialog,
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
@@ -522,103 +515,116 @@ public class GUI {
 			
 			
 			int amount_test=Integer.parseInt(transAmount.getText());
-			//the case where the value is not positive which is syntacically valid, but not ideal: nothing is free...not can you buy something for a negative amount
+			// the case where the value is not positive
 			while(amount_test<=0){
-				System.out.println("TEstsodgiunbsip");
 				JOptionPane.showMessageDialog(null,"The transaction amount must be positive!");
                 result = JOptionPane.showConfirmDialog(frame, dialog,
                         "New Account", JOptionPane.OK_CANCEL_OPTION);	
 						amount_test=Integer.parseInt(transAmount.getText());
 			}
 			
-				//the case that information is enter but contains illegal characters
-        while(!transAmount.getText().equals("")){
-            //temporary string to hold the account balance data for test purposes
-            String amount_content_test=transAmount.getText();
-			
-            int non_digit_count=0; // counter that tracks the number of non digital characters 
-            //iterates through the contents the the enter balance and checks for non numeric characters
-            for(int i=0; i<amount_content_test.length(); i++){
-                if(!Character.isDigit(amount_content_test.charAt(i))){
-                    //if a non numeric is found increments a counter that tracks the total
-                    // number of non numeric characters found
-                    non_digit_count++;
-                }
-            }
-            
-            // if the counter is at least one output an error to inform the user
-            // else return as the contents of the data enter is valid
-            if(non_digit_count>0){ 
+            //the case that information is enter but contains illegal characters
+            while(!transAmount.getText().equals("")){
+                //temporary string to hold the account balance data for test purposes
+                String amount_content_test=transAmount.getText();
                 
-                JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for the account amount!");
-                result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-                if(result == JOptionPane.CANCEL_OPTION)
-                    break;
-            }
-            // break out of the while as no non numeric values where found
-            else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
-                                                    // the entire program will freeze 
-        }
-            int amount = Integer.parseInt(transAmount.getText());
+                int non_digit_count=0; // counter that tracks the number of non digital characters 
+                //iterates through the contents the the enter balance and checks for non numeric characters
+                for(int i=0; i<amount_content_test.length(); i++){
+                    if(!Character.isDigit(amount_content_test.charAt(i))){
+                        //if a non numeric is found increments a counter that tracks the total
+                        // number of non numeric characters found
+                        non_digit_count++;
+                    }
+                }
+                
+                // if the counter is at least one output an error to inform the user
+                // else return as the contents of the data enter is valid
+                if(non_digit_count>0){ 
+                    
+                    JOptionPane.showMessageDialog(null, "Please enter numbers ONLY for the account amount!");
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                            "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    if(result == JOptionPane.CANCEL_OPTION)
+                        break;
+                }
+                // break out of the while as no non numeric values where found
+                else if(non_digit_count==0){ break;}  // <-- do not delete this as if this is not present
+                                                        // the entire program will freeze 
+                
+                
+                try{
+                    Double.parseDouble(transAmount.getText());
+                } catch (Exception e){
+                    JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
+                    
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                            "New Account", JOptionPane.OK_CANCEL_OPTION);
+                            
+                    if(result == JOptionPane.CANCEL_OPTION)
+                        break;
+                }
+            }*/
+            
+            double amount = Double.parseDouble(transAmount.getText());
 			String type = transType.getSelectedItem().toString();
 			String comment = transComments.getText();
 			
 					
-		//check for null inputs and output if the error if detects null input
-	
-		while(transComments.getText().equals("") ||transPayee.getText().equals("") || transCategory.getText().equals("") || transAmount.getText().equals("")){
-			//System.out.println("Test");
-			if(transPayee.getText().equals("")){
-			JOptionPane.showMessageDialog(null, "A recipient must be entered!");
-				result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);		
-							if(result==JOptionPane.CANCEL_OPTION)
-								break;	
-			}
-			else if(transCategory.getText().equals("")){
-			JOptionPane.showMessageDialog(null, "There must a category!");	
-			result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
-							if(result==JOptionPane.CANCEL_OPTION)
-								break;	
-			}
-			else if(transAmount.getText().equals("")){
-			JOptionPane.showMessageDialog(null, "You must enter an amount!");
-			result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-							if(result==JOptionPane.CANCEL_OPTION)
-								break;	
-			}
-			else if(transComments.getText().equals("")){
-				JOptionPane.showMessageDialog(null, "The Transaction must have a Description!");
-			result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);
-				if(result==JOptionPane.CANCEL_OPTION)
-					break;						
-			}
-			
-			else break; // if all cases have been tested and no error is found then exit the loop as all fields contain data--> checking for correctness will be done else where
-		}
+            //check for null inputs and output if the error if detects null input
+            
+            /*while(transComments.getText().equals("") ||transPayee.getText().equals("") || transCategory.getText().equals("") || transAmount.getText().equals("")){
+                //System.out.println("Test");
+                if(transPayee.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "A recipient must be entered!");
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                            "New Account", JOptionPane.OK_CANCEL_OPTION);		
+                                if(result==JOptionPane.CANCEL_OPTION)
+                                    break;	
+                }
+                else if(transCategory.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "There must a category!");	
+                result = JOptionPane.showConfirmDialog(frame, dialog,
+                            "New Account", JOptionPane.OK_CANCEL_OPTION);	
+                                if(result==JOptionPane.CANCEL_OPTION)
+                                    break;	
+                }
+                else if(transAmount.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "You must enter an amount!");
+                result = JOptionPane.showConfirmDialog(frame, dialog,
+                            "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                if(result==JOptionPane.CANCEL_OPTION)
+                                    break;	
+                }
+                else if(transComments.getText().equals("")){
+                    JOptionPane.showMessageDialog(null, "The Transaction must have a Description!");
+                result = JOptionPane.showConfirmDialog(frame, dialog,
+                            "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    if(result==JOptionPane.CANCEL_OPTION)
+                        break;						
+                }
+                
+                else break; // if all cases have been tested and no error is found then exit the loop as all fields contain data--> checking for correctness will be done else where
+            }*/
 		
-		//below updates the transaction sum: the sum of all he transactions for the user
-		if(result==JOptionPane.OK_OPTION){
-		for(Transaction t: trans){
-						if(t.getAmount()<=0){
-							sum_lab.setText("0");
-						}
-						else{ 
-							sum_tran+=t.getAmount();
-							sum_lab.setText(Integer.toString(sum_tran));
-						}
-					}
-		}//end for
+            //below updates the transaction sum: the sum of all the transactions for the user
+            if(result==JOptionPane.OK_OPTION){
+                for(Transaction t: trans){
+                    if(t.getAmount()<=0){
+                        sum_lab.setText("0");
+                    }
+                    else{ 
+                        sum_tran+=t.getAmount();
+                        sum_lab.setText(Integer.toString(sum_tran));
+                    }
+                }
+            }//end for
 			
 					
 					
 					
 					
-					 try{
+            try{
                switch(type){ // add account depending on type
                     case "Income":
                         Income income = new Income();
@@ -626,9 +632,6 @@ public class GUI {
                         income.setPayee(payee);
 						income.setComments(comment);
 						income.setCategory(cat);
-						//income.setIsIncome(isIncome);  <-- needs to be updated
-						//Test was a success: the data must be added here in order to update the actual data in the table and not just display: --> "today""
-						//System.out.println("Testing Data: switch loop line 633" + curr_date);
                         income.setDate(curr_date);
 						trans.add(income);
 						initTableTransactions();
@@ -639,7 +642,6 @@ public class GUI {
 						spending.setPayee(payee);
 						spending.setComments(comment);
 						spending.setCategory(cat);
-						//spending.setIsIncome(isIncome);  <--needs to be updated
                        spending.setDate(curr_date);
 						trans.add(spending);
 						initTableTransactions();
@@ -650,19 +652,18 @@ public class GUI {
                         transfer.setPayee(payee);
 						transfer.setComments(comment);
 						transfer.setCategory(cat);
-						//transfer.setIsIncome(isIncome);  <-- needs to be updated
                         transfer.setDate(curr_date);
 						trans.add(transfer);
 						initTableTransactions();
                         break;
                     default:
                         JOptionPane.showMessageDialog(null,"Invalid Entry");
-					 }
+                }
             } catch(NullPointerException e1){
                 e1.printStackTrace();	
             }
             // write the new account to the file
-            IO.updateTranData(trans);
+            IO.updateTranData(trans, currAccount);
         }
         else if(result==JOptionPane.CANCEL_OPTION || result==JOptionPane.CLOSED_OPTION){
             //need to be able to close the frame if the cancel option is chosen
@@ -729,9 +730,10 @@ public class GUI {
     
     // setup the table for viewing transactions for the current account
     private static void initTableTransactions(){
-		//once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amout
-		// else if no transactions exits sets the balancce to 0
-		
+        trans = currAccount.getTransactions();
+        
+		// once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amount
+		// else if no transactions exits sets the balance to 0
 		//sets the amount to 0 initially then preforms the check to see if anything exits
 		sum_tran = 0;
 		for(Transaction t:trans){
@@ -743,8 +745,8 @@ public class GUI {
                 sum_lab.setText(Integer.toString(sum_tran));
             }
 		}
+        
         Transaction transaction = new Transaction();
-		
 		
 		tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
@@ -756,11 +758,10 @@ public class GUI {
         tableModel.addColumn("Comments");
         tableModel.addColumn("Amount");
         
-        //ArrayList<Transaction> transactions = currAccount.getTransactions();
-        //Transaction trans; // current transaction
-        //System.out.println("Reached before for loop of init table transaction ");
+        
         for(int i = 0; i < trans.size(); i++){
             transaction = trans.get(i);
+            
             tableModel.addRow(new Object[]{
                 transaction.getDate(),
                 transaction.getPayee(),
@@ -959,15 +960,15 @@ public class GUI {
                 case 1:
                     //setValueReport(value, row, col);
                     break;
-                case 2:System.out.println("set values at: setValueTransaction reached");
-                    setValueTransaction(value, row, col);
+                case 2:
+                    //setValueTransaction(value, row, col);
                     break;
                 default:
                     System.out.println("ERROR - GUI.MyTableModel - invalid currTab");
             }
             
             IO.updateAccountData(accounts);
-			IO.updateTranData(trans);
+			IO.updateTranData(trans, currAccount);
 		}
         
         // set values of appropriate account
@@ -987,20 +988,21 @@ public class GUI {
 		
 		
 		
-		private void setValueTransaction(Object value, int row, int col){
+		/*private void setValueTransaction(Object value, int row, int col){
 			
             switch(col){
 				
-                case 0: System.out.println("reached case 0 of setValTrans");trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // rename the account
-				view_acct.removeAllItems(); // clear the dropdown
-				for(Transaction t: trans){ // update the dropdown
-                        view_acct.addItem(t.getAmount());
-				System.out.println(t.getAmount());}
-						break;
+                case 0: 
+                    System.out.println("reached case 0 of setValTrans");
+                    trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // rename the account
+                    view_acct.removeAllItems(); // clear the dropdown
+                    for(Transaction t: trans){ // update the dropdown
+                            view_acct.addItem(t.getAmount());
+                    System.out.println(t.getAmount());}
+                    break;
 					
-		
 			}
-        }
+        }*/
 	} // class MyTableModel
 	
 	
