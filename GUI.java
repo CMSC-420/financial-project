@@ -520,10 +520,19 @@ public class GUI {
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
 			}
 			
+			//the case where the value is zero which is syntacically valid, but not ideal: nothing is free...
+			while(transAmount.getText().equals("0")){
+				System.out.println("TEstsodgiunbsip");
+				JOptionPane.showMessageDialog(null,"The transaction amount cannot be 0!");
+                result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "New Account", JOptionPane.OK_CANCEL_OPTION);	
+			}
+			
 				//the case that information is enter but contains illegal characters
         while(!transAmount.getText().equals("")){
             //temporary string to hold the account balance data for test purposes
             String amount_content_test=transAmount.getText();
+			
             int non_digit_count=0; // counter that tracks the number of non digital characters 
             //iterates through the contents the the enter balance and checks for non numeric characters
             for(int i=0; i<amount_content_test.length(); i++){
