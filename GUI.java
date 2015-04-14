@@ -631,21 +631,8 @@ public class GUI {
     private static void initTableTransactions(){
         trans = currAccount.getTransactions();
         
-		// once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amount
-		// else if no transactions exists sets the balance to 0
-		// sets the amount to 0 initially then preforms the check to see if anything exits
-		/*sum_tran = 0;
-		for(Transaction t:trans){
-			if(t.getAmount()<=0){
-                sum_lab.setText("0");
-            }
-            else{ 
-                sum_tran += t.getAmount();
-                sum_lab.setText(Integer.toString(sum_tran));
-            }
-		}*/
-        
-        sum_lab.setText("$" + currAccount.getBalance());
+        // display account balance at the bottom of the screen
+        sum_lab.setText("Balance: $" + currAccount.getBalance());
         
         Transaction transaction = new Transaction();
 		
@@ -688,14 +675,8 @@ public class GUI {
 		
 		Double total = 0.0;
 		for(Account a:accounts){
-			/*if(a.getBalance() <= 0){
-                sum_lab.setText("$0.00");
-            }
-            else{ 
-                
-            }*/
             total += a.getBalance();
-            sum_lab.setText("$" + total);
+            sum_lab.setText("Total: $" + total);
 		}
         
         Account account = new Account();
