@@ -272,7 +272,7 @@ public class GUI {
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
-        /*int sum_test = 0;  //<-- checks the balance of all accounts on load to see if the the balance needs to be up to date
+        /*int sum_test = 0;  //<-- checks the balance of all accounts on load to see if the the balance needs to be updated
 		for(Account a : accounts) {
              
 			view_acct.addItem(a.getName());
@@ -283,8 +283,6 @@ public class GUI {
 			sum_lab.setText(Integer.toString(sum_test));
 			
 		}*/
-        
-        
         
         
         // These define the current height and width of the window.
@@ -640,9 +638,9 @@ public class GUI {
         trans = currAccount.getTransactions();
         
 		// once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amount
-		// else if no transactions exits sets the balance to 0
+		// else if no transactions exists sets the balance to 0
 		// sets the amount to 0 initially then preforms the check to see if anything exits
-		sum_tran = 0;
+		/*sum_tran = 0;
 		for(Transaction t:trans){
 			if(t.getAmount()<=0){
                 sum_lab.setText("0");
@@ -651,7 +649,9 @@ public class GUI {
                 sum_tran += t.getAmount();
                 sum_lab.setText(Integer.toString(sum_tran));
             }
-		}
+		}*/
+        
+        sum_lab.setText("$" + currAccount.getBalance());
         
         Transaction transaction = new Transaction();
 		
@@ -688,20 +688,20 @@ public class GUI {
     
     // setup the table for viewing accounts
     private static void initTableAccounts(){
-		//once the account screen is loaded: checks the all accounts for a sum and updates the sum amout
-		// else if no accounts exits sets the balancce to 0
+		//once the account screen is loaded: checks the all accounts for a sum and updates the sum amount
+		// else if no accounts exits sets the balance to 0
 		
-		//sets the balance to 0 initially then preforms the check to see if anything exits
-		sum_bal=0;
+		Double total = 0.0;
 		for(Account a:accounts){
-			if(a.getBalance()<=0){
-                sum_lab.setText("0");
+			if(a.getBalance() <= 0){
+                sum_lab.setText("$0.00");
             }
             else{ 
-                sum_bal += a.getBalance();
-                sum_lab.setText(Integer.toString(sum_bal));
+                total += a.getBalance();
+                sum_lab.setText("$" + total);
             }
 		}
+        
         Account account = new Account();
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
