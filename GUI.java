@@ -230,14 +230,20 @@ public class GUI {
                                             JOptionPane.OK_CANCEL_OPTION); // options
                             
                             if(result == JOptionPane.OK_OPTION){ // user confirmed
-                                accounts.remove(row); // remove the selected account from the array list
+                                Account acc = accounts.get(row);
+                                accounts.remove(acc); // remove the selected account from the array list
                                 view_acct.removeAllItems(); // clear the dropdown
                                 // update the dropdown with the new array list
                                 for(Account a : accounts) {
                                     view_acct.addItem(a.getName());
                                 }
+                                
+                                // delete the transaction file
+                                File transFile = new File(acc.getName() + ".txt");
+                                transFile.delete();
+                                
                                 initTableAccounts(); // update the table
-                                IO.updateAccountData(accounts); // update the text file
+                                IO.updateAccountData(accounts); // update the accounts text file
                             } else { // user canceled
                                 // do nothing
                             }
@@ -257,8 +263,24 @@ public class GUI {
                                             JOptionPane.OK_CANCEL_OPTION); // options
                             
                             if(result == JOptionPane.OK_OPTION){ // user confirmed
-                                trans.remove(row); // remove the selected transaction from the array list
+                                Transaction t = trans.get(row);
+                                trans.remove(t); // remove the selected transaction from the array list
                                 
+                                switch(t.getType()){
+                                    case "Spending":
+                                        currAccount.setBalance(currAccount.getBalance() + t.getAmount());
+                                        break;
+                                    case "Income":
+                                        currAccount.setBalance(currAccount.getBalance() - t.getAmount());
+                                        break;
+                                    case "Transfer":
+                                        /*
+                                         * This needs work. It should update both the current account
+                                         * and the account that was receiving the transfer.
+                                         */
+                                        currAccount.setBalance(currAccount.getBalance() + t.getAmount());
+                                        break;
+                                }
                                 
                                 initTableTransactions(); // update the table
                                 IO.updateTranData(trans, currAccount); // update the text file
