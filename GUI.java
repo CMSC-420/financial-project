@@ -110,6 +110,9 @@ public class GUI {
 		 * 		3) Record Transactions
 		 */
 		view_acct = new JComboBox<String>();
+        for(Account a : accounts) // add accounts to dropdown
+			view_acct.addItem(a.getName());
+            
         // keep track of the currently selected account
         view_acct.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -451,6 +454,7 @@ public class GUI {
     
     
     
+    // creates a popup for adding a transaction
     private static void addTransactionPopup(){
         int result;
 		
@@ -681,6 +685,7 @@ public class GUI {
         button_1.setText("New Transaction");
         button_2.setText("Delete Transaction");
         button_2.setVisible(true);
+        view_acct.setVisible(true);
     } // initTableTransactions
     
     
@@ -688,7 +693,7 @@ public class GUI {
     
     // setup the table for viewing accounts
     private static void initTableAccounts(){
-		//once the account screen is loaded: checks the all accounts for a sum and updates the sum amount
+		// once the account screen is loaded: checks the all accounts for a sum and updates the sum amount
 		// else if no accounts exits sets the balance to 0
 		
 		Double total = 0.0;
@@ -717,6 +722,7 @@ public class GUI {
         button_1.setText("New Account");
         button_2.setText("Delete Account");
         button_2.setVisible(true);
+        view_acct.setVisible(false);
     } // initTableAccounts
     
 
