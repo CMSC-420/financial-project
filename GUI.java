@@ -110,6 +110,21 @@ public class GUI {
 		 * 		3) Record Transactions
 		 */
 		view_acct = new JComboBox<String>();
+        for(Account a : accounts) // add accounts to dropdown
+			view_acct.addItem(a.getName());
+            
+        // keep track of the currently selected account
+        view_acct.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                int index = view_acct.getSelectedIndex();
+                
+                if(index >= 0){
+                    currAccount = accounts.get(index);
+                    if(currTab == 2)
+                        initTableTransactions();
+                }
+            }
+        });
         
         /**
          * makes the X in the titlebar close the program
@@ -257,33 +272,6 @@ public class GUI {
                 }
 			}
 		});
-        
-        
-        // adds components to the Drop down menu for user to select the account they wish to view
-        int sum_test = 0;  //<-- checks the balance of all accounts on load to see if the the balance needs to be up to date
-		for(Account a : accounts) {
-             
-			view_acct.addItem(a.getName());
-			sum_test += a.getBalance();
-        }
-		//if on load the balance is greater than 0 update the label else do nothing
-		if(sum_test > 0){
-			sum_lab.setText(Integer.toString(sum_test));
-			
-		}
-        
-        // keep track of the currently selected account
-        view_acct.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                int index = view_acct.getSelectedIndex();
-                
-                if(index >= 0){
-                    currAccount = accounts.get(index);
-                    if(currTab == 2)
-                        initTableTransactions();
-                }
-            }
-        });
         
         
         // These define the current height and width of the window.
@@ -452,6 +440,7 @@ public class GUI {
     
     
     
+    // creates a popup for adding a transaction
     private static void addTransactionPopup(){
         int result;
 		
@@ -551,19 +540,6 @@ public class GUI {
                 double amount = Double.parseDouble(transAmount.getText());
                 String type = transType.getSelectedItem().toString();
                 String comment = transComments.getText();
-            
-                //below updates the transaction sum: the sum of all the transactions for the user
-                if(result==JOptionPane.OK_OPTION){
-                    for(Transaction t: trans){
-                        if(t.getAmount()<=0){
-                            sum_lab.setText("0");
-                        }
-                        else{ 
-                            sum_tran+=t.getAmount();
-                            sum_lab.setText(Integer.toString(sum_tran));
-                        }
-                    }
-                }//end for
                 
                
                 Transaction transaction = new Transaction();
@@ -575,9 +551,26 @@ public class GUI {
                 transaction.setType(type);
                 trans.add(transaction);
                 
+                switch(type){
+                    case "Spending":
+                        currAccount.setBalance(currAccount.getBalance() - amount);
+                        break;
+                    case "Income":
+                        currAccount.setBalance(currAccount.getBalance() + amount);
+                        break;
+                    case "Transfer":
+                        /*
+                         * This should remove money from the current account and add  
+                         * money to whatever account is receiving the transfer.
+                         */
+                        currAccount.setBalance(currAccount.getBalance() - amount);
+                        break;
+                }
+                
                 initTableTransactions();
                 
-                // write the new account to the file
+                // update files
+                IO.updateAccountData(accounts);
                 IO.updateTranData(trans, currAccount);
             }
         }
@@ -638,19 +631,8 @@ public class GUI {
     private static void initTableTransactions(){
         trans = currAccount.getTransactions();
         
-		// once the transaction screen is loaded: checks the all transaction for a sum and updates the sum amount
-		// else if no transactions exits sets the balance to 0
-		// sets the amount to 0 initially then preforms the check to see if anything exits
-		sum_tran = 0;
-		for(Transaction t:trans){
-			if(t.getAmount()<=0){
-                sum_lab.setText("0");
-            }
-            else{ 
-                sum_tran += t.getAmount();
-                sum_lab.setText(Integer.toString(sum_tran));
-            }
-		}
+        // display account balance at the bottom of the screen
+        sum_lab.setText("Balance: $" + currAccount.getBalance());
         
         Transaction transaction = new Transaction();
 		
@@ -680,6 +662,7 @@ public class GUI {
         button_1.setText("New Transaction");
         button_2.setText("Delete Transaction");
         button_2.setVisible(true);
+        view_acct.setVisible(true);
     } // initTableTransactions
     
     
@@ -687,20 +670,15 @@ public class GUI {
     
     // setup the table for viewing accounts
     private static void initTableAccounts(){
-		//once the account screen is loaded: checks the all accounts for a sum and updates the sum amout
-		// else if no accounts exits sets the balancce to 0
+		// once the account screen is loaded: checks the all accounts for a sum and updates the sum amount
+		// else if no accounts exits sets the balance to 0
 		
-		//sets the balance to 0 initially then preforms the check to see if anything exits
-		sum_bal=0;
+		Double total = 0.0;
 		for(Account a:accounts){
-			if(a.getBalance()<=0){
-                sum_lab.setText("0");
-            }
-            else{ 
-                sum_bal += a.getBalance();
-                sum_lab.setText(Integer.toString(sum_bal));
-            }
+            total += a.getBalance();
+            sum_lab.setText("Total: $" + total);
 		}
+        
         Account account = new Account();
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
@@ -716,6 +694,7 @@ public class GUI {
         button_1.setText("New Account");
         button_2.setText("Delete Account");
         button_2.setVisible(true);
+        view_acct.setVisible(false);
     } // initTableAccounts
     
 
