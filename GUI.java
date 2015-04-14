@@ -274,20 +274,6 @@ public class GUI {
 		});
         
         
-        // adds components to the Drop down menu for user to select the account they wish to view
-        /*int sum_test = 0;  //<-- checks the balance of all accounts on load to see if the the balance needs to be updated
-		for(Account a : accounts) {
-             
-			view_acct.addItem(a.getName());
-			sum_test += a.getBalance();
-        }
-		//if on load the balance is greater than 0 update the label else do nothing
-		if(sum_test > 0){
-			sum_lab.setText(Integer.toString(sum_test));
-			
-		}*/
-        
-        
         // These define the current height and width of the window.
         windowHeight = frame.getBounds().height;
         windowWidth = frame.getBounds().width;
@@ -554,19 +540,6 @@ public class GUI {
                 double amount = Double.parseDouble(transAmount.getText());
                 String type = transType.getSelectedItem().toString();
                 String comment = transComments.getText();
-            
-                //below updates the transaction sum: the sum of all the transactions for the user
-                if(result==JOptionPane.OK_OPTION){
-                    for(Transaction t: trans){
-                        if(t.getAmount()<=0){
-                            sum_lab.setText("0");
-                        }
-                        else{ 
-                            sum_tran+=t.getAmount();
-                            sum_lab.setText(Integer.toString(sum_tran));
-                        }
-                    }
-                }//end for
                 
                
                 Transaction transaction = new Transaction();
@@ -578,9 +551,26 @@ public class GUI {
                 transaction.setType(type);
                 trans.add(transaction);
                 
+                switch(type){
+                    case "Spending":
+                        currAccount.setBalance(currAccount.getBalance() - amount);
+                        break;
+                    case "Income":
+                        currAccount.setBalance(currAccount.getBalance() + amount);
+                        break;
+                    case "Transfer":
+                        /*
+                         * This should remove money from the current account and add  
+                         * money to whatever account is receiving the transfer.
+                         */
+                        currAccount.setBalance(currAccount.getBalance() - amount);
+                        break;
+                }
+                
                 initTableTransactions();
                 
-                // write the new account to the file
+                // update files
+                IO.updateAccountData(accounts);
                 IO.updateTranData(trans, currAccount);
             }
         }
@@ -698,13 +688,14 @@ public class GUI {
 		
 		Double total = 0.0;
 		for(Account a:accounts){
-			if(a.getBalance() <= 0){
+			/*if(a.getBalance() <= 0){
                 sum_lab.setText("$0.00");
             }
             else{ 
-                total += a.getBalance();
-                sum_lab.setText("$" + total);
-            }
+                
+            }*/
+            total += a.getBalance();
+            sum_lab.setText("$" + total);
 		}
         
         Account account = new Account();
