@@ -110,6 +110,18 @@ public class GUI {
 		 * 		3) Record Transactions
 		 */
 		view_acct = new JComboBox<String>();
+        // keep track of the currently selected account
+        view_acct.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                int index = view_acct.getSelectedIndex();
+                
+                if(index >= 0){
+                    currAccount = accounts.get(index);
+                    if(currTab == 2)
+                        initTableTransactions();
+                }
+            }
+        });
         
         /**
          * makes the X in the titlebar close the program
@@ -260,7 +272,7 @@ public class GUI {
         
         
         // adds components to the Drop down menu for user to select the account they wish to view
-        int sum_test = 0;  //<-- checks the balance of all accounts on load to see if the the balance needs to be up to date
+        /*int sum_test = 0;  //<-- checks the balance of all accounts on load to see if the the balance needs to be up to date
 		for(Account a : accounts) {
              
 			view_acct.addItem(a.getName());
@@ -270,20 +282,9 @@ public class GUI {
 		if(sum_test > 0){
 			sum_lab.setText(Integer.toString(sum_test));
 			
-		}
+		}*/
         
-        // keep track of the currently selected account
-        view_acct.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                int index = view_acct.getSelectedIndex();
-                
-                if(index >= 0){
-                    currAccount = accounts.get(index);
-                    if(currTab == 2)
-                        initTableTransactions();
-                }
-            }
-        });
+        
         
         
         // These define the current height and width of the window.
