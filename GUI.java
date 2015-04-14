@@ -263,8 +263,24 @@ public class GUI {
                                             JOptionPane.OK_CANCEL_OPTION); // options
                             
                             if(result == JOptionPane.OK_OPTION){ // user confirmed
-                                trans.remove(row); // remove the selected transaction from the array list
+                                Transaction t = trans.get(row);
+                                trans.remove(t); // remove the selected transaction from the array list
                                 
+                                switch(t.getType()){
+                                    case "Spending":
+                                        currAccount.setBalance(currAccount.getBalance() + t.getAmount());
+                                        break;
+                                    case "Income":
+                                        currAccount.setBalance(currAccount.getBalance() - t.getAmount());
+                                        break;
+                                    case "Transfer":
+                                        /*
+                                         * This needs work. It should update both the current account
+                                         * and the account that was receiving the transfer.
+                                         */
+                                        currAccount.setBalance(currAccount.getBalance() + t.getAmount());
+                                        break;
+                                }
                                 
                                 initTableTransactions(); // update the table
                                 IO.updateTranData(trans, currAccount); // update the text file
