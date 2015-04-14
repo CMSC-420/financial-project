@@ -161,7 +161,6 @@ public class GUI {
 		act_mgmt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-                currTab = 0;
 				initTableAccounts();
 			}
 		});
@@ -172,10 +171,7 @@ public class GUI {
 		reports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-                currTab = 1;
 				initTableReports();
-				
-				
 			}
 		});
 		
@@ -185,7 +181,6 @@ public class GUI {
 		record_transaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-                currTab = 2;
 				initTableTransactions();
 			}
 		});
@@ -244,6 +239,9 @@ public class GUI {
                                 
                                 initTableAccounts(); // update the table
                                 IO.updateAccountData(accounts); // update the accounts text file
+                                
+                                if(accounts.size() == 0)
+                                    currAccount = null;
                             } else { // user canceled
                                 // do nothing
                             }
@@ -651,40 +649,46 @@ public class GUI {
     
     // setup the table for viewing transactions for the current account
     private static void initTableTransactions(){
-        trans = currAccount.getTransactions();
-        
-        // display account balance at the bottom of the screen
-        sum_lab.setText("Balance: $" + currAccount.getBalance());
-        
-        Transaction transaction = new Transaction();
-		
-		tableModel.setColumnCount(0);
-        tableModel.setRowCount(0);
-        tableModel.addColumn("Date");
-        tableModel.addColumn("Payee");
-        tableModel.addColumn("Type");
-        tableModel.addColumn("Category");
-        tableModel.addColumn("Comments");
-        tableModel.addColumn("Amount");
-        
-        
-        for(int i = 0; i < trans.size(); i++){
-            transaction = trans.get(i);
+        if(currAccount != null){
+            currTab = 2;
             
-            tableModel.addRow(new Object[]{
-                transaction.getDate(),
-                transaction.getPayee(),
-                transaction.getType(), 
-                transaction.getCategory(),
-                transaction.getComments(),
-                "$" + transaction.getAmount()
-            });
+            trans = currAccount.getTransactions();
+            
+            // display account balance at the bottom of the screen
+            sum_lab.setText("Balance: $" + currAccount.getBalance());
+            
+            Transaction transaction = new Transaction();
+            
+            tableModel.setColumnCount(0);
+            tableModel.setRowCount(0);
+            tableModel.addColumn("Date");
+            tableModel.addColumn("Payee");
+            tableModel.addColumn("Type");
+            tableModel.addColumn("Category");
+            tableModel.addColumn("Comments");
+            tableModel.addColumn("Amount");
+            
+            
+            for(int i = 0; i < trans.size(); i++){
+                transaction = trans.get(i);
+                
+                tableModel.addRow(new Object[]{
+                    transaction.getDate(),
+                    transaction.getPayee(),
+                    transaction.getType(), 
+                    transaction.getCategory(),
+                    transaction.getComments(),
+                    "$" + transaction.getAmount()
+                });
+            }
+            
+            button_1.setText("New Transaction");
+            button_2.setText("Delete Transaction");
+            button_2.setVisible(true);
+            view_acct.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "You must create an account first!");
         }
-        
-        button_1.setText("New Transaction");
-        button_2.setText("Delete Transaction");
-        button_2.setVisible(true);
-        view_acct.setVisible(true);
     } // initTableTransactions
     
     
@@ -695,11 +699,13 @@ public class GUI {
 		// once the account screen is loaded: checks the all accounts for a sum and updates the sum amount
 		// else if no accounts exits sets the balance to 0
 		
+        currTab = 0;
+        
 		Double total = 0.0;
 		for(Account a:accounts){
             total += a.getBalance();
-            sum_lab.setText("Total: $" + total);
 		}
+        sum_lab.setText("Total: $" + total);
         
         Account account = new Account();
         tableModel.setColumnCount(0);
@@ -728,7 +734,9 @@ public class GUI {
 		JOptionPane.showMessageDialog(null,"This section is still to come, stay tuned!");
 					
 					
-		/*tableModel.setColumnCount(0);
+		/*currTab = 1;
+        
+        tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
         tableModel.addColumn("Reports");
