@@ -502,7 +502,7 @@ public class GUI {
 
         // prompt the user for basic account info
         result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+                        "New Transaction", JOptionPane.OK_CANCEL_OPTION);
                         
 		if(result == JOptionPane.OK_OPTION){ // if the user clicked ok
             // get the account info from the popup
