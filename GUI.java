@@ -381,7 +381,13 @@ public class GUI {
                     else
                         break;
                     
-                } else if(inputError == 2){ // balance is not a number
+                } 
+                else if(inputError == 2){
+                    accBal.setText("0.0");
+                    inputError = 0;
+                    break;
+                }
+                else if(inputError == 3){ // balance is not a number
                     JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
                     
                     result = JOptionPane.showConfirmDialog(frame, dialog,
@@ -611,9 +617,13 @@ public class GUI {
         
         else {
             try{ // try to parse the accBal field
-                Double.parseDouble(balance);
+                if(balance.equals("")){
+                    valid_input = 2;
+                } else {
+                    Double.parseDouble(balance);
+                }
             } catch(Exception e){
-                valid_input = 2;
+                valid_input = 3;
             }
         }
         
