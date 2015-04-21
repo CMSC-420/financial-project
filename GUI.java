@@ -618,7 +618,9 @@ public class GUI {
                     case "Transfer":
                         Account target = accounts.get(transAcc.getSelectedIndex());
                         
-                        if(target != currAccount){
+                        if(target == currAccount){
+                            JOptionPane.showMessageDialog(null, "Cannot transfer to itself!");
+                        } else {
                             
                             trans.add(transaction);
                             currAccount.setBalance(currAccount.getBalance() - amount);
