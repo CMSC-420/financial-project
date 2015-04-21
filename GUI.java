@@ -487,9 +487,13 @@ public class GUI {
         JPanel fields = new JPanel(new GridLayout(0,1,2,2));
         
         // setup the JOptionPane for adding a transaction
+        JLabel transTarget = new JLabel("Target Account");
+        transTarget.setVisible(false); // initially invisible
+        
         labels.add(new JLabel("Date"));
         labels.add(new JLabel("Payee"));
         labels.add(new JLabel("Account Type"));
+        labels.add(transTarget); 
         labels.add(new JLabel("Category"));
         labels.add(new JLabel("Comments"));
         labels.add(new JLabel("Amount"));
@@ -498,20 +502,44 @@ public class GUI {
         JLabel transDate = new JLabel(curr_date);
         JTextField transPayee = new JTextField();
         JComboBox transType = new JComboBox();
+        JComboBox transAcc = new JComboBox(); // target account choices
+        transAcc.setVisible(false); // initially invisible
         JTextField transCategory = new JTextField();
         JTextField transComments = new JTextField();
         JTextField transAmount = new JTextField();
         transType.addItem("Spending");
         transType.addItem("Income");
 		transType.addItem("Transfer");
+        
+        for(Account a : accounts) // add existing accounts to the dropdown
+            transAcc.addItem(a.getName());
+            
+        // show transAcc only if transaction type is "Transfer"
+        transType.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                int index = transType.getSelectedIndex();
+                
+                if(index == 2){
+                    transAcc.setVisible(true);
+                    transTarget.setVisible(true);
+                } else {
+                    transAcc.setVisible(false);
+                    transTarget.setVisible(false);
+                }
+            }
+        });
+        
 		fields.add(transDate);
         fields.add(transPayee);
         fields.add(transType);
+        fields.add(transAcc);
         fields.add(transCategory);
         fields.add(transComments);
         fields.add(transAmount);
         dialog.add(fields, BorderLayout.CENTER);
 
+        
+        
         // prompt the user for basic account info
         result = JOptionPane.showConfirmDialog(frame, dialog,
                         "New Account", JOptionPane.OK_CANCEL_OPTION);
@@ -575,21 +603,36 @@ public class GUI {
                 transaction.setCategory(cat);
                 transaction.setDate(curr_date);
                 transaction.setType(type);
-                trans.add(transaction);
                 
                 switch(type){
                     case "Spending":
+                    
+                        trans.add(transaction);
                         currAccount.setBalance(currAccount.getBalance() - amount);
                         break;
                     case "Income":
+                    
+                        trans.add(transaction);
                         currAccount.setBalance(currAccount.getBalance() + amount);
                         break;
                     case "Transfer":
-                        /*
-                         * This should remove money from the current account and add  
-                         * money to whatever account is receiving the transfer.
-                         */
-                        currAccount.setBalance(currAccount.getBalance() - amount);
+                        Account target = accounts.get(transAcc.getSelectedIndex());
+                        
+                        if(target != currAccount){
+                            
+                            trans.add(transaction);
+                            currAccount.setBalance(currAccount.getBalance() - amount);
+                            
+                            target.setBalance(target.getBalance() + amount);
+                            Transaction temp = new Transaction();
+                            temp.setAmount(amount);
+                            temp.setPayee(payee);
+                            temp.setComments(comment);
+                            temp.setCategory(cat);
+                            temp.setDate(curr_date);
+                            temp.setType(type);
+                            target.addTransaction(temp);
+                        }
                         break;
                 }
                 
