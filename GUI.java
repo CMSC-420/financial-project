@@ -964,7 +964,9 @@ public class GUI {
 		private void setValueTransaction(Object value, int row, int col){
 			
             switch(col){
-				
+				case 0:
+                    transChangeDate(value,row);
+                    break;
                 case 1: 
                     trans.get(row).setPayee(String.valueOf(value)); // change the payee
                     break;
@@ -975,12 +977,35 @@ public class GUI {
                     trans.get(row).setComments(String.valueOf(value)); // change the comments
                     break;
                 case 5:
-                    //trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // change the comments
+                    //trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // change the amount
                     break;
 			}
             
             IO.updateTranData(currAccount.getTransactions(), currAccount);
         }
+        
+        // change the date of the transaction
+        private void transChangeDate(Object value, int row){
+            Transaction t = trans.get(row);
+            int[] date = new int[3];
+            
+            String dateStr = value.toString();
+            Scanner scan = new Scanner(dateStr);
+            scan.useDelimiter("/");
+            
+            for(int i = 0; i < 3; i++){
+                if(scan.hasNextInt()){
+                    date[i] = scan.nextInt();
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Invalid Date Format");
+                    initTableTransactions();
+                    return;
+                }
+            }
+            
+            t.setDate(dateStr);
+        } // transChangeDate
 	} // class MyTableModel
 	
 	
