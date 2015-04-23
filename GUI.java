@@ -477,7 +477,7 @@ public class GUI {
         int year = current_date.get(Calendar.YEAR);
 		
         //current date string to pass to the panel	
-        String curr_date = Integer.toString(month) + "/" +Integer.toString(day) + "/" +Integer.toString(year);
+        String curr_date = Integer.toString(month) + "/" +Integer.toString(day) + "/" + Integer.toString(year);
         
         // temporary panel for the JOptionPane
         JPanel dialog = new JPanel(new BorderLayout(5,5));
@@ -499,7 +499,8 @@ public class GUI {
         labels.add(new JLabel("Amount"));
         dialog.add(labels, BorderLayout.WEST);
         
-        JLabel transDate = new JLabel(curr_date);
+        //JLabel transDate = new JLabel(curr_date);
+        JTextField transDate = new JTextField(curr_date);
         JTextField transPayee = new JTextField();
         JComboBox transType = new JComboBox();
         JComboBox transAcc = new JComboBox(); // target account choices
@@ -603,6 +604,10 @@ public class GUI {
                 transaction.setCategory(cat);
                 transaction.setDate(curr_date);
                 transaction.setType(type);
+                
+                if(transPopCheckDate(date)){
+                    transaction.setDate(date);
+                }
                 
                 switch(type){
                     case "Spending":
@@ -885,6 +890,33 @@ public class GUI {
         }
     } // class ResizeListener
 	
+    
+    
+    
+    // set the date in the addTransaction popup
+    private static boolean transPopCheckDate(String value){
+        //Transaction t = trans.get(row);
+        //int[] date = new int[3];
+        
+        //String dateStr = value.toString();
+        Scanner scan = new Scanner(value);
+        scan.useDelimiter("/");
+        
+        for(int i = 0; i < 3; i++){
+            if(scan.hasNextInt()){
+                //date[i] = scan.nextInt();
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Invalid Date Format");
+                initTableTransactions();
+                return false;
+            }
+        }
+        
+        //t.setDate(dateStr);
+        return true;
+    } // transChangeDate
+    
     
     
     
