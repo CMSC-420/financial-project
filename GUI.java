@@ -547,7 +547,7 @@ public class GUI {
                         
 		if(result == JOptionPane.OK_OPTION){ // if the user clicked OK
             
-            int inputError = check_input_trans(transPayee.getText(), transCategory.getText(), transAmount.getText());
+            int inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
             
             // keep trying until no errors or user cancels
             while(inputError > 0){
@@ -558,7 +558,7 @@ public class GUI {
                                     "New Account", JOptionPane.OK_CANCEL_OPTION);
                     
                     if(result == JOptionPane.OK_OPTION)
-                        inputError = check_input_trans(transPayee.getText(), transCategory.getText(), transAmount.getText());
+                        inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
                     else
                         break;
                     
@@ -570,18 +570,29 @@ public class GUI {
                                     "New Account", JOptionPane.OK_CANCEL_OPTION);
                     
                     if(result == JOptionPane.OK_OPTION)
-                        inputError = check_input_trans(transPayee.getText(), transCategory.getText(), transAmount.getText());
+                        inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
                     else
                         break;
                 }
-                else if(inputError == 3){ // amount is not a number
+                else if(inputError == 3){
+                    JOptionPane.showMessageDialog(null, "Invalid date format!");
+                    
+                    result = JOptionPane.showConfirmDialog(frame, dialog,
+                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                    
+                    if(result == JOptionPane.OK_OPTION)
+                        inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
+                    else
+                        break;
+                }
+                else if(inputError == 4){ // amount is not a number
                     JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
                     
                     result = JOptionPane.showConfirmDialog(frame, dialog,
                                     "New Account", JOptionPane.OK_CANCEL_OPTION);
                     
                     if(result == JOptionPane.OK_OPTION)
-                        inputError = check_input_trans(transPayee.getText(), transCategory.getText(), transAmount.getText());
+                        inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
                     else
                         break;
                 }
@@ -598,16 +609,13 @@ public class GUI {
                 
                
                 Transaction transaction = new Transaction();
+                transaction.setDate(date);
                 transaction.setAmount(amount);
                 transaction.setPayee(payee);
                 transaction.setComments(comment);
                 transaction.setCategory(cat);
                 transaction.setDate(curr_date);
                 transaction.setType(type);
-                
-                if(transPopCheckDate(date)){
-                    transaction.setDate(date);
-                }
                 
                 switch(type){
                     case "Spending":
@@ -685,7 +693,7 @@ public class GUI {
     
     
     // check input for errors
-    private static int check_input_trans(String payee, String category, String amount){
+    private static int check_input_trans(String date, String payee, String category, String amount){
         int valid_input = 0;
         
         if(payee.equals("")){
@@ -694,11 +702,14 @@ public class GUI {
         else if(category.equals("")){
             valid_input = 2;
         }
+        else if(!transPopCheckDate(date)){
+            valid_input = 3;
+        }
         else{
             try{
                 Double.parseDouble(amount);
             } catch(Exception e){
-                valid_input = 3;
+                valid_input = 4;
             }
         }
         
@@ -895,25 +906,18 @@ public class GUI {
     
     // set the date in the addTransaction popup
     private static boolean transPopCheckDate(String value){
-        //Transaction t = trans.get(row);
-        //int[] date = new int[3];
-        
-        //String dateStr = value.toString();
         Scanner scan = new Scanner(value);
         scan.useDelimiter("/");
         
+        // make sure there are 3 ints separated by "/"
         for(int i = 0; i < 3; i++){
-            if(scan.hasNextInt()){
-                //date[i] = scan.nextInt();
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Invalid Date Format");
-                initTableTransactions();
+            if(scan.hasNextInt()){ 
+                scan.nextInt();
+            } else {
                 return false;
             }
         }
         
-        //t.setDate(dateStr);
         return true;
     } // transChangeDate
     
@@ -1027,9 +1031,8 @@ public class GUI {
             
             for(int i = 0; i < 3; i++){
                 if(scan.hasNextInt()){
-                    date[i] = scan.nextInt();
-                }
-                else {
+                    scan.nextInt();
+                } else {
                     JOptionPane.showMessageDialog(null, "Invalid Date Format");
                     initTableTransactions();
                     return;
