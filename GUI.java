@@ -634,6 +634,7 @@ public class GUI {
                             temp.setDate(curr_date);
                             temp.setType(type);
                             target.addTransaction(temp);
+                            IO.updateTranData(target.getTransactions(), target);
                         }
                         break;
                 }
