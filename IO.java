@@ -78,7 +78,7 @@ public class IO extends GUI {
             Scanner scan = null;
             try {
                 scan = new Scanner(tranData);
-                scan.useDelimiter("/./");
+                scan.useDelimiter("~~~");
             } catch (FileNotFoundException e1) {
                 e1.printStackTrace();
             }
@@ -140,12 +140,12 @@ public class IO extends GUI {
             
             for(int i = 0; i < trans.size(); i++){
                 //System.out.println("Testing Date: " + trans.get(i).getDate());
-                bw.write(trans.get(i).getType() + "/./" 
-                    + trans.get(i).getAmount() + "/./" 
-                    + trans.get(i).getDate() + "/./" 
-                    + trans.get(i).getPayee() + "/./" 
-                    + trans.get(i).getCategory() + "/./"
-                    + trans.get(i).getComments() + "/./" );
+                bw.write(trans.get(i).getType() + "~~~" 
+                    + trans.get(i).getAmount() + "~~~" 
+                    + trans.get(i).getDate() + "~~~" 
+                    + trans.get(i).getPayee() + "~~~" 
+                    + trans.get(i).getCategory() + "~~~"
+                    + trans.get(i).getComments() + "~~~" );
 
                bw.newLine();
                 
