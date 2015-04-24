@@ -6,6 +6,7 @@
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
+import java.nio.file.*;
 
 public class IO extends GUI {
     
@@ -16,7 +17,7 @@ public class IO extends GUI {
     // create all necessary files if they don't already exist
     // load in any saved information if the files do exist
     @SuppressWarnings("unchecked")
-    public static void initAccount(ArrayList<Account> accounts){
+    public static void initAccount(ArrayList<Account> accounts) throws IOException{
         
         if (!accountData.exists()) { // create account data file if it doesn't exist
             try{
@@ -58,7 +59,6 @@ public class IO extends GUI {
         }
         
     } // init Accounts
-	
     
     
     
@@ -69,7 +69,6 @@ public class IO extends GUI {
             try{
                 for (Account a : accounts) {
                  tranData.createNewFile();
-                    // tranData = new File(System.getProperty("user.dir")+"0"+a.getName()+"TransactionData.txt");
                 }
             } catch(Exception e){
                 e.printStackTrace();
@@ -139,7 +138,6 @@ public class IO extends GUI {
             BufferedWriter bw = new BufferedWriter(new FileWriter(tranData,true));
             
             for(int i = 0; i < trans.size(); i++){
-                //System.out.println("Testing Date: " + trans.get(i).getDate());
                 bw.write(trans.get(i).getType() + "~~~" 
                     + trans.get(i).getAmount() + "~~~" 
                     + trans.get(i).getDate() + "~~~" 
@@ -148,9 +146,6 @@ public class IO extends GUI {
                     + trans.get(i).getComments() + "~~~" );
 
                bw.newLine();
-                
-            
-                
             }// for
             
             bw.close();

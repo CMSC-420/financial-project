@@ -47,6 +47,11 @@ public class GUI {
 	//list of all transactions
 	protected static ArrayList<Transaction> trans;
 	
+	//list of all report data --< of type string for now
+	protected static ArrayList<String> reports_list = new ArrayList<String>();
+	//String to grab the selected content for the report
+	static String report_list="";
+	
     // the currently selected tab
     // 0 = Account, 1 = Reports, 2 = Transactions
     protected static int currTab = 0;
@@ -160,7 +165,6 @@ public class GUI {
 		act_mgmt =  new JButton("Accounts");
 		act_mgmt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
 				initTableAccounts();
 			}
 		});
@@ -170,7 +174,6 @@ public class GUI {
 		reports = new JButton("Reports");
 		reports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				initTableReports();
 			}
 		});
@@ -180,7 +183,6 @@ public class GUI {
 		record_transaction = new JButton("Transactions");
 		record_transaction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				initTableTransactions();
 			}
 		});
@@ -404,21 +406,13 @@ public class GUI {
                 name = accName.getText();
                 balance = Double.parseDouble(accBal.getText());
                 type = accType.getSelectedItem().toString();
-            
-                for(Account a: accounts){
-                    if(a.getBalance()<=0){
-                        sum_lab.setText("0");
-                    }
-                    else{ 
-                        sum_bal+=a.getBalance();
-                        sum_lab.setText(Integer.toString(sum_bal));
-                    }
-                }
                 
                 //check to see if account name already exists
                 accExists = false;
                 for(int i = 0; i < accounts.size(); i++){
-                	if(accounts.get(i).getName().toLowerCase().equals(name.toLowerCase())){
+                    
+                	if((accounts.get(i).getName().toLowerCase().equals(name.toLowerCase()))
+                			&&(accounts.get(i).getType().equals(type))){
                 		accExists = true;
                 	}
                 }//for
@@ -440,13 +434,13 @@ public class GUI {
                         
 	                } catch(NullPointerException e1){
 	                    e1.printStackTrace();	
-	                	}
+                    }
 	                // write the new account to the file
 	                IO.updateAccountData(accounts);
                 }//if
 				
                 else{
-                	JOptionPane.showMessageDialog(null, "Account name already exists!");
+                	JOptionPane.showMessageDialog(null, "Account already exists!");
                 	
                 	// try again
                     result = JOptionPane.showConfirmDialog(frame, dialog,
@@ -460,6 +454,7 @@ public class GUI {
                 }//else
             }
         }
+        
     
     } // addAccountPopup
     
@@ -477,7 +472,7 @@ public class GUI {
         int year = current_date.get(Calendar.YEAR);
 		
         //current date string to pass to the panel	
-        String curr_date = Integer.toString(month) + "/" +Integer.toString(day) + "/" + Integer.toString(year);
+        String curr_date = Integer.toString(month) + "/" + Integer.toString(day) + "/" + Integer.toString(year);
         
         // temporary panel for the JOptionPane
         JPanel dialog = new JPanel(new BorderLayout(5,5));
@@ -543,7 +538,7 @@ public class GUI {
         
         // prompt the user for basic account info
         result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "New Account", JOptionPane.OK_CANCEL_OPTION);
+                        "New Transaction", JOptionPane.OK_CANCEL_OPTION);
                         
 		if(result == JOptionPane.OK_OPTION){ // if the user clicked OK
             
@@ -555,7 +550,7 @@ public class GUI {
                     JOptionPane.showMessageDialog(null, "The transaction must have a payee!");
                     
                     result = JOptionPane.showConfirmDialog(frame, dialog,
-                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                    "New Transaction", JOptionPane.OK_CANCEL_OPTION);
                     
                     if(result == JOptionPane.OK_OPTION)
                         inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
@@ -567,7 +562,7 @@ public class GUI {
                     JOptionPane.showMessageDialog(null, "The transaction must have a category!");
                     
                     result = JOptionPane.showConfirmDialog(frame, dialog,
-                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                    "New Transaction", JOptionPane.OK_CANCEL_OPTION);
                     
                     if(result == JOptionPane.OK_OPTION)
                         inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
@@ -578,7 +573,7 @@ public class GUI {
                     JOptionPane.showMessageDialog(null, "Invalid date format!");
                     
                     result = JOptionPane.showConfirmDialog(frame, dialog,
-                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                    "New Transaction", JOptionPane.OK_CANCEL_OPTION);
                     
                     if(result == JOptionPane.OK_OPTION)
                         inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
@@ -589,7 +584,7 @@ public class GUI {
                     JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
                     
                     result = JOptionPane.showConfirmDialog(frame, dialog,
-                                    "New Account", JOptionPane.OK_CANCEL_OPTION);
+                                    "New Transaction", JOptionPane.OK_CANCEL_OPTION);
                     
                     if(result == JOptionPane.OK_OPTION)
                         inputError = check_input_trans(transDate.getText(), transPayee.getText(), transCategory.getText(), transAmount.getText());
@@ -655,8 +650,8 @@ public class GUI {
                 initTableTransactions();
                 
                 // update files
-                IO.updateAccountData(accounts);
-                IO.updateTranData(trans, currAccount);
+                IO.updateAccountData(accounts); // this updates the accounts for the user
+                IO.updateTranData(trans, currAccount); //this updates the transactions that have been taking place by the user
             }
         }
     } // addTransactionPopup
@@ -762,6 +757,167 @@ public class GUI {
             JOptionPane.showMessageDialog(null, "You must create an account first!");
         }
     } // initTableTransactions
+	
+	
+	
+	
+	
+	
+	 private static void initTableReports(){
+     
+	/*
+	*
+	*		My thoughts:
+			One way:
+				1) Populate the list of all transaction data
+	*			2) Allow user to sort by data:
+				3) ONCE given a sort range: re populate the list;
+				
+				
+			Another way: as the user enter day not only right it to a textfile, but add the all fields as one string to an arraylist
+				then run the the array to find the date specified
+				
+				
+				
+				For now: just popup the dialog list and ask use for range and then populate the list
+					Just to get working...
+	*/
+	
+	
+        String qeurry[] = new String[50]; // <-- this will need a way to create the array and get the size automatically or use somthing besides an array...
+										// currently for testing only 
+
+	  // temporary panel for the JOptionPane
+        JPanel dialog = new JPanel(new BorderLayout(5,5));
+        // all of the labels for the JOptionPane
+        JPanel labels = new JPanel(new GridLayout(0,1,2,2));
+        // all of the input fields for the JOptionPane
+        JPanel fields = new JPanel(new GridLayout(0,1,2,2));
+        
+        // setup the JOptionPane for adding a transaction
+        labels.add(new JLabel("Start"));
+        labels.add(new JLabel("Month"));
+        labels.add(new JLabel("Month"));
+        labels.add(new JLabel("End"));
+        labels.add(new JLabel("Day"));
+        labels.add(new JLabel("Day"));
+        /*labels.add(new JLabel("Account Type"));
+        labels.add(new JLabel("Category"));
+        labels.add(new JLabel("Comments"));
+        labels.add(new JLabel("Amount"));*/
+        dialog.add(labels, BorderLayout.WEST);
+        
+       // JLabel transDate = new JLabel(curr_date);
+        JTextField s_monthRange = new JTextField();
+        JTextField e_monthRange = new JTextField();
+        JTextField e_dayRange = new JTextField();
+        JTextField s_dayRange = new JTextField();
+        /*JComboBox transType = new JComboBox();
+        JTextField transCategory = new JTextField();
+        JTextField transComments = new JTextField();
+        JTextField transAmount = new JTextField();*/
+     /*   transType.addItem("Spending");
+        transType.addItem("Income");
+		transType.addItem("Transfer");*/
+		fields.add(s_monthRange);
+		fields.add(s_monthRange);
+		fields.add(e_dayRange);
+		fields.add(e_dayRange);
+        /*fields.add(transPayee);
+        fields.add(transType);
+        fields.add(transCategory);
+        fields.add(transComments);
+        fields.add(transAmount);*/
+        dialog.add(fields, BorderLayout.CENTER);
+
+        // prompt the user for basic account info
+       int  result = JOptionPane.showConfirmDialog(frame, dialog,
+                        "Please Enter a Range", JOptionPane.OK_CANCEL_OPTION);
+
+		/**
+		*		it will need error checking as well...
+		*
+		*/
+		
+		 /*
+				Starts by prompting a user for the range they want to view...Will not work with current implimentation but this is the setup;
+				For now will simply return the range the user request....*/
+				
+		 int s_day=0,s_month=0, e_day=0,e_month=0;
+		if(result==JOptionPane.OK_OPTION){
+			s_month = Integer.parseInt(s_monthRange.getText());
+			s_month = Integer.parseInt(s_monthRange.getText());
+			e_day = Integer.parseInt(e_dayRange.getText());
+			e_day = Integer.parseInt(e_dayRange.getText());
+		}
+		
+		JOptionPane.showMessageDialog(null, "Start: " + s_day + ":" + s_month + "End: " + e_month + ":" +e_month);
+		System.out.println("Debug: just before for loop");
+		System.out.println(reports_list.size());
+		for(int i=0; i <reports_list.size(); i++){
+					System.out.println("Debug: in for loop");
+					System.out.println(reports_list.get(i));
+				}
+				
+
+
+	  if(currAccount != null){
+            currTab = 1;
+            
+            trans = currAccount.getTransactions();
+            
+            // display account balance at the bottom of the screen
+            sum_lab.setText("Balance: $" + currAccount.getBalance());
+            
+            Transaction transaction = new Transaction();
+            
+            tableModel.setColumnCount(0);
+            tableModel.setRowCount(0); 
+			tableModel.addColumn("Date");
+            tableModel.addColumn("Category");
+            tableModel.addColumn("Amount");
+           tableModel.addColumn("Percentage");
+		  
+           /* tableModel.addColumn("");
+            tableModel.addColumn("Amount");*/
+            
+			
+            
+            for(int i = 0; i < reports_list.size(); i++){
+                String parse_reports_list=reports_list.get(i);
+				//not the following solution will only work to get values of the report that are "single words only"
+				// meaning that if the user enter any other word beyond that of a sinle value per field, then the foling 
+				//solution will not work..EX: Cell Phone Bill. This primarily applies to the "Category Field".
+                 Scanner scan_report_list= new Scanner(parse_reports_list);
+				String date="";
+				String cat="";
+				Double amount=0.0;
+				Double percentage; // this value will need to be implimented later
+				while(scan_report_list.hasNext()){
+					date = scan_report_list.next();
+					cat=scan_report_list.next();
+					amount=Double.parseDouble(scan_report_list.next());
+				}
+				//The following line id for testing purposes onl--> seems to be working correctly
+				System.out.println(date+" "+ cat + " " +amount);
+				
+				
+                tableModel.addRow(new Object[]{
+                    transaction.getDate(),
+                    transaction.getCategory(),
+                    "$" + transaction.getAmount()
+                });
+            }
+            
+            button_1.setText("New Transaction");
+            button_2.setText("Delete Transaction");
+            button_2.setVisible(false);
+            button_2.setVisible(false);
+            view_acct.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "You must create an account first!");
+        }
+    } // initTableReports
     
     
     
@@ -795,35 +951,6 @@ public class GUI {
         button_2.setText("Delete Account");
         button_2.setVisible(true);
         view_acct.setVisible(false);
-    } // initTableAccounts
-    
-
-    
-    
-    // setup the table for viewing reports
-    private static void initTableReports(){
-			
-		JOptionPane.showMessageDialog(null,"This section is still to come, stay tuned!");
-					
-					
-		/*currTab = 1;
-        
-        tableModel.setColumnCount(0);
-        tableModel.setRowCount(0);
-        
-        tableModel.addColumn("Reports");
-        tableModel.addColumn("Reports");
-        tableModel.addColumn("Reports");
-        
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
-        tableModel.addRow(new Object[]{});
-        
-        button_1.setText("Placeholder");
-        button_2.setText("Placeholder");
-        button_2.setVisible(false);
-        */
-		
     } // initTableAccounts
     
     
@@ -964,7 +1091,7 @@ public class GUI {
                     setValueAccount(value, row, col);
                     break;
                 case 1:
-                    //setValueReport(value, row, col);
+                    setValueReport(value, row, col);
                     break;
                 case 2:
                     setValueTransaction(value, row, col);
@@ -1019,6 +1146,11 @@ public class GUI {
             
             IO.updateTranData(currAccount.getTransactions(), currAccount);
         }
+        
+        
+        private void setValueReport(Object value, int row, int col){
+            
+        } // setValueReport
         
         // change the date of the transaction
         private void transChangeDate(Object value, int row){
