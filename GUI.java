@@ -418,7 +418,8 @@ public class GUI {
                 //check to see if account name already exists
                 accExists = false;
                 for(int i = 0; i < accounts.size(); i++){
-                	if(accounts.get(i).getName().toLowerCase().equals(name.toLowerCase())){
+                	if((accounts.get(i).getName().toLowerCase().equals(name.toLowerCase()))
+                			&&(accounts.get(i).getType().equals(type))){
                 		accExists = true;
                 	}
                 }//for
@@ -446,7 +447,7 @@ public class GUI {
                 }//if
 				
                 else{
-                	JOptionPane.showMessageDialog(null, "Account name already exists!");
+                	JOptionPane.showMessageDialog(null, "Account already exists!");
                 	
                 	// try again
                     result = JOptionPane.showConfirmDialog(frame, dialog,
