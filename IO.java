@@ -6,9 +6,22 @@
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
+import java.sql.*;
+
+ 
 
 public class IO extends GUI {
     
+	
+	// JDBC driver name and database URL
+   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+   static final String DB_URL = "jdbc:mysql://localhost/cmsc420";
+
+
+   //  Database credentials
+   static final String USER = "root";
+   static final String PASS = "";
+	
     // a text file to hold account information
     private static File accountData = new File("AccountData.txt");
     private static File tranData;
@@ -18,30 +31,59 @@ public class IO extends GUI {
     @SuppressWarnings("unchecked")
     public static void initAccount(ArrayList<Account> accounts){
         
-        if (!accountData.exists()) { // create account data file if it doesn't exist
+		
+        // create account data database
             try{
-                accountData.createNewFile();
-            } catch(Exception e){
+                Class.forName(JDBC_DRIVER);
+				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+				Statement stmt = conn.createStatement();
+				
+				
+				String sql = "CREATE TABLE accounts " +
+                   "(type VARCHAR(10) not NULL, " +
+                   " name VARCHAR(30), " + 
+                   " balance double, " +  
+                   " PRIMARY KEY ( type, name ))"; 
+				
+				stmt.executeUpdate(sql);
+			
+				
+				conn.close();
+			} 
+			
+			catch(SQLException se){
+                se.printStackTrace();
+            }
+			
+			 catch(Exception e){
                 e.printStackTrace();
             }
-        } else { // Load account data if the file already exists
-        
-            Scanner scanner = null;
-            try {
-                scanner = new Scanner(accountData);
-            } catch (FileNotFoundException e1) {
-                e1.printStackTrace();
-            }
-            
+			
+	
+			
+			try{
+				 Class.forName(JDBC_DRIVER);
+				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+				Statement stmt2 = conn.createStatement();
+			  
+				String query = "Select * From accounts";
+			  
+				ResultSet rslt = stmt2.executeQuery(query);
+           
             String type;
             String name;
             double balance;
             
-            while(scanner.hasNextLine()){
-                type = scanner.next();
-                name = scanner.next();
-                balance = scanner.nextDouble();
-                
+            while(rslt.next()){
+                type = rslt.getString(1);
+                name = rslt.getString(2);
+                balance = rslt.getDouble(3);
+                System.out.println(type + name + balance);
+				
+				
+				
                 Account acc = new Account();
                 acc.setType(type);
                 acc.setName(name);
@@ -50,59 +92,96 @@ public class IO extends GUI {
                 initTrans(acc);
                 
                 accounts.add(acc);
-                
-                scanner.nextLine();
+				
+				
+			}
+			conn.close();
+			}
+			catch(SQLException se){
+                se.printStackTrace();
             }
-            
-            scanner.close();
-        }
-        
-    } // init Accounts
+			
+			 catch(Exception e){
+                e.printStackTrace();
+            }
+			
+		 // Load account data if the file already exists
 	
+	}
     
     
     
     private static void initTrans(Account acc){
-        tranData = new File(acc.getName() + ".txt");
         
-        if(!tranData.exists()){
+        
             try{
-                for (Account a : accounts) {
-                 tranData.createNewFile();
-                    // tranData = new File(System.getProperty("user.dir")+"0"+a.getName()+"TransactionData.txt");
-                }
-            } catch(Exception e){
+				Class.forName(JDBC_DRIVER);
+				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+				
+				Statement stmt = conn.createStatement();
+				
+				
+				String sql = "CREATE TABLE transactions " +
+                   "(name VARCHAR(30) not NULL," +
+                   " type VARCHAR(10), " + 
+                   " amount double, " +
+				   " date VARCHAR(10), " +
+				   " payee VARCHAR(30), " +
+				   " category VARCHAR(10), " +
+                   " comments VARCHAR(100))";
+
+				stmt.executeUpdate(sql);
+				
+				conn.close();
+			}
+			catch(SQLException se){
+                se.printStackTrace();
+            }
+            catch(Exception e){
                 e.printStackTrace();
             }
-        } else {
-            Scanner scan = null;
+			
             try {
-                scan = new Scanner(tranData);
-                scan.useDelimiter("/./");
-            } catch (FileNotFoundException e1) {
-                e1.printStackTrace();
-            }
+				Class.forName(JDBC_DRIVER);
+				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+				Statement stmt2 = conn.createStatement();
+			  
+				String query = "Select * From transactions";
+			  
+				ResultSet rslt = stmt2.executeQuery(query);
+				Transaction trans;
             
-            Transaction trans;
-            
-            while(scan.hasNextLine()){
-                
+            while(rslt.next()){
+                System.out.println(rslt.getString(1));
                 trans = new Transaction();
-                trans.setType(scan.next());
-                trans.setAmount(scan.nextDouble());
-                trans.setDate(scan.next());
-                trans.setPayee(scan.next());
-                trans.setCategory(scan.next());
-                trans.setComments(scan.next());
+                trans.setType(rslt.getString(2));
+                trans.setAmount(rslt.getDouble(3));
+                trans.setDate(rslt.getString(4));
+                trans.setPayee(rslt.getString(5));
+                trans.setCategory(rslt.getString(6));
+                trans.setComments(rslt.getString(7));
                 
                 acc.addTransaction(trans);
                 
-                scan.nextLine();
+				conn.close();
             }
-            scan.close();
+            }
+			
+			catch(SQLException se){
+                se.printStackTrace();
+            }
+
+			catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+       
+            
             
         }
-    } // initTrans
+     // initTrans
     
 	
     
@@ -110,21 +189,48 @@ public class IO extends GUI {
     // rewrite accountData.txt with new account info
     public static void updateAccountData(ArrayList<Account> accounts){
         try{ 
-            accountData.delete();
-            accountData.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(accountData,true));
+            Class.forName(JDBC_DRIVER);
+			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+			Statement stmt = conn.createStatement();
+			
+			String update = "DELETE FROM accounts";
+			
+			stmt.executeUpdate(update);
             
-            for(int i = 0; i < accounts.size(); i++){
-                
-                bw.write(accounts.get(i).getType() + " " + accounts.get(i).getName() + " " + accounts.get(i).getBalance());
-                bw.newLine();
-                
-            }// for
-            
-            bw.close();
-        } catch(IOException e1) {
-            e1.printStackTrace();
+          conn.close();  
+        } catch(SQLException se) {
+            se.printStackTrace();
         }
+		catch (Exception e) {
+            e.printStackTrace();
+        }
+		
+		try{
+			Class.forName(JDBC_DRIVER);
+			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+			Statement stmt = conn.createStatement();
+			
+			 for(int i = 0; i < accounts.size(); i++){
+                
+				Statement st = conn.createStatement();
+				
+				st.executeUpdate("INSERT INTO accounts (type, name, balance) "+"VALUES ("+"\'"+ accounts.get(i).getType() +"\'"+","+"\'"+ accounts.get(i).getName() +"\'"+","+ accounts.get(i).getBalance()+")");
+
+				
+            }// for
+			
+			conn.close();
+			
+		}
+		 catch(SQLException se) {
+            se.printStackTrace();
+        }
+		catch (Exception e) {
+            e.printStackTrace();
+        }
+		
     } // updateAccountData
 	
 	
@@ -133,40 +239,55 @@ public class IO extends GUI {
 	// rewrite tranData.txt with new account info
     public static void updateTranData(ArrayList<Transaction> trans, Account acc){
         try{ 
-            tranData = new File(System.getProperty("user.dir")+"/" + acc.getName() + ".txt");
-            tranData.delete();
-            tranData.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(tranData,true));
             
+			Class.forName(JDBC_DRIVER);
+			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+					
+			Statement stmt = conn.createStatement();
+			
+			String update = "DELETE FROM transactions WHERE name = \'" + acc.getName() +"\'";
+			
+			stmt.executeUpdate(update);
             for(int i = 0; i < trans.size(); i++){
                 //System.out.println("Testing Date: " + trans.get(i).getDate());
-                bw.write(trans.get(i).getType() + "/./" 
-                    + trans.get(i).getAmount() + "/./" 
-                    + trans.get(i).getDate() + "/./" 
-                    + trans.get(i).getPayee() + "/./" 
-                    + trans.get(i).getCategory() + "/./"
-                    + trans.get(i).getComments() + "/./" );
+				Statement st = conn.createStatement();
+               
+				st.executeUpdate("INSERT INTO transactions (name, type, amount, date, payee, category, comments) "+"VALUES ("+"\'"+ acc.getName() +"\'"+","+"\'"+ trans.get(i).getType() +"\'"+","+ trans.get(i).getAmount() +","+ "\'" + trans.get(i).getDate() +"\'"+","+"\'" + trans.get(i).getPayee() +"\'"+","+ "\'" + trans.get(i).getCategory() +"\'"+","+ "\'"+ trans.get(i).getComments() + "\'" + ")");
 
-               bw.newLine();
-                
-            
-                
             }// for
             
-            bw.close();
-        } catch(IOException e1) {
-            e1.printStackTrace();
+			conn.close();
+        } 
+		catch(SQLException se) {
+            se.printStackTrace();
         }
+		catch(Exception e) {
+            e.printStackTrace();
+        }
+		
     } // updateAccountData
     
     public static void updateTranDataName(String oldName, String newName){
-        File oldFile = new File(oldName + ".txt");
-        File newFile = new File(newName + ".txt");
-        
-        if(newFile.exists()){
-            JOptionPane.showMessageDialog(null, "That account name already exists!");
-        } else {
-            oldFile.renameTo(newFile);
+
+		try{
+			
+			Class.forName(JDBC_DRIVER);
+			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+			Statement stmt = conn.createStatement();
+			
+			String update = "UPDATE transactions SET name= \'"+ newName +"\' WHERE name = \'" + oldName +"\'";
+			
+			stmt.executeUpdate(update);
+			
+			conn.close();
+		}
+		
+		catch(SQLException se) {
+            se.printStackTrace();
+        }
+		catch(Exception e) {
+            e.printStackTrace();
         }
     } // updateTranDataName
     
