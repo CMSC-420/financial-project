@@ -111,49 +111,60 @@ public class IO extends GUI {
     
     
     private static void initTrans(Account acc){
-        
-    
-        try{
-            Class.forName(JDBC_DRIVER);
-            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            
-            
-            Statement stmt = conn.createStatement();
-            
-            
-            String sql = "CREATE TABLE transactions " +
-               "(name VARCHAR(30) not NULL," +
-               " type VARCHAR(10), " + 
-               " amount double, " +
-               " date VARCHAR(10), " +
-               " payee VARCHAR(30), " +
-               " category VARCHAR(10), " +
-               " comments VARCHAR(100))";
+      
+			String nameHolder = acc.getName();
+            try{
+				Class.forName(JDBC_DRIVER);
+				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+				
+				Statement stmt = conn.createStatement();
+				
+				
+				String sql = "CREATE TABLE transactions " +
+                   "(name VARCHAR(30) not NULL," +
+                   " type VARCHAR(10), " + 
+                   " amount double, " +
+				   " date VARCHAR(10), " +
+				   " payee VARCHAR(30), " +
+				   " category VARCHAR(10), " +
+                   " comments VARCHAR(100))";
 
-            stmt.executeUpdate(sql);
-            
-            conn.close();
-        }
-        catch(SQLException se){
-            se.printStackTrace();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        
-        try {
-            Class.forName(JDBC_DRIVER);
-            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            
-            Statement stmt2 = conn.createStatement();
-          
-            String query = "Select * From transactions";
-          
-            ResultSet rslt = stmt2.executeQuery(query);
-            Transaction trans;
-        
+				stmt.executeUpdate(sql);
+				
+				conn.close();
+			}
+			catch(SQLException se){
+                se.printStackTrace();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+			
+            try {
+				Class.forName(JDBC_DRIVER);
+				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+				Statement stmt2 = conn.createStatement();
+			  
+				String query = "Select * From transactions WHERE name = " + "\'" + nameHolder + "\'";
+			  
+				ResultSet rslt = stmt2.executeQuery(query);
+				Transaction trans;
+                
             while(rslt.next()){
-                System.out.println(rslt.getString(1));
+				System.out.println("check");
+				System.out.println(rslt.getString(1));
+				System.out.println(rslt.getString(2));
+				System.out.println(rslt.getString(3));
+				System.out.println(rslt.getString(4));
+				System.out.println(rslt.getString(5));
+				System.out.println(rslt.getString(6));
+				System.out.println(rslt.getString(7));
+				System.out.println("check done");
+				
+				
+				
                 trans = new Transaction();
                 trans.setType(rslt.getString(2));
                 trans.setAmount(rslt.getDouble(3));
@@ -211,7 +222,14 @@ public class IO extends GUI {
                 
 				Statement st = conn.createStatement();
 				
-				st.executeUpdate("INSERT INTO accounts (type, name, balance) "+"VALUES ("+"\'"+ accounts.get(i).getType() +"\'"+","+"\'"+ accounts.get(i).getName() +"\'"+","+ accounts.get(i).getBalance()+")");
+				st.executeUpdate("INSERT INTO accounts (type, name, balance) "
+                + "VALUES (" + "\'"
+                + accounts.get(i).getType() 
+                + "\'" + "," + "\'"
+                + accounts.get(i).getName() 
+                + "\'" + ","
+                + accounts.get(i).getBalance()
+                + ")");
 
 				
             }// for
@@ -285,7 +303,7 @@ public class IO extends GUI {
 				
 			Statement stmt = conn.createStatement();
 			
-			String update = "UPDATE transactions SET name= \'"+ newName +"\' WHERE name = \'" + oldName +"\'";
+			String update = "UPDATE transactions SET name= \'" + newName + "\' WHERE name = \'" + oldName + "\'";
 			
 			stmt.executeUpdate(update);
 			
