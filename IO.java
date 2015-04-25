@@ -112,8 +112,8 @@ public class IO extends GUI {
     
     
     private static void initTrans(Account acc){
-        
-        
+      
+			String nameHolder = acc.getName();
             try{
 				Class.forName(JDBC_DRIVER);
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -148,13 +148,25 @@ public class IO extends GUI {
 				
 				Statement stmt2 = conn.createStatement();
 			  
-				String query = "Select * From transactions";
+				String query = "Select * From transactions WHERE name = " + "\'" + nameHolder + "\'";
 			  
 				ResultSet rslt = stmt2.executeQuery(query);
 				Transaction trans;
-            
+				
+			
             while(rslt.next()){
-                System.out.println(rslt.getString(1));
+				System.out.println("check");
+				System.out.println(rslt.getString(1));
+				System.out.println(rslt.getString(2));
+				System.out.println(rslt.getString(3));
+				System.out.println(rslt.getString(4));
+				System.out.println(rslt.getString(5));
+				System.out.println(rslt.getString(6));
+				System.out.println(rslt.getString(7));
+				System.out.println("check done");
+				
+				
+				
                 trans = new Transaction();
                 trans.setType(rslt.getString(2));
                 trans.setAmount(rslt.getDouble(3));
