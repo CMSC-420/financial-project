@@ -1,6 +1,29 @@
 # Financial Project
 
 
+
+<hr>
+So to get this to work there are a few things you need to do:
+
+1) Install MySQL following these instructions. The first few minutes explain how to properly install MySQL for our purposes.  
+https://www.youtube.com/watch?v=O4xXzTIcnDE  
+http://dev.mysql.com/downloads/mysql/
+
+2) Download the driver to connect our program with the sql database  
+https://dev.mysql.com/downloads/connector/j/5.0.html
+
+3) Copy the mysql-connector-java-5.0.8-bin.jar into the folder that our program is in
+
+4) You will need to go into sql and create a database called cmsc420
+
+- To get into sql you will need to go to wherever you copied mysql-5.6.23-winx64, and go into \bin\ in command prompt. Then run the line 'mysqld' then open up another window of command prompt and run the line 'mysql -u root'. You should now be in the mysql shell and can run the line 'CREATE DATABASE cmsc420' to make the database.
+
+5) at this point you are ready to run the program so open up the command prompt and go to the directory where it is stored with the mysql-connector jar file
+
+6) Use 'run.bat' to compile and run the program from now on.
+<hr>
+
+
 <b>Background</b>  
 You as a user would like to manage your financial accounts with the help of a tool that keeps track of your finances. The purpose of the software is to allow users to manage their spending and income accounts. The software shall also provide a friendly graphical user interface. 
 
