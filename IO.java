@@ -17,28 +17,21 @@ public class IO extends GUI {
    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
    static final String DB_URL = "jdbc:mysql://localhost/cmsc420";
 
-
    //  Database credentials
    static final String USER = "root";
    static final String PASS = "";
 	
-    // a text file to hold account information
-    private static File accountData = new File("AccountData.txt");
-    private static File tranData;
-    
-    // create all necessary files if they don't already exist
+    // create all necessary mysql tables if they don't already exist
     // load in any saved information if the files do exist
     @SuppressWarnings("unchecked")
     public static void initAccount(ArrayList<Account> accounts){
         
-		
-        // create account data database
+        // create account data mysql table
             try{
                 Class.forName(JDBC_DRIVER);
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				
 				Statement stmt = conn.createStatement();
-				
 				
 				String sql = "CREATE TABLE accounts " +
                    "(type VARCHAR(10) not NULL, " +
@@ -48,20 +41,72 @@ public class IO extends GUI {
 				
 				stmt.executeUpdate(sql);
 			
-				
 				conn.close();
 			} 
 			
 			catch(SQLException se){
                 se.printStackTrace();
             }
-			
 			 catch(Exception e){
                 e.printStackTrace();
             }
 			
-	
 			
+			
+			//checks all transactions to make sure that the account they are associated with still exists
+			try {
+				Class.forName(JDBC_DRIVER);
+				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+				
+				Statement stmt = conn.createStatement();
+			  
+				String query = "Select * From transactions";
+			  
+				ResultSet rslt = stmt.executeQuery(query);
+				
+			
+            while(rslt.next()){
+				
+                String accNameCheck = rslt.getString(1);
+				boolean deleteAccTransData = true;
+				
+				Statement stmt2 = conn.createStatement();
+				
+				String query2 = "Select * FROM accounts";
+			  
+				ResultSet rslt2 = stmt2.executeQuery(query2);
+				
+				while(rslt2.next())
+				{
+					String transNameCheck = rslt2.getString(2);
+					
+					if(accNameCheck.equals(transNameCheck)){
+					deleteAccTransData = false;
+					}
+				}
+				
+				if(deleteAccTransData)
+				{
+					Statement stmt3 = conn.createStatement();
+					String update = "DELETE FROM transactions WHERE name = \'" + accNameCheck + "\'";
+					stmt3.executeUpdate(update);
+				}
+
+            }
+			conn.close();
+            }
+			
+			catch(SQLException se){
+                se.printStackTrace();
+            }
+
+			catch (Exception e) {
+                e.printStackTrace();
+            }
+			
+			
+	
+			//pulls all existing data from the tables into the GUI
 			try{
 				 Class.forName(JDBC_DRIVER);
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -80,10 +125,8 @@ public class IO extends GUI {
                 type = rslt.getString(1);
                 name = rslt.getString(2);
                 balance = rslt.getDouble(3);
-                System.out.println(type + name + balance);
-				
-				
-				
+               
+
                 Account acc = new Account();
                 acc.setType(type);
                 acc.setName(name);
@@ -100,27 +143,24 @@ public class IO extends GUI {
 			catch(SQLException se){
                 se.printStackTrace();
             }
-			
 			 catch(Exception e){
                 e.printStackTrace();
             }
-			
-		 // Load account data if the file already exists
-	
+
 	}
-    
+    //initAccount
+	
     
     
     private static void initTrans(Account acc){
       
 			String nameHolder = acc.getName();
+			//creates transactions mysql table if it doesn't already exist
             try{
 				Class.forName(JDBC_DRIVER);
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				
-				
 				Statement stmt = conn.createStatement();
-				
 				
 				String sql = "CREATE TABLE transactions " +
                    "(name VARCHAR(30) not NULL," +
@@ -142,18 +182,21 @@ public class IO extends GUI {
                 e.printStackTrace();
             }
 			
+		
+			
+			
+			//Load data from mysql transactions table into the GUI
             try {
 				Class.forName(JDBC_DRIVER);
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				
-				Statement stmt2 = conn.createStatement();
+				Statement stmt = conn.createStatement();
 			  
 				String query = "Select * From transactions WHERE name = " + "\'" + nameHolder + "\'";
 			  
-				ResultSet rslt = stmt2.executeQuery(query);
+				ResultSet rslt = stmt.executeQuery(query);
 				Transaction trans;
 				
-			
             while(rslt.next()){
 
                 trans = new Transaction();
@@ -165,8 +208,6 @@ public class IO extends GUI {
                 trans.setComments(rslt.getString(7));
                 
                 acc.addTransaction(trans);
-                
-				
             }
 			conn.close();
             }
@@ -178,18 +219,15 @@ public class IO extends GUI {
 			catch (Exception e) {
                 e.printStackTrace();
             }
-            
-       
-            
-            
         }
      // initTrans
     
 	
     
 	
-    // rewrite accountData.txt with new account info
+    // rewrite mysql accounts table with new account info
     public static void updateAccountData(ArrayList<Account> accounts){
+		//delete all entries from accounts table
         try{ 
             Class.forName(JDBC_DRIVER);
 			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -208,6 +246,7 @@ public class IO extends GUI {
             e.printStackTrace();
         }
 		
+		//Load all data from the GUI accounts array into the mysql accounts table
 		try{
 			Class.forName(JDBC_DRIVER);
 			Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -238,8 +277,9 @@ public class IO extends GUI {
 	
     
 	
-	// rewrite tranData.txt with new account info
+	// rewrite mysql transactions table with new transaction info
     public static void updateTranData(ArrayList<Transaction> trans, Account acc){
+		//delete all entries from the mysql transaction table associated with the account from the parameters 
         try{ 
             
 			Class.forName(JDBC_DRIVER);
@@ -251,7 +291,8 @@ public class IO extends GUI {
 			
 			stmt.executeUpdate(update);
             for(int i = 0; i < trans.size(); i++){
-                //System.out.println("Testing Date: " + trans.get(i).getDate());
+                
+				//load all transactions form the transactions array into the mysql transactions table
 				Statement st = conn.createStatement();
                
 				st.executeUpdate("INSERT INTO transactions (name, type, amount, date, payee, category, comments) "+"VALUES ("+"\'"+ acc.getName() +"\'"+","+"\'"+ trans.get(i).getType() +"\'"+","+ trans.get(i).getAmount() +","+ "\'" + trans.get(i).getDate() +"\'"+","+"\'" + trans.get(i).getPayee() +"\'"+","+ "\'" + trans.get(i).getCategory() +"\'"+","+ "\'"+ trans.get(i).getComments() + "\'" + ")");
@@ -269,6 +310,7 @@ public class IO extends GUI {
 		
     } // updateAccountData
     
+	//edit the name of the of the account in the mysql transactions table
     public static void updateTranDataName(String oldName, String newName){
 
 		try{
