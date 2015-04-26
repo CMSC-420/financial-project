@@ -62,7 +62,7 @@ public class IO extends GUI {
 	
 			
 			try{
-				 Class.forName(JDBC_DRIVER);
+				Class.forName(JDBC_DRIVER);
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				
 				Statement stmt2 = conn.createStatement();
@@ -71,30 +71,30 @@ public class IO extends GUI {
 			  
 				ResultSet rslt = stmt2.executeQuery(query);
            
-            String type;
-            String name;
-            double balance;
-            
-            while(rslt.next()){
-                type = rslt.getString(1);
-                name = rslt.getString(2);
-                balance = rslt.getDouble(3);
-                System.out.println(type + name + balance);
-				
-				
-				
-                Account acc = new Account();
-                acc.setType(type);
-                acc.setName(name);
-                acc.setBalance(balance);
+                String type;
+                String name;
+                double balance;
                 
-                initTrans(acc);
-                
-                accounts.add(acc);
-				
-				
-			}
-			conn.close();
+                while(rslt.next()){
+                    type = rslt.getString(1);
+                    name = rslt.getString(2);
+                    balance = rslt.getDouble(3);
+                    System.out.println(type + name + balance);
+                    
+                    
+                    
+                    Account acc = new Account();
+                    acc.setType(type);
+                    acc.setName(name);
+                    acc.setBalance(balance);
+                    
+                    initTrans(acc);
+                    
+                    accounts.add(acc);
+                    
+                    
+                }
+                conn.close();
 			}
 			catch(SQLException se){
                 se.printStackTrace();
@@ -175,8 +175,10 @@ public class IO extends GUI {
                 
                 acc.addTransaction(trans);
                 
-                conn.close();
+                
             }
+            
+            conn.close();
         }
         
         catch(SQLException se){
