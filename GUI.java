@@ -125,7 +125,9 @@ public class GUI {
                 
                 if(index >= 0){
                     currAccount = accounts.get(index);
-                    if(currTab == 2)
+                    if(currTab == 1)
+                        initTableReports();
+                    else if(currTab == 2)
                         initTableTransactions();
                 }
             }
@@ -274,11 +276,7 @@ public class GUI {
                                         currAccount.setBalance(currAccount.getBalance() - t.getAmount());
                                         break;
                                     case "Transfer":
-                                        /*
-                                         * This needs work. It should update both the current account
-                                         * and the account that was receiving the transfer.
-                                         */
-                                        currAccount.setBalance(currAccount.getBalance() + t.getAmount());
+                                        deleteTransfer(t);
                                         break;
                                 }
                                 
@@ -749,8 +747,10 @@ public class GUI {
                 });
             }
             
+            sum_lab.setVisible(true);
             button_1.setText("New Transaction");
             button_2.setText("Delete Transaction");
+            button_1.setVisible(true);
             button_2.setVisible(true);
             view_acct.setVisible(true);
         } else {
@@ -761,163 +761,93 @@ public class GUI {
 	
 	
 	
-	
-	
-	 private static void initTableReports(){
-     
-	/*
-	*
-	*		My thoughts:
-			One way:
-				1) Populate the list of all transaction data
-	*			2) Allow user to sort by data:
-				3) ONCE given a sort range: re populate the list;
-				
-				
-			Another way: as the user enter day not only right it to a textfile, but add the all fields as one string to an arraylist
-				then run the the array to find the date specified
-				
-				
-				
-				For now: just popup the dialog list and ask use for range and then populate the list
-					Just to get working...
-	*/
-	
-	
-        String qeurry[] = new String[50]; // <-- this will need a way to create the array and get the size automatically or use somthing besides an array...
-										// currently for testing only 
-
-	  // temporary panel for the JOptionPane
-        JPanel dialog = new JPanel(new BorderLayout(5,5));
-        // all of the labels for the JOptionPane
-        JPanel labels = new JPanel(new GridLayout(0,1,2,2));
-        // all of the input fields for the JOptionPane
-        JPanel fields = new JPanel(new GridLayout(0,1,2,2));
-        
-        // setup the JOptionPane for adding a transaction
-        labels.add(new JLabel("Start"));
-        labels.add(new JLabel("Month"));
-        labels.add(new JLabel("Month"));
-        labels.add(new JLabel("End"));
-        labels.add(new JLabel("Day"));
-        labels.add(new JLabel("Day"));
-        /*labels.add(new JLabel("Account Type"));
-        labels.add(new JLabel("Category"));
-        labels.add(new JLabel("Comments"));
-        labels.add(new JLabel("Amount"));*/
-        dialog.add(labels, BorderLayout.WEST);
-        
-       // JLabel transDate = new JLabel(curr_date);
-        JTextField s_monthRange = new JTextField();
-        JTextField e_monthRange = new JTextField();
-        JTextField e_dayRange = new JTextField();
-        JTextField s_dayRange = new JTextField();
-        /*JComboBox transType = new JComboBox();
-        JTextField transCategory = new JTextField();
-        JTextField transComments = new JTextField();
-        JTextField transAmount = new JTextField();*/
-     /*   transType.addItem("Spending");
-        transType.addItem("Income");
-		transType.addItem("Transfer");*/
-		fields.add(s_monthRange);
-		fields.add(s_monthRange);
-		fields.add(e_dayRange);
-		fields.add(e_dayRange);
-        /*fields.add(transPayee);
-        fields.add(transType);
-        fields.add(transCategory);
-        fields.add(transComments);
-        fields.add(transAmount);*/
-        dialog.add(fields, BorderLayout.CENTER);
-
-        // prompt the user for basic account info
-       int  result = JOptionPane.showConfirmDialog(frame, dialog,
-                        "Please Enter a Range", JOptionPane.OK_CANCEL_OPTION);
-
-		/**
-		*		it will need error checking as well...
-		*
-		*/
-		
-		 /*
-				Starts by prompting a user for the range they want to view...Will not work with current implimentation but this is the setup;
-				For now will simply return the range the user request....*/
-				
-		 int s_day=0,s_month=0, e_day=0,e_month=0;
-		if(result==JOptionPane.OK_OPTION){
-			s_month = Integer.parseInt(s_monthRange.getText());
-			s_month = Integer.parseInt(s_monthRange.getText());
-			e_day = Integer.parseInt(e_dayRange.getText());
-			e_day = Integer.parseInt(e_dayRange.getText());
-		}
-		
-		JOptionPane.showMessageDialog(null, "Start: " + s_day + ":" + s_month + "End: " + e_month + ":" +e_month);
-		System.out.println("Debug: just before for loop");
-		System.out.println(reports_list.size());
-		for(int i=0; i <reports_list.size(); i++){
-					System.out.println("Debug: in for loop");
-					System.out.println(reports_list.get(i));
-				}
-				
-
-
-	  if(currAccount != null){
+	// setup the table for viewing a spending analysis report
+	private static void initTableReports(){
+        if(currAccount != null){
             currTab = 1;
             
+            // reset table
+            tableModel.setColumnCount(0);
+            tableModel.setRowCount(0);
+            // create appropriate columns
+            tableModel.addColumn("Category");
+            tableModel.addColumn("Total");
+            tableModel.addColumn("Percent");
+            
+            // transactions of the current account
             trans = currAccount.getTransactions();
             
-            // display account balance at the bottom of the screen
-            sum_lab.setText("Balance: $" + currAccount.getBalance());
+            // I made this class to simplify the grouping of these three pieces of data
+            class Report{
+                public String category; // category of spending
+                public double total; // total spent in this category
+                public double percent; // percent compared to total spending
+            } // report
             
-            Transaction transaction = new Transaction();
+            // one Report for each category
+            ArrayList<Report> reports = new ArrayList<>();
             
-            tableModel.setColumnCount(0);
-            tableModel.setRowCount(0); 
-			tableModel.addColumn("Date");
-            tableModel.addColumn("Category");
-            tableModel.addColumn("Amount");
-           tableModel.addColumn("Percentage");
-		  
-           /* tableModel.addColumn("");
-            tableModel.addColumn("Amount");*/
+            Transaction t; // the transaction currently being looked at
+            boolean exists = false; // whether the category is already represented in reports
+            int index = 0; // the index of the report (if the category already exists)
+            double totalSpent = 0; // the total amount spent across all categories
+            Report rep; // the report currently being looked at
             
-			
+            // update the reports arraylist with all necessary information
+            for(int i = 0; i < trans.size(); i++){
+                t = trans.get(i);
+                
+                if(t.getType().equals("Spending")){ // only count spending; ignore income and transfers
+                    exists = false; // assume the category doesn't exist yet
+                    
+                    for(int j = 0; j < reports.size(); j++){
+                        // the category has been found in 'reports' list
+                        if(reports.get(j).category.equals(t.getCategory())){
+                            exists = true;
+                            index = j; // record the index of the report
+                        }
+                    }
+                    
+                    if(exists){ // if the category already exists
+                        rep = reports.get(index); // get the correct report
+                        
+                        // update values
+                        totalSpent += t.getAmount();
+                        rep.total += t.getAmount();
+                    }
+                    else { // the category does not already exist
+                        rep = new Report(); // new Report
+                        
+                        // update values
+                        totalSpent += t.getAmount();
+                        rep.category = t.getCategory();
+                        rep.total = t.getAmount();
+                        
+                        // add new report to the list
+                        reports.add(rep);
+                    }
+                } // if
+            } // for
             
-            for(int i = 0; i < reports_list.size(); i++){
-                String parse_reports_list=reports_list.get(i);
-				//not the following solution will only work to get values of the report that are "single words only"
-				// meaning that if the user enter any other word beyond that of a sinle value per field, then the foling 
-				//solution will not work..EX: Cell Phone Bill. This primarily applies to the "Category Field".
-                 Scanner scan_report_list= new Scanner(parse_reports_list);
-				String date="";
-				String cat="";
-				Double amount=0.0;
-				Double percentage; // this value will need to be implimented later
-				while(scan_report_list.hasNext()){
-					date = scan_report_list.next();
-					cat=scan_report_list.next();
-					amount=Double.parseDouble(scan_report_list.next());
-				}
-				//The following line id for testing purposes onl--> seems to be working correctly
-				System.out.println(date+" "+ cat + " " +amount);
-				
-				
-                tableModel.addRow(new Object[]{
-                    transaction.getDate(),
-                    transaction.getCategory(),
-                    "$" + transaction.getAmount()
-                });
-            }
+            // populate the table
+            for(int i = 0; i < reports.size(); i++){
+                rep = reports.get(i);
+                rep.percent = (rep.total / totalSpent) * 100; // update the percentage of total spending
+                
+                // add a row to the table
+                tableModel.addRow(new Object[]{rep.category, "$" + rep.total, rep.percent + "%"});
+            } // for
             
-            button_1.setText("New Transaction");
-            button_2.setText("Delete Transaction");
-            button_2.setVisible(false);
+            // update the UI
+            sum_lab.setVisible(false);
+            button_1.setVisible(false);
             button_2.setVisible(false);
             view_acct.setVisible(true);
-        } else {
+        }
+        else { // no accounts have been created yet
             JOptionPane.showMessageDialog(null, "You must create an account first!");
         }
-    } // initTableReports
+    }
     
     
     
@@ -947,7 +877,10 @@ public class GUI {
             account = accounts.get(i);
             tableModel.addRow(new Object[]{account.getName(), account.getType(), "$" + account.getBalance()});
         }
+        
+        sum_lab.setVisible(true);
         button_1.setText("New Account");
+        button_1.setVisible(true);
         button_2.setText("Delete Account");
         button_2.setVisible(true);
         view_acct.setVisible(false);
@@ -1051,6 +984,14 @@ public class GUI {
     
     
     
+    // handle the complex task of deleting a transfer
+    private static void deleteTransfer(Transaction t){
+        
+    } // deleteTransfer
+    
+    
+    
+    
     /*
 	 * This class was made to allow the use of certain variable types in the table.
 	 * In particular, this allows the use of booleans, because it forces the table to 
@@ -1069,8 +1010,6 @@ public class GUI {
 				temp = getValueAt(0, index).getClass();
 			} catch(NullPointerException npe){
                 //System.out.println("NullPointerException - GUI.MyTableModel.getColumnClass");
-				System.out.println("This section is a work in progress");
-				
 			}
 			
 			return temp;
@@ -1091,7 +1030,7 @@ public class GUI {
                     setValueAccount(value, row, col);
                     break;
                 case 1:
-                    setValueReport(value, row, col);
+                    super.setValueAt(value, row, col); // temporary
                     break;
                 case 2:
                     setValueTransaction(value, row, col);

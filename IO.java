@@ -25,52 +25,48 @@ public class IO extends GUI {
     private static File accountData = new File("AccountData.txt");
     private static File tranData;
     
-    // create all necessary files if they don't already exist
-    // load in any saved information if the files do exist
+    // load all account info
     @SuppressWarnings("unchecked")
     public static void initAccount(ArrayList<Account> accounts) throws IOException{
         
-		
         // create account data database
-            try{
-                Class.forName(JDBC_DRIVER);
-				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-				
-				Statement stmt = conn.createStatement();
-				
-				
-				String sql = "CREATE TABLE accounts " +
-                   "(type VARCHAR(10) not NULL, " +
-                   " name VARCHAR(30), " + 
-                   " balance double, " +  
-                   " PRIMARY KEY ( type, name ))"; 
-				
-				stmt.executeUpdate(sql);
-			
-				
-				conn.close();
-			} 
-			
-			catch(SQLException se){
-                se.printStackTrace();
-            }
-			
-			 catch(Exception e){
-                e.printStackTrace();
-            }
-			
-	
-			
-			try{
-				 Class.forName(JDBC_DRIVER);
-				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-				
-				Statement stmt2 = conn.createStatement();
-			  
-				String query = "Select * From accounts";
-			  
-				ResultSet rslt = stmt2.executeQuery(query);
-           
+        try{
+            Class.forName(JDBC_DRIVER);
+            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            
+            Statement stmt = conn.createStatement();
+            
+            
+            String sql = "CREATE TABLE accounts " +
+               "(type VARCHAR(10) not NULL, " +
+               " name VARCHAR(30), " + 
+               " balance double, " +  
+               " PRIMARY KEY ( type, name ))"; 
+            
+            stmt.executeUpdate(sql);
+        
+            
+            conn.close();
+        }
+        catch(SQLException se){
+            se.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        
+
+        
+        try{
+            Class.forName(JDBC_DRIVER);
+            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            
+            Statement stmt2 = conn.createStatement();
+          
+            String query = "Select * From accounts";
+          
+            ResultSet rslt = stmt2.executeQuery(query);
+       
             String type;
             String name;
             double balance;
@@ -80,9 +76,9 @@ public class IO extends GUI {
                 name = rslt.getString(2);
                 balance = rslt.getDouble(3);
                 System.out.println(type + name + balance);
-				
-				
-				
+                
+                
+                
                 Account acc = new Account();
                 acc.setType(type);
                 acc.setName(name);
@@ -91,80 +87,79 @@ public class IO extends GUI {
                 initTrans(acc);
                 
                 accounts.add(acc);
-				
-				
-			}
-			conn.close();
-			}
-			catch(SQLException se){
-                se.printStackTrace();
+                
             }
-			
-			 catch(Exception e){
-                e.printStackTrace();
-            }
-			
-		 // Load account data if the file already exists
-	
+            conn.close();
+        }
+        catch(SQLException se){
+            se.printStackTrace();
+        }
+        
+         catch(Exception e){
+            e.printStackTrace();
+        }
+
 	}
     
     
     
     private static void initTrans(Account acc){
       
-			String nameHolder = acc.getName();
-            try{
-				Class.forName(JDBC_DRIVER);
-				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-				
-				
-				Statement stmt = conn.createStatement();
-				
-				
-				String sql = "CREATE TABLE transactions " +
-                   "(name VARCHAR(30) not NULL," +
-                   " type VARCHAR(10), " + 
-                   " amount double, " +
-				   " date VARCHAR(10), " +
-				   " payee VARCHAR(30), " +
-				   " category VARCHAR(10), " +
-                   " comments VARCHAR(100))";
+        String nameHolder = acc.getName();
+        
+        try{
+            Class.forName(JDBC_DRIVER);
+            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            
+            
+            Statement stmt = conn.createStatement();
+            
+            
+            String sql = "CREATE TABLE transactions " +
+               "(name VARCHAR(30) not NULL," +
+               " type VARCHAR(10), " + 
+               " amount double, " +
+               " date VARCHAR(10), " +
+               " payee VARCHAR(30), " +
+               " category VARCHAR(10), " +
+               " comments VARCHAR(100))";
 
-				stmt.executeUpdate(sql);
-				
-				conn.close();
-			}
-			catch(SQLException se){
-                se.printStackTrace();
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-			
-            try {
-				Class.forName(JDBC_DRIVER);
-				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-				
-				Statement stmt2 = conn.createStatement();
-			  
-				String query = "Select * From transactions WHERE name = " + "\'" + nameHolder + "\'";
-			  
-				ResultSet rslt = stmt2.executeQuery(query);
-				Transaction trans;
-                
+            stmt.executeUpdate(sql);
+            
+            conn.close();
+        }
+        catch(SQLException se){
+            se.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        
+        try {
+            Class.forName(JDBC_DRIVER);
+            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            
+            Statement stmt2 = conn.createStatement();
+          
+            String query = "Select * From transactions WHERE name = " + "\'" + nameHolder + "\'";
+          
+            ResultSet rslt = stmt2.executeQuery(query);
+            Transaction trans;
+            
             while(rslt.next()){
-				System.out.println("check");
-				System.out.println(rslt.getString(1));
-				System.out.println(rslt.getString(2));
-				System.out.println(rslt.getString(3));
-				System.out.println(rslt.getString(4));
-				System.out.println(rslt.getString(5));
-				System.out.println(rslt.getString(6));
-				System.out.println(rslt.getString(7));
-				System.out.println("check done");
-				
-				
-				
+                /* testing
+                System.out.println("check");
+                System.out.println(rslt.getString(1));
+                System.out.println(rslt.getString(2));
+                System.out.println(rslt.getString(3));
+                System.out.println(rslt.getString(4));
+                System.out.println(rslt.getString(5));
+                System.out.println(rslt.getString(6));
+                System.out.println(rslt.getString(7));
+                System.out.println("check done");
+                */
+                
+                
                 trans = new Transaction();
                 trans.setType(rslt.getString(2));
                 trans.setAmount(rslt.getDouble(3));
@@ -175,14 +170,13 @@ public class IO extends GUI {
                 
                 acc.addTransaction(trans);
                 
-                conn.close();
             }
-        }
         
+            conn.close();
+        }
         catch(SQLException se){
             se.printStackTrace();
         }
-
         catch (Exception e) {
             e.printStackTrace();
         }
@@ -192,7 +186,7 @@ public class IO extends GUI {
 	
     
 	
-    // rewrite accountData.txt with new account info
+    // update the account info in the database
     public static void updateAccountData(ArrayList<Account> accounts){
         try{ 
             Class.forName(JDBC_DRIVER);
@@ -249,7 +243,7 @@ public class IO extends GUI {
 	
     
 	
-	// rewrite tranData.txt with new account info
+	// update the transaction info for the given account in the database
     public static void updateTranData(ArrayList<Transaction> trans, Account acc){
         try{ 
             
@@ -261,6 +255,7 @@ public class IO extends GUI {
 			String update = "DELETE FROM transactions WHERE name = \'" + acc.getName() +"\'";
 			
 			stmt.executeUpdate(update);
+            
             for(int i = 0; i < trans.size(); i++){
 				Statement st = conn.createStatement();
                
@@ -284,7 +279,7 @@ public class IO extends GUI {
             }// for
             
 			conn.close();
-        } 
+        }
 		catch(SQLException se) {
             se.printStackTrace();
         }
@@ -294,6 +289,7 @@ public class IO extends GUI {
 		
     } // updateAccountData
     
+    // change the name of the transactions file
     public static void updateTranDataName(String oldName, String newName){
 
 		try{

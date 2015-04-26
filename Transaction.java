@@ -10,7 +10,6 @@ public class Transaction{
     private String payee; // where the money came from or went to
     private String comments; // any comments the user would like to make about the transaction
     private String category; // e.g. groceries, bills, phone, gas, etc
-    private boolean isIncome; // whether this is an income or spending transaction
     
     public Transaction(){
         amount = 0;
@@ -18,7 +17,6 @@ public class Transaction{
         payee = "N/A";
         comments = "";
         category = "any";
-        isIncome = true;
     } // constructor
     
     /*
@@ -54,10 +52,6 @@ public class Transaction{
         this.category = category;
     } // setCategory
     
-    public void setIsIncome(Boolean isIncome){
-        this.isIncome = isIncome;
-    } // setIncome
-    
     public void setType(String type){
         
         this.type=type;
@@ -85,56 +79,10 @@ public class Transaction{
         return category;
     } // getCategory
     
-    public Boolean isIncome(){
-        return isIncome;
-    } // isIncome
-    
     public String getType(){
         
         return type;
-    }
-    
-    public String getIncome() {
-        return "Income";
-    }
-    public String getSpending() {
-        return "Spending";
-    }
-    public String getTransfer() {
-        return "Transfer";
-    }
+    } // getType
 } // class
-
-
-
-//class for different sub type constructors
-class Income extends Transaction{
-    public Income(){
-        super();
-        type = "Income";
-    } // default constructor
-} // Income class
-
-
-
-
-class Spending extends Transaction{
-    public Spending(){
-        super();
-        type = "Spending";
-    } // default constructor
-} // Spending class
-
-
-
-
-class Transfer extends Transaction{
-    public Transfer(){
-        super();
-        type = "Transaction";
-    } // default constructor
-} // Transfer class
-
-
 
 
