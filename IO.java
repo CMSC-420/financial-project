@@ -155,18 +155,7 @@ public class IO extends GUI {
 				
 			
             while(rslt.next()){
-				System.out.println("check");
-				System.out.println(rslt.getString(1));
-				System.out.println(rslt.getString(2));
-				System.out.println(rslt.getString(3));
-				System.out.println(rslt.getString(4));
-				System.out.println(rslt.getString(5));
-				System.out.println(rslt.getString(6));
-				System.out.println(rslt.getString(7));
-				System.out.println("check done");
-				
-				
-				
+
                 trans = new Transaction();
                 trans.setType(rslt.getString(2));
                 trans.setAmount(rslt.getDouble(3));
@@ -177,8 +166,9 @@ public class IO extends GUI {
                 
                 acc.addTransaction(trans);
                 
-				conn.close();
+				
             }
+			conn.close();
             }
 			
 			catch(SQLException se){
