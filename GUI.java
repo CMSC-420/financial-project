@@ -731,7 +731,7 @@ public class GUI {
             tableModel.addColumn("Type");
             tableModel.addColumn("Category");
             tableModel.addColumn("Comments");
-            tableModel.addColumn("Amount");
+            tableModel.addColumn("Amount ($)");
             
             // combobox to change the transaction type
             JComboBox transTypeCombo = new JComboBox();
@@ -789,7 +789,7 @@ public class GUI {
                     transaction.getType(), 
                     transaction.getCategory(),
                     transaction.getComments(),
-                    "$" + transaction.getAmount()
+                    transaction.getAmount()
                 });
             }
             
@@ -1170,10 +1170,26 @@ public class GUI {
                     trans.get(row).setComments(String.valueOf(value)); // change the comments
                     break;
                 case 5:
-                    //trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // change the amount
+                    try{
+                        if(trans.get(row).getType().equals("Spending")){
+                            currAccount.setBalance(currAccount.getBalance() + trans.get(row).getAmount());
+                            trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // change the amount
+                            currAccount.setBalance(currAccount.getBalance() - trans.get(row).getAmount());
+                        }
+                        else if(trans.get(row).getType().equals("Income")){
+                            currAccount.setBalance(currAccount.getBalance() - trans.get(row).getAmount());
+                            trans.get(row).setAmount(Double.parseDouble(String.valueOf(value))); // change the amount
+                            currAccount.setBalance(currAccount.getBalance() + trans.get(row).getAmount());
+                        }
+                        
+                    } catch(Exception e){
+                        JOptionPane.showMessageDialog(null, "Please enter a valid dollar amount!");
+                    }
+                    initTableTransactions();
                     break;
 			}
             
+            IO.updateAccountData(accounts);
             IO.updateTranData(currAccount.getTransactions(), currAccount);
         }
         
