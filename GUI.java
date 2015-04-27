@@ -281,7 +281,8 @@ public class GUI {
                                 }
                                 
                                 initTableTransactions(); // update the table
-                                IO.updateTranData(trans, currAccount); // update the text file
+                                IO.updateAccountData(accounts); // update the account data
+                                IO.updateTranData(trans, currAccount); // update the transaction data
                             } else { // user canceled
                                 // do nothing
                             }
@@ -591,7 +592,7 @@ public class GUI {
                 }
             }
             
-            if(inputError == 0){
+            if(inputError == 0){ // no errors
                 // get the account info from the popup
                 String date = transDate.getText();
                 String payee = transPayee.getText();
@@ -628,8 +629,10 @@ public class GUI {
                             JOptionPane.showMessageDialog(null, "Cannot transfer to itself!");
                         } else {
                             
-                            trans.add(transaction);
+                            transaction.setTarget(target);
+                            
                             currAccount.setBalance(currAccount.getBalance() - amount);
+                            
                             
                             target.setBalance(target.getBalance() + amount);
                             Transaction temp = new Transaction();
@@ -639,7 +642,17 @@ public class GUI {
                             temp.setCategory(cat);
                             temp.setDate(curr_date);
                             temp.setType(type);
+                            temp.setSender(currAccount);
+                            
+                            
+                            transaction.setPartner(temp);
+                            temp.setPartner(transaction);
+                            
+                            trans.add(transaction);
                             target.addTransaction(temp);
+                            
+                            
+                            
                             IO.updateTranData(target.getTransactions(), target);
                         }
                         break;
@@ -1077,7 +1090,28 @@ public class GUI {
     
     // handle the complex task of deleting a transfer
     private static void deleteTransfer(Transaction t){
+        trans = currAccount.getTransactions();
         
+        if(t.getTarget() != null){ // t is sending the transfer
+            
+            trans.remove(t);
+            currAccount.setBalance(currAccount.getBalance() + t.getAmount());
+            
+            t.getTarget().getTransactions().remove(t.getPartner());
+            t.getTarget().setBalance(t.getTarget().getBalance() - t.getAmount());
+            
+            IO.updateTranData(t.getTarget().getTransactions(), t.getTarget());
+        }
+        else { // t is receiving the transfer
+            
+            trans.remove(t);
+            currAccount.setBalance(currAccount.getBalance() - t.getAmount());
+            
+            t.getSender().getTransactions().remove(t.getPartner());
+            t.getSender().setBalance(t.getSender().getBalance() + t.getAmount());
+            
+            IO.updateTranData(t.getSender().getTransactions(), t.getSender());
+        }
     } // deleteTransfer
     
     

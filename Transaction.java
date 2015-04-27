@@ -13,6 +13,7 @@ public class Transaction{
     // only used for transfers
     private Account target; // the account this transfer is being sent to
     private Account sender; // the account that sent this transfer
+    private Transaction partner; // the other half of this transfer
     
     public Transaction(){
         amount = 0;
@@ -22,6 +23,7 @@ public class Transaction{
         category = "any";
         target = null;
         sender = null;
+        partner = null;
     } // constructor
     
     /*
@@ -70,6 +72,10 @@ public class Transaction{
         this.sender = sender;
     } // setSender
     
+    public void setPartner(Transaction partner){
+        this.partner = partner;
+    } // setPartner
+    
     
     
     public double getAmount(){
@@ -103,6 +109,10 @@ public class Transaction{
     public Account getSender(){
         return sender;
     } // getSender
+    
+    public Transaction getPartner(){
+        return partner;
+    } // getPartner
 } // class
 
 
