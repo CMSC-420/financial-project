@@ -733,6 +733,52 @@ public class GUI {
             tableModel.addColumn("Comments");
             tableModel.addColumn("Amount");
             
+            // combobox to change the transaction type
+            JComboBox transTypeCombo = new JComboBox();
+            transTypeCombo.addItem("Spending");
+            transTypeCombo.addItem("Income");
+            
+            // put the combobox in the middle column
+            table.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(transTypeCombo));
+            
+            // make the combobox change the account type when it is selected
+            transTypeCombo.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    
+                    int index = transTypeCombo.getSelectedIndex();
+                    int row = table.getSelectedRow();
+                    
+                    if(index >= 0 && row >= 0){
+                        Transaction t = trans.get(row);
+                        String oldType;
+                        
+                        switch(index){
+                            case 0:
+                                oldType = t.getType(); // get the old type
+                                
+                                if(oldType.equals("Income")){ // if the old type was income
+                                    currAccount.setBalance(currAccount.getBalance() - (2 * t.getAmount()));
+                                    sum_lab.setText("Balance: $" + currAccount.getBalance());
+                                }
+                                t.setType("Spending");
+                                break;
+                            case 1:
+                                oldType = t.getType(); // get the old type
+                                
+                                if(oldType.equals("Spending")){ // if the old type was spending
+                                    currAccount.setBalance(currAccount.getBalance() + (2 * t.getAmount()));
+                                    sum_lab.setText("Balance: $" + currAccount.getBalance());
+                                }
+                                t.setType("Income");
+                                break;
+                        }
+                        
+                        IO.updateAccountData(accounts);
+                        IO.updateTranData(trans, currAccount);
+                    }
+                }
+            });
+        
             
             for(int i = 0; i < trans.size(); i++){
                 transaction = trans.get(i);
@@ -854,30 +900,75 @@ public class GUI {
     
     // setup the table for viewing accounts
     private static void initTableAccounts(){
-		// once the account screen is loaded: checks the all accounts for a sum and updates the sum amount
-		// else if no accounts exits sets the balance to 0
-		
-        currTab = 0;
+		currTab = 0;
         
+        // update the total balance of all accounts
 		Double total = 0.0;
 		for(Account a:accounts){
             total += a.getBalance();
 		}
         sum_lab.setText("Total: $" + total);
         
-        Account account = new Account();
+        Account account;// = new Account();
         tableModel.setColumnCount(0);
         tableModel.setRowCount(0);
         
+        // setup columns
         tableModel.addColumn("Account Name");
         tableModel.addColumn("Account Type");
         tableModel.addColumn("Balance");
         
+        // combobox for changing account type
+        JComboBox accTypeCombo = new JComboBox();
+        accTypeCombo.addItem("Checking");
+        accTypeCombo.addItem("Savings");
+        accTypeCombo.addItem("Credit Card");
+        accTypeCombo.addItem("COD");
+        accTypeCombo.addItem("Money Market");
+        
+        // put the combobox in the middle column
+        table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(accTypeCombo));
+        
+        // make the combobox change the account type when it is selected
+        accTypeCombo.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                int index = accTypeCombo.getSelectedIndex();
+                int row = table.getSelectedRow();
+                
+                if(index >= 0 && row >= 0){
+                    Account account = accounts.get(row);
+                    
+                    switch(index){
+                        case 0:
+                            account.setType("Checking");
+                            break;
+                        case 1:
+                            account.setType("Savings");
+                            break;
+                        case 2:
+                            account.setType("CreditCard");
+                            break;
+                        case 3:
+                            account.setType("COD");
+                            break;
+                        case 4:
+                            account.setType("MoneyMarket");
+                            break;
+                    }
+                    
+                    IO.updateAccountData(accounts);
+                }
+            }
+        });
+        
+        // add a row for each account
         for(int i = 0; i < accounts.size(); i++){
             account = accounts.get(i);
-            tableModel.addRow(new Object[]{account.getName(), account.getType(), "$" + account.getBalance()});
+            
+            tableModel.addRow(new Object[]{account.getName(), account.getType() , "$" + account.getBalance()});
         }
         
+        // buttons, dropdown, and balance counter
         sum_lab.setVisible(true);
         button_1.setText("New Account");
         button_1.setVisible(true);
