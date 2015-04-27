@@ -2,14 +2,17 @@ import java.util.*;
 import java.util.Date;
 
 public class Transaction{
-    //type to identify the transaction that is being recorded
-    public String type; //< -- this should be private to ensure encapsulation but for some reason I got an      
-                        // error stating: "type has private access" so switched to public for testing and debugging
+    
+    private String type; // spending / income / transfer
     private double amount; // the amount of money involved
     private String date; // the date the transaction occurred
     private String payee; // where the money came from or went to
     private String comments; // any comments the user would like to make about the transaction
     private String category; // e.g. groceries, bills, phone, gas, etc
+    
+    // only used for transfers
+    private Account target; // the account this transfer is being sent to
+    private Account sender; // the account that sent this transfer
     
     public Transaction(){
         amount = 0;
@@ -17,6 +20,8 @@ public class Transaction{
         payee = "N/A";
         comments = "";
         category = "any";
+        target = null;
+        sender = null;
     } // constructor
     
     /*
@@ -57,6 +62,14 @@ public class Transaction{
         this.type=type;
     }
     
+    public void setTarget(Account target){
+        this.target = target;
+    } // setTarget
+    
+    public void setSender(Account sender){
+        this.sender = sender;
+    } // setSender
+    
     
     
     public double getAmount(){
@@ -80,9 +93,16 @@ public class Transaction{
     } // getCategory
     
     public String getType(){
-        
         return type;
     } // getType
+    
+    public Account getTarget(){
+        return target;
+    } // getTarget
+    
+    public Account getSender(){
+        return sender;
+    } // getSender
 } // class
 
 
