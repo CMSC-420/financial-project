@@ -67,6 +67,7 @@ public class IO extends GUI {
             while(rslt.next()){
                 
                 String accNameCheck = rslt.getString(1);
+				String accTypeCheck = rslt.getString(8);
                 boolean deleteAccTransData = true;
                 
                 Statement stmt2 = conn.createStatement();
@@ -78,8 +79,8 @@ public class IO extends GUI {
                 while(rslt2.next())
                 {
                     String transNameCheck = rslt2.getString(2);
-                    
-                    if(accNameCheck.equals(transNameCheck)){
+                    String transTypeCheck = rslt2.getString(1);
+                    if(accNameCheck.equals(transNameCheck) && accTypeCheck.equals(transTypeCheck)){
                     deleteAccTransData = false;
                     }
                 }
@@ -87,7 +88,7 @@ public class IO extends GUI {
                 if(deleteAccTransData)
                 {
                     Statement stmt3 = conn.createStatement();
-                    String update = "DELETE FROM transactions WHERE name = \'" + accNameCheck + "\'";
+                    String update = "DELETE FROM transactions WHERE name = \'" + accNameCheck + "\' AND typeAcc = "+ "\'" + accTypeCheck + "\'";
                     stmt3.executeUpdate(update);
                 }
 
@@ -153,13 +154,14 @@ public class IO extends GUI {
     private static void initTrans(Account acc){
       
 			String nameHolder = acc.getName();
+			String typeHolder = acc.getType();
 			//creates transactions mysql table if it doesn't already exist
             try{
 				Class.forName(JDBC_DRIVER);
 				Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				
 				Statement stmt = conn.createStatement();
-				
+				System.out.println("CHECK------------------------------------");
 				String sql = "CREATE TABLE transactions " +
                    "(name VARCHAR(30) not NULL," +
                    " type VARCHAR(10), " + 
@@ -167,7 +169,8 @@ public class IO extends GUI {
 				   " date VARCHAR(10), " +
 				   " payee VARCHAR(30), " +
 				   " category VARCHAR(10), " +
-                   " comments VARCHAR(100))";
+                   " comments VARCHAR(100)," +
+				   "typeAcc VARCHAR(10) not NULL)";
 
 				stmt.executeUpdate(sql);
 				
@@ -190,7 +193,7 @@ public class IO extends GUI {
 				
 				Statement stmt = conn.createStatement();
 			  
-				String query = "Select * From transactions WHERE name = " + "\'" + nameHolder + "\'";
+				String query = "Select * From transactions WHERE name = " + "\'" + nameHolder + "\' AND typeAcc = "+ "\'" + typeHolder + "\'";
 			  
 				ResultSet rslt = stmt.executeQuery(query);
 				Transaction trans;
@@ -301,7 +304,7 @@ public class IO extends GUI {
 				//load all transactions form the transactions array into the mysql transactions table
 				Statement st = conn.createStatement();
                
-				st.executeUpdate("INSERT INTO transactions (name, type, amount, date, payee, category, comments) "
+				st.executeUpdate("INSERT INTO transactions (name, type, amount, date, payee, category, comments, typeAcc) "
                     +"VALUES (" + "\'"
                     + acc.getName() 
                     + "\'" + "," + "\'"
@@ -316,6 +319,8 @@ public class IO extends GUI {
                     + trans.get(i).getCategory() 
                     + "\'" + "," + "\'"
                     + trans.get(i).getComments() 
+                    + "\'" + "," +"\'"
+					+ acc.getType() 
                     + "\'" + ")");
 
             }// for
