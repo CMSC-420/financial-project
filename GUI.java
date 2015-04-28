@@ -124,7 +124,7 @@ public class GUI {
         view_acct.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 int index = view_acct.getSelectedIndex();
-                
+                System.out.println(index);
                 if(index >= 0){
                     currAccount = accounts.get(index);
                     if(currTab == 1)
@@ -1445,13 +1445,25 @@ public class GUI {
             int thisYear = getYear(thisDate);
             
             if((startYear <= thisYear) && (thisYear <= endYear)){
-                if(endMonth == startMonth){
+                if((endMonth == startMonth) && (thisMonth == startMonth)){
                     if((endDay >= thisDay) && (thisDay >= startDay)){
                         return true;
                     }
                 }
-                else if((endMonth >= thisMonth) && (thisMonth >= startMonth)){
-                    return true;
+                else if((startMonth <= thisMonth) && (thisMonth <= endMonth)){
+                    if(thisMonth == startMonth){
+                        if(startDay <= thisDay){
+                            return true;
+                        }
+                    }
+                    else if(thisMonth == endMonth){
+                        if(thisDay <= endDay){
+                            return true;
+                        }
+                    }
+                    else {
+                        return true;
+                    }
                 }
             }
             
