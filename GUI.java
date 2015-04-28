@@ -33,6 +33,8 @@ public class GUI {
     protected static GroupLayout groupLayout; // the layout for the components
     
 	protected static JButton act_mgmt, reports, record_transaction, button_1, button_2; // Buttons
+    protected static JButton resetDates; // reset the date range
+    protected static JTextField startDate, endDate; // date range
 	protected static JComboBox view_acct; // User selectable drop down menu to select the account they wish to view
  
 	// scrollpane for table implementation --> give the table a scrollbar after the limit for viewable entries has been met
@@ -290,6 +292,36 @@ public class GUI {
                         break;
                     default:
                         System.out.println("\n\nERROR - GUI.button_2 - invalid currTab\n");
+                }
+			}
+		});
+        
+        
+        // reset dates
+        resetDates = new JButton("Reset Dates");
+		resetDates.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                initTableTransactions();
+			}
+		});
+        
+        startDate = new JTextField();
+        startDate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                
+                if(FindDates.isDate(startDate.getText()) 
+                    && FindDates.isDate(endDate.getText())){
+                    initTableTransactions(startDate.getText(), endDate.getText());
+                }
+			}
+		});
+        
+        endDate = new JTextField();
+        endDate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                if(FindDates.isDate(startDate.getText()) 
+                    && FindDates.isDate(endDate.getText())){
+                    initTableTransactions(startDate.getText(), endDate.getText());
                 }
 			}
 		});
@@ -608,7 +640,6 @@ public class GUI {
                 transaction.setPayee(payee);
                 transaction.setComments(comment);
                 transaction.setCategory(cat);
-                transaction.setDate(curr_date);
                 transaction.setType(type);
                 
                 switch(type){
@@ -640,7 +671,7 @@ public class GUI {
                             temp.setPayee(payee);
                             temp.setComments(comment);
                             temp.setCategory(cat);
-                            temp.setDate(curr_date);
+                            temp.setDate(date);
                             temp.setType(type);
                             temp.setSender(currAccount);
                             
@@ -662,7 +693,7 @@ public class GUI {
                 
                 // update files
                 IO.updateAccountData(accounts); // this updates the accounts for the user
-                IO.updateTranData(trans, currAccount); //this updates the transactions that have been taking place by the user
+                IO.updateTranData(trans, currAccount); // this updates the transactions that have been taking place by the user
             }
         }
     } // addTransactionPopup
@@ -731,6 +762,9 @@ public class GUI {
             currTab = 2;
             
             trans = currAccount.getTransactions();
+            
+            startDate.setText(FindDates.getOldestDate(trans));
+            endDate.setText(FindDates.getNewestDate(trans));
             
             // display account balance at the bottom of the screen
             sum_lab.setText("Balance: $" + currAccount.getBalance());
@@ -812,11 +846,110 @@ public class GUI {
             button_1.setVisible(true);
             button_2.setVisible(true);
             view_acct.setVisible(true);
+            resetDates.setVisible(true);
+            startDate.setVisible(true);
+            endDate.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "You must create an account first!");
         }
     } // initTableTransactions
 	
+    
+    
+    
+    private static void initTableTransactions(String startDate, String endDate){
+        if(currAccount != null){
+            currTab = 2;
+            
+            trans = currAccount.getTransactions();
+            
+            // display account balance at the bottom of the screen
+            sum_lab.setText("Balance: $" + currAccount.getBalance());
+            
+            Transaction transaction = new Transaction();
+            
+            tableModel.setColumnCount(0);
+            tableModel.setRowCount(0);
+            tableModel.addColumn("Date");
+            tableModel.addColumn("Payee");
+            tableModel.addColumn("Type");
+            tableModel.addColumn("Category");
+            tableModel.addColumn("Comments");
+            tableModel.addColumn("Amount ($)");
+            
+            // combobox to change the transaction type
+            JComboBox transTypeCombo = new JComboBox();
+            transTypeCombo.addItem("Spending");
+            transTypeCombo.addItem("Income");
+            
+            // put the combobox in the middle column
+            table.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(transTypeCombo));
+            
+            // make the combobox change the account type when it is selected
+            transTypeCombo.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    
+                    int index = transTypeCombo.getSelectedIndex();
+                    int row = table.getSelectedRow();
+                    
+                    if(index >= 0 && row >= 0){
+                        Transaction t = trans.get(row);
+                        String oldType;
+                        
+                        switch(index){
+                            case 0:
+                                oldType = t.getType(); // get the old type
+                                
+                                if(oldType.equals("Income")){ // if the old type was income
+                                    currAccount.setBalance(currAccount.getBalance() - (2 * t.getAmount()));
+                                    sum_lab.setText("Balance: $" + currAccount.getBalance());
+                                }
+                                t.setType("Spending");
+                                break;
+                            case 1:
+                                oldType = t.getType(); // get the old type
+                                
+                                if(oldType.equals("Spending")){ // if the old type was spending
+                                    currAccount.setBalance(currAccount.getBalance() + (2 * t.getAmount()));
+                                    sum_lab.setText("Balance: $" + currAccount.getBalance());
+                                }
+                                t.setType("Income");
+                                break;
+                        }
+                        
+                        IO.updateAccountData(accounts);
+                        IO.updateTranData(trans, currAccount);
+                    }
+                }
+            });
+        
+            
+            for(int i = 0; i < trans.size(); i++){
+                transaction = trans.get(i);
+                
+                if(FindDates.qualifies(startDate, endDate, transaction.getDate())){
+                    tableModel.addRow(new Object[]{
+                        transaction.getDate(),
+                        transaction.getPayee(),
+                        transaction.getType(), 
+                        transaction.getCategory(),
+                        transaction.getComments(),
+                        transaction.getAmount()
+                    });
+                }
+            }
+            
+            sum_lab.setVisible(true);
+            button_1.setText("New Transaction");
+            button_2.setText("Delete Transaction");
+            button_1.setVisible(true);
+            button_2.setVisible(true);
+            view_acct.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "You must create an account first!");
+        }
+    } // initTableTransactions
+    
 	
 	
 	
@@ -902,6 +1035,9 @@ public class GUI {
             button_1.setVisible(false);
             button_2.setVisible(false);
             view_acct.setVisible(true);
+            resetDates.setVisible(false);
+            startDate.setVisible(false);
+            endDate.setVisible(false);
         }
         else { // no accounts have been created yet
             JOptionPane.showMessageDialog(null, "You must create an account first!");
@@ -988,6 +1124,9 @@ public class GUI {
         button_2.setText("Delete Account");
         button_2.setVisible(true);
         view_acct.setVisible(false);
+        resetDates.setVisible(false);
+        startDate.setVisible(false);
+        endDate.setVisible(false);
     } // initTableAccounts
     
     
@@ -1007,6 +1146,9 @@ public class GUI {
                         .addComponent(record_transaction, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(record_transaction, view_acct, LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(view_acct, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(resetDates, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(startDate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(endDate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     )
                     .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, windowWidth - 40, GroupLayout.PREFERRED_SIZE)
                     .addGap(10)
@@ -1030,6 +1172,12 @@ public class GUI {
                         .addComponent(record_transaction)
                         .addGap(10)
                         .addComponent(view_acct)
+                        .addGap(10)
+                        .addComponent(resetDates)
+                        .addGap(10)
+                        .addComponent(startDate)
+                        .addGap(10)
+                        .addComponent(endDate)
                     )
                     .addGap(10)
                     .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, windowHeight - 150, GroupLayout.PREFERRED_SIZE)
@@ -1045,8 +1193,8 @@ public class GUI {
                 )
         );
         // keep the buttons all the same size
-        groupLayout.linkSize(SwingConstants.HORIZONTAL, act_mgmt, reports, record_transaction, view_acct, button_1, button_2);
-        groupLayout.linkSize(SwingConstants.VERTICAL, act_mgmt, reports, record_transaction, view_acct, button_1, button_2);
+        groupLayout.linkSize(SwingConstants.HORIZONTAL, act_mgmt, reports, record_transaction, view_acct, button_1, button_2, resetDates);
+        groupLayout.linkSize(SwingConstants.VERTICAL, act_mgmt, reports, record_transaction, view_acct, button_1, button_2, resetDates);
     } // makeLayout
     
     
@@ -1255,6 +1403,138 @@ public class GUI {
         } // transChangeDate
 	} // class MyTableModel
 	
-	
+	private static class FindDates{
+        static Scanner scan;
+        
+        
+        public static int getMonth(String date){
+            scan = new Scanner(date);
+            scan.useDelimiter("/");
+            
+            return Integer.parseInt(scan.next());
+        }
+        
+        public static int getDay(String date){
+            scan = new Scanner(date);
+            scan.useDelimiter("/");
+            
+            scan.next();
+            return Integer.parseInt(scan.next());
+        }
+        
+        public static int getYear(String date){
+            scan = new Scanner(date);
+            scan.useDelimiter("/");
+            
+            scan.next();
+            scan.next();
+            return Integer.parseInt(scan.next());
+        }
+        
+        public static boolean qualifies(String startDate, String endDate, String thisDate){
+            int startMonth = getMonth(startDate);
+            int startDay = getDay(startDate);
+            int startYear = getYear(startDate);
+            
+            int endMonth = getMonth(endDate);
+            int endDay = getDay(endDate);
+            int endYear = getYear(endDate);
+            
+            int thisMonth = getMonth(thisDate);
+            int thisDay = getDay(thisDate);
+            int thisYear = getYear(thisDate);
+            
+            if((startYear <= thisYear) && (thisYear <= endYear)){
+                if(endMonth == startMonth){
+                    if((endDay >= thisDay) && (thisDay >= startDay)){
+                        return true;
+                    }
+                }
+                else if((endMonth >= thisMonth) && (thisMonth >= startMonth)){
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        public static boolean isDate(String date){
+            Scanner scan = new Scanner(date);
+            scan.useDelimiter("/");
+            
+            for(int i = 0; i < 3; i++){
+                if(scan.hasNextInt()){
+                    scan.nextInt();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid Date Format");
+                    initTableTransactions();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        public static String getOldestDate(ArrayList<Transaction> transactions){
+            Scanner scan;
+            int month = 0;
+            int day = 0;
+            int year = 0;
+            
+            for(int i = 0; i < transactions.size(); i++){
+                scan = new Scanner(transactions.get(i).getDate());
+                scan.useDelimiter("/");
+                
+                int tempMonth = scan.nextInt();
+                int tempDay = scan.nextInt();
+                int tempYear = scan.nextInt();
+                
+                if(tempMonth <= month || month == 0){
+                    
+                    if(tempDay <= day || day == 0){
+                        
+                        if(tempYear <= year || year == 0){
+                            month = tempMonth;
+                            day = tempDay;
+                            year = tempYear;
+                        }
+                    }
+                }
+            }
+            
+            return month + "/" + day + "/" + year;
+        } // getOldestDate
+        
+        public static String getNewestDate(ArrayList<Transaction> transactions){
+            Scanner scan;
+            int month = 0;
+            int day = 0;
+            int year = 0;
+            
+            for(int i = 0; i < transactions.size(); i++){
+                scan = new Scanner(transactions.get(i).getDate());
+                scan.useDelimiter("/");
+                
+                int tempMonth = scan.nextInt();
+                int tempDay = scan.nextInt();
+                int tempYear = scan.nextInt();
+                
+                if(tempMonth >= month || month == 0){
+                    
+                    if(tempDay >= day || day == 0){
+                        
+                        if(tempYear >= year || year == 0){
+                            month = tempMonth;
+                            day = tempDay;
+                            year = tempYear;
+                        }
+                    }
+                }
+            }
+            
+            return month + "/" + day + "/" + year;
+        } // getNewestDate
+        
+    } // class FindDates
 
 } // class
